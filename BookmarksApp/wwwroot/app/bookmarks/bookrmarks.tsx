@@ -24,6 +24,9 @@ function Bookmarks(props: BookmarProps) {
     return (<ul>{bookmarks}</ul>);
 }
 
+
+
+
 type TagProps = {
     tag: TagModel;
 }
@@ -31,28 +34,39 @@ type TagProps = {
 function Tag(props: TagProps) {
     const tag = props.tag;
     const tagItem = <li>{tag.name}<Bookmarks bookmarks={tag.bookmarks} /></li>;
-    if (tag.subTags) {
-        const subTags = tag.subTags.map(subTag => <Tags key={subTag.name} />)
-        return (<>{tagItem}<div></div></>)
-    }
-    return tagItem;
+
+    return (<>{tagItem}{tag.subTags && <Tags tags={tag.subTags} />} </>);
 }
 
-type TagsState = {
+
+type TagsProps = {
     tags: TagModel[];
 }
 
-export class Tags extends React.Component<{}, TagsState> {
+function Tags(props: TagsProps) {
+    const tagItems = props.tags.map(tag => <Tag key={tag.name} tag={tag} />);
+    return (
+        <ul>{tagItems}</ul>
+    );
+}
+
+type TagsRootState = {
+    tags: TagModel[];
+}
+
+export class TagsRoot extends React.Component<{}, TagsRootState> {
+
+    state: TagsRootState = { tags: null }
 
     componentDidMount() {
         this.setState({ tags: sampleBookrmarks.slice() });
     }
 
     render() {
-        const tags = sampleBookrmarks.map(tag => <Tag key={tag.name} tag={tag} />);
-        return (
-            <ul>{tags}</ul>
-        );
+        if (this.state.tags) {
+            return (<Tags tags={this.state.tags} />);
+        }
+        return null;
     }
 }
 
@@ -60,14 +74,22 @@ export const sampleBookrmarks: TagModel[] = [
     {
         name: '.Net',
         bookmarks: [
-            { name: '.net', url: 'https://dotnet.microsoft.com/download' }
+            { name: 'download', url: 'https://dotnet.microsoft.com/download' }
+        ],
+        subTags: [
+            {
+                name: 'Asp.net',
+                bookmarks: [
+                    { name: 'asp.net', url: 'https://dotnet.microsoft.com/apps/aspnet' },
+                    { name: 'asp.net core', url: 'https://docs.microsoft.com/es-es/aspnet/core/?view=aspnetcore-2.2' },
+                ],
+            }
         ]
     },
     {
-        name: 'Asp.net',
+        name: 'react',
         bookmarks: [
-            { name: 'asp.net', url: 'https://dotnet.microsoft.com/apps/aspnet' },
-            { name: 'asp.net core', url: 'https://docs.microsoft.com/es-es/aspnet/core/?view=aspnetcore-2.2' },
-        ],
+            { name: 'react docs', url: 'https://reactjs.org/docs/getting-started.html' }
+        ]
     }
 ]

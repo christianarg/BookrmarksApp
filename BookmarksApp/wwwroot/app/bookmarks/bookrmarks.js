@@ -26,42 +26,55 @@ function Tag(props) {
     var tagItem = React.createElement("li", null,
         tag.name,
         React.createElement(Bookmarks, { bookmarks: tag.bookmarks }));
-    if (tag.subTags) {
-        var subTags = tag.subTags.map(function (subTag) { return React.createElement(Tags, { key: subTag.name }); });
-        return (React.createElement(React.Fragment, null,
-            tagItem,
-            React.createElement("div", null)));
-    }
-    return tagItem;
+    return (React.createElement(React.Fragment, null,
+        tagItem,
+        tag.subTags && React.createElement(Tags, { tags: tag.subTags }),
+        " "));
 }
-var Tags = /** @class */ (function (_super) {
-    __extends(Tags, _super);
-    function Tags() {
-        return _super !== null && _super.apply(this, arguments) || this;
+function Tags(props) {
+    var tagItems = props.tags.map(function (tag) { return React.createElement(Tag, { key: tag.name, tag: tag }); });
+    return (React.createElement("ul", null, tagItems));
+}
+var TagsRoot = /** @class */ (function (_super) {
+    __extends(TagsRoot, _super);
+    function TagsRoot() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.state = { tags: null };
+        return _this;
     }
-    Tags.prototype.componentDidMount = function () {
+    TagsRoot.prototype.componentDidMount = function () {
         this.setState({ tags: exports.sampleBookrmarks.slice() });
     };
-    Tags.prototype.render = function () {
-        var tags = exports.sampleBookrmarks.map(function (tag) { return React.createElement(Tag, { key: tag.name, tag: tag }); });
-        return (React.createElement("ul", null, tags));
+    TagsRoot.prototype.render = function () {
+        if (this.state.tags) {
+            return (React.createElement(Tags, { tags: this.state.tags }));
+        }
+        return null;
     };
-    return Tags;
+    return TagsRoot;
 }(React.Component));
-exports.Tags = Tags;
+exports.TagsRoot = TagsRoot;
 exports.sampleBookrmarks = [
     {
         name: '.Net',
         bookmarks: [
-            { name: '.net', url: 'https://dotnet.microsoft.com/download' }
+            { name: 'download', url: 'https://dotnet.microsoft.com/download' }
+        ],
+        subTags: [
+            {
+                name: 'Asp.net',
+                bookmarks: [
+                    { name: 'asp.net', url: 'https://dotnet.microsoft.com/apps/aspnet' },
+                    { name: 'asp.net core', url: 'https://docs.microsoft.com/es-es/aspnet/core/?view=aspnetcore-2.2' },
+                ],
+            }
         ]
     },
     {
-        name: 'Asp.net',
+        name: 'react',
         bookmarks: [
-            { name: 'asp.net', url: 'https://dotnet.microsoft.com/apps/aspnet' },
-            { name: 'asp.net core', url: 'https://docs.microsoft.com/es-es/aspnet/core/?view=aspnetcore-2.2' },
-        ],
+            { name: 'react docs', url: 'https://reactjs.org/docs/getting-started.html' }
+        ]
     }
 ];
 //# sourceMappingURL=bookrmarks.js.map
