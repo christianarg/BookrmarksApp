@@ -4,6 +4,7 @@ type TagModel = {
     name: string;
     subTags?: TagModel[];
     bookmarks: BookmarkModel[];
+    hidden?: boolean;
 }
 
 type BookmarkModel = {
@@ -33,6 +34,9 @@ type TagProps = {
 
 function Tag(props: TagProps) {
     const tag = props.tag;
+    if (tag.hidden) {
+        return null;
+    }
     const tagItem = <li>{tag.name}<Bookmarks bookmarks={tag.bookmarks} /></li>;
 
     return (<>{tagItem}{tag.subTags && <Tags tags={tag.subTags} />} </>);
@@ -60,6 +64,16 @@ function TagSearch(props: TagSearchProps) {
     return (<input type="text" value={props.searachText} onChange={(evt) => props.onSearchChange(evt.target.value)} />)
 }
 
+
+function filterTags(tags: TagModel[], searchText: string) {
+    tags.forEach(tag => {
+        tag.hidden = !tag.name.toLowerCase().includes(searchText.toLowerCase());
+        if (tag.subTags) {
+            filterTags(tag.subTags, searchText);
+        }
+    });
+}
+
 type TagsRootState = {
     tags: TagModel[];
     searachText: string;
@@ -74,7 +88,9 @@ export class TagsRoot extends React.Component<{}, TagsRootState> {
     }
 
     handleSearch = (searchValue: string) => {
-        this.setState({ searachText: searchValue });
+        const tags = this.state.tags.slice();
+        filterTags(tags, searchValue);
+        this.setState({ tags: tags, searachText: searchValue });
     }
 
     render() {

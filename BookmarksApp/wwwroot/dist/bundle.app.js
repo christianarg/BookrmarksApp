@@ -160,6 +160,9 @@ function Bookmarks(props) {
 }
 function Tag(props) {
     var tag = props.tag;
+    if (tag.hidden) {
+        return null;
+    }
     var tagItem = React.createElement("li", null,
         tag.name,
         React.createElement(Bookmarks, { bookmarks: tag.bookmarks }));
@@ -175,13 +178,23 @@ function Tags(props) {
 function TagSearch(props) {
     return (React.createElement("input", { type: "text", value: props.searachText, onChange: function (evt) { return props.onSearchChange(evt.target.value); } }));
 }
+function filterTags(tags, searchText) {
+    tags.forEach(function (tag) {
+        tag.hidden = !tag.name.toLowerCase().includes(searchText.toLowerCase());
+        if (tag.subTags) {
+            filterTags(tag.subTags, searchText);
+        }
+    });
+}
 var TagsRoot = /** @class */ (function (_super) {
     __extends(TagsRoot, _super);
     function TagsRoot() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.state = { tags: null, searachText: '' };
         _this.handleSearch = function (searchValue) {
-            _this.setState({ searachText: searchValue });
+            var tags = _this.state.tags.slice();
+            filterTags(tags, searchValue);
+            _this.setState({ tags: tags, searachText: searchValue });
         };
         return _this;
     }
