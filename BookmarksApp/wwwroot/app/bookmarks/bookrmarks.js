@@ -14,18 +14,41 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = require("react");
-var Bookmarks = /** @class */ (function (_super) {
-    __extends(Bookmarks, _super);
-    function Bookmarks() {
+function Bookmarks(props) {
+    var bookmarks = props.bookmarks.map(function (bookmark) {
+        return React.createElement("li", { key: bookmark.name },
+            React.createElement("a", { href: bookmark.url, target: "_blank" }, bookmark.name));
+    });
+    return (React.createElement("ul", null, bookmarks));
+}
+function Tag(props) {
+    var tag = props.tag;
+    var tagItem = React.createElement("li", null,
+        tag.name,
+        React.createElement(Bookmarks, { bookmarks: tag.bookmarks }));
+    if (tag.subTags) {
+        var subTags = tag.subTags.map(function (subTag) { return React.createElement(Tags, { key: subTag.name }); });
+        return (React.createElement(React.Fragment, null,
+            tagItem,
+            React.createElement("div", null)));
+    }
+    return tagItem;
+}
+var Tags = /** @class */ (function (_super) {
+    __extends(Tags, _super);
+    function Tags() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
-    Bookmarks.prototype.render = function () {
-        var tags = exports.sampleBookrmarks.map(function (tag) { return React.createElement("li", { key: tag.name }, tag.name); });
+    Tags.prototype.componentDidMount = function () {
+        this.setState({ tags: exports.sampleBookrmarks.slice() });
+    };
+    Tags.prototype.render = function () {
+        var tags = exports.sampleBookrmarks.map(function (tag) { return React.createElement(Tag, { key: tag.name, tag: tag }); });
         return (React.createElement("ul", null, tags));
     };
-    return Bookmarks;
+    return Tags;
 }(React.Component));
-exports.Bookmarks = Bookmarks;
+exports.Tags = Tags;
 exports.sampleBookrmarks = [
     {
         name: '.Net',

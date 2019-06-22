@@ -1,30 +1,66 @@
 ﻿import * as React from 'react';
 
-type Tag = {
+type TagModel = {
     name: string;
-    subTags?: Tag[];
-    bookmarks: Bookmark[];
+    subTags?: TagModel[];
+    bookmarks: BookmarkModel[];
 }
 
-type Bookmark = {
+type BookmarkModel = {
     name: string;
     url: string;
 }
 
-export class Bookmarks extends React.Component {
+
+type BookmarProps = {
+    bookmarks: BookmarkModel[];
+}
+
+function Bookmarks(props: BookmarProps) {
+    const bookmarks = props.bookmarks.map(bookmark =>
+        <li key={bookmark.name}>
+            <a href={bookmark.url} target="_blank" >{bookmark.name}</a>
+        </li>)
+    return (<ul>{bookmarks}</ul>);
+}
+
+type TagProps = {
+    tag: TagModel;
+}
+
+function Tag(props: TagProps) {
+    const tag = props.tag;
+    const tagItem = <li>{tag.name}<Bookmarks bookmarks={tag.bookmarks} /></li>;
+    if (tag.subTags) {
+        const subTags = tag.subTags.map(subTag => <Tags key={subTag.name} />)
+        return (<>{tagItem}<div></div></>)
+    }
+    return tagItem;
+}
+
+type TagsState = {
+    tags: TagModel[];
+}
+
+export class Tags extends React.Component<{}, TagsState> {
+
+    componentDidMount() {
+        this.setState({ tags: sampleBookrmarks.slice() });
+    }
+
     render() {
-        const tags = sampleBookrmarks.map(tag => <li key={tag.name}>{tag.name}</li>)
+        const tags = sampleBookrmarks.map(tag => <Tag key={tag.name} tag={tag} />);
         return (
             <ul>{tags}</ul>
         );
     }
 }
 
-export const sampleBookrmarks: Tag[] = [
+export const sampleBookrmarks: TagModel[] = [
     {
         name: '.Net',
         bookmarks: [
-            { name: '.net', url:'https://dotnet.microsoft.com/download' }
+            { name: '.net', url: 'https://dotnet.microsoft.com/download' }
         ]
     },
     {

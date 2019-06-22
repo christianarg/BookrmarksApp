@@ -1,10 +1,10 @@
 ﻿import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Bookmarks } from './bookmarks/bookrmarks';
+import { Tags } from './bookmarks/bookrmarks';
 
 class App extends React.Component{
     render() {
-        return (<Bookmarks />);
+        return (<Tags />);
     }
 }
 
