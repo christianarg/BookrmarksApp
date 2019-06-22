@@ -10,6 +10,7 @@ type TagModel = {
 type BookmarkModel = {
     name: string;
     url: string;
+    hidden?: boolean;
 }
 
 
@@ -61,7 +62,7 @@ type TagSearchProps = {
 }
 
 function TagSearch(props: TagSearchProps) {
-    return (<input type="text" value={props.searachText} onChange={(evt) => props.onSearchChange(evt.target.value)} />)
+    return (<input type="text" placeholder="Search tags..." value={props.searachText} onChange={(evt) => props.onSearchChange(evt.target.value)} />)
 }
 
 

@@ -176,7 +176,7 @@ function Tags(props) {
     return (React.createElement("ul", null, tagItems));
 }
 function TagSearch(props) {
-    return (React.createElement("input", { type: "text", value: props.searachText, onChange: function (evt) { return props.onSearchChange(evt.target.value); } }));
+    return (React.createElement("input", { type: "text", placeholder: "Search tags...", value: props.searachText, onChange: function (evt) { return props.onSearchChange(evt.target.value); } }));
 }
 function filterTags(tags, searchText) {
     tags.forEach(function (tag) {
