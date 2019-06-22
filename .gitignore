@@ -338,4 +338,6 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
-/WebApCoreReact/wwwroot/dist/**
+/BookmarkApp/wwwroot/dist/**
+/BookmarkApp/wwwroot/app/**/*.js
+/BookmarkApp/wwwroot/app/**/*.js.map
