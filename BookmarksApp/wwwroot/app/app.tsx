@@ -4,7 +4,6 @@ import { Bookmarks } from './bookmarks/bookrmarks';
 
 class App extends React.Component{
     render() {
-        debugger;
         return (<Bookmarks />);
     }
 }
