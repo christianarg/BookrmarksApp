@@ -35,11 +35,17 @@ function Tags(props) {
     var tagItems = props.tags.map(function (tag) { return React.createElement(Tag, { key: tag.name, tag: tag }); });
     return (React.createElement("ul", null, tagItems));
 }
+function TagSearch(props) {
+    return (React.createElement("input", { type: "text", value: props.searachText, onChange: function (evt) { return props.onSearchChange(evt.target.value); } }));
+}
 var TagsRoot = /** @class */ (function (_super) {
     __extends(TagsRoot, _super);
     function TagsRoot() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.state = { tags: null };
+        _this.state = { tags: null, searachText: '' };
+        _this.handleSearch = function (searchValue) {
+            _this.setState({ searachText: searchValue });
+        };
         return _this;
     }
     TagsRoot.prototype.componentDidMount = function () {
@@ -47,7 +53,9 @@ var TagsRoot = /** @class */ (function (_super) {
     };
     TagsRoot.prototype.render = function () {
         if (this.state.tags) {
-            return (React.createElement(Tags, { tags: this.state.tags }));
+            return (React.createElement("div", null,
+                React.createElement(TagSearch, { searachText: this.state.searachText, onSearchChange: this.handleSearch }),
+                React.createElement(Tags, { tags: this.state.tags })));
         }
         return null;
     };

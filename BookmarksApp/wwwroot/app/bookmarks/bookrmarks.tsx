@@ -50,21 +50,40 @@ function Tags(props: TagsProps) {
     );
 }
 
+
+type TagSearchProps = {
+    searachText: string;
+    onSearchChange: (value: string) => void;
+}
+
+function TagSearch(props: TagSearchProps) {
+    return (<input type="text" value={props.searachText} onChange={(evt) => props.onSearchChange(evt.target.value)} />)
+}
+
 type TagsRootState = {
     tags: TagModel[];
+    searachText: string;
 }
 
 export class TagsRoot extends React.Component<{}, TagsRootState> {
 
-    state: TagsRootState = { tags: null }
+    state: TagsRootState = { tags: null, searachText: '' }
 
     componentDidMount() {
         this.setState({ tags: sampleBookrmarks.slice() });
     }
 
+    handleSearch = (searchValue: string) => {
+        this.setState({ searachText: searchValue });
+    }
+
     render() {
         if (this.state.tags) {
-            return (<Tags tags={this.state.tags} />);
+            return (
+                <div>
+                    <TagSearch searachText={this.state.searachText} onSearchChange={this.handleSearch} />
+                    <Tags tags={this.state.tags} />
+                </div>);
         }
         return null;
     }
