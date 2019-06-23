@@ -16,7 +16,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var React = require("react");
 function Bookmarks(props) {
     var bookmarks = props.bookmarks.map(function (bookmark) { return !bookmark.hidden &&
-        React.createElement("li", { key: bookmark.name },
+        React.createElement("li", { key: bookmark.name, className: "bookmark" },
             React.createElement("a", { href: bookmark.url, target: "_blank" }, bookmark.name)); });
     return (React.createElement("ul", null, bookmarks));
 }
@@ -25,7 +25,7 @@ function Tag(props) {
     if (tag.hidden) {
         return null;
     }
-    var tagItem = React.createElement("li", null,
+    var tagItem = React.createElement("li", { className: "tag" },
         tag.name,
         React.createElement(Bookmarks, { bookmarks: tag.bookmarks }));
     return (React.createElement(React.Fragment, null,

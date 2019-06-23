@@ -20,7 +20,7 @@ type BookmarProps = {
 
 function Bookmarks(props: BookmarProps) {
     const bookmarks = props.bookmarks.map(bookmark => !bookmark.hidden &&
-        <li key={bookmark.name}>
+        <li key={bookmark.name} className="bookmark">
             <a href={bookmark.url} target="_blank" >{bookmark.name}</a>
         </li>)
     return (<ul>{bookmarks}</ul>);
@@ -38,7 +38,7 @@ function Tag(props: TagProps) {
     if (tag.hidden) {
         return null;
     }
-    const tagItem = <li>{tag.name}<Bookmarks bookmarks={tag.bookmarks} /></li>;
+    const tagItem = <li className="tag">{tag.name}<Bookmarks bookmarks={tag.bookmarks} /></li>;
 
     return (<>{tagItem}{tag.subTags && <Tags tags={tag.subTags} />} </>);
 }
