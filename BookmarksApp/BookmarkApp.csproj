@@ -9,6 +9,7 @@
     <Content Remove="wwwroot\app\app.js" />
     <Content Remove="wwwroot\app\app.js.map" />
     <Content Remove="wwwroot\app\app.tsx" />
+    <Content Remove="wwwroot\app\bookmarks\bookmarks.test.tsx" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,13 +1,13 @@
 ﻿import * as React from 'react';
 
-type TagModel = {
+export type TagModel = {
     name: string;
     subTags?: TagModel[];
     bookmarks: BookmarkModel[];
     hidden?: boolean;
 }
 
-type BookmarkModel = {
+export type BookmarkModel = {
     name: string;
     url: string;
     hidden?: boolean;
@@ -19,7 +19,7 @@ type BookmarProps = {
 }
 
 function Bookmarks(props: BookmarProps) {
-    const bookmarks = props.bookmarks.map(bookmark =>
+    const bookmarks = props.bookmarks.map(bookmark => !bookmark.hidden &&
         <li key={bookmark.name}>
             <a href={bookmark.url} target="_blank" >{bookmark.name}</a>
         </li>)
@@ -62,13 +62,20 @@ type TagSearchProps = {
 }
 
 function TagSearch(props: TagSearchProps) {
-    return (<input type="text" placeholder="Search tags..." value={props.searachText} onChange={(evt) => props.onSearchChange(evt.target.value)} />)
+    return (<div><input type="text" placeholder="Search tags..." value={props.searachText} onChange={(evt) => props.onSearchChange(evt.target.value)} /></div>)
 }
 
 
-function filterTags(tags: TagModel[], searchText: string) {
+function hasText(text: string, searchText: string) {
+    return text.toLowerCase().includes(searchText.toLowerCase());
+}
+
+export function filterTags(tags: TagModel[], searchText: string) {
     tags.forEach(tag => {
-        tag.hidden = !tag.name.toLowerCase().includes(searchText.toLowerCase());
+        tag.bookmarks.forEach(bookmark => bookmark.hidden = !hasText(bookmark.name, searchText));
+        const anyBookmarkVisible = tag.bookmarks.some(b => !b.hidden);
+        const tagNameHasText = hasText(tag.name, searchText);
+        tag.hidden = !tagNameHasText && !anyBookmarkVisible;
         if (tag.subTags) {
             filterTags(tag.subTags, searchText);
         }

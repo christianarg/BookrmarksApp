@@ -6,6 +6,7 @@
   "scripts": {
     "build": "webpack",
     "start": "webpack --watch --mode=development",
+    "test": "jest",
     "start:dev": "webpack-dev-server",
     "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand --watchAll"
   },

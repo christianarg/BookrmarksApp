@@ -152,10 +152,9 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = __webpack_require__(/*! react */ "react");
 function Bookmarks(props) {
-    var bookmarks = props.bookmarks.map(function (bookmark) {
-        return React.createElement("li", { key: bookmark.name },
-            React.createElement("a", { href: bookmark.url, target: "_blank" }, bookmark.name));
-    });
+    var bookmarks = props.bookmarks.map(function (bookmark) { return !bookmark.hidden &&
+        React.createElement("li", { key: bookmark.name },
+            React.createElement("a", { href: bookmark.url, target: "_blank" }, bookmark.name)); });
     return (React.createElement("ul", null, bookmarks));
 }
 function Tag(props) {
@@ -176,16 +175,24 @@ function Tags(props) {
     return (React.createElement("ul", null, tagItems));
 }
 function TagSearch(props) {
-    return (React.createElement("input", { type: "text", placeholder: "Search tags...", value: props.searachText, onChange: function (evt) { return props.onSearchChange(evt.target.value); } }));
+    return (React.createElement("div", null,
+        React.createElement("input", { type: "text", placeholder: "Search tags...", value: props.searachText, onChange: function (evt) { return props.onSearchChange(evt.target.value); } })));
+}
+function hasText(text, searchText) {
+    return text.toLowerCase().includes(searchText.toLowerCase());
 }
 function filterTags(tags, searchText) {
     tags.forEach(function (tag) {
-        tag.hidden = !tag.name.toLowerCase().includes(searchText.toLowerCase());
+        tag.bookmarks.forEach(function (bookmark) { return bookmark.hidden = !hasText(bookmark.name, searchText); });
+        var anyBookmarkVisible = tag.bookmarks.some(function (b) { return !b.hidden; });
+        var tagNameHasText = hasText(tag.name, searchText);
+        tag.hidden = !tagNameHasText && !anyBookmarkVisible;
         if (tag.subTags) {
             filterTags(tag.subTags, searchText);
         }
     });
 }
+exports.filterTags = filterTags;
 var TagsRoot = /** @class */ (function (_super) {
     __extends(TagsRoot, _super);
     function TagsRoot() {
