@@ -75,7 +75,8 @@ export function filterTags(tags: TagModel[], searchText: string) {
         tag.bookmarks.forEach(bookmark => bookmark.hidden = !hasText(bookmark.name, searchText));
         const anyBookmarkVisible = tag.bookmarks.some(b => !b.hidden);
         const tagNameHasText = hasText(tag.name, searchText);
-        tag.hidden = !tagNameHasText && !anyBookmarkVisible;
+        const anySubTagsVisible = tag.subTags && tag.subTags.some(t => !t.hidden);
+        tag.hidden = !tagNameHasText && !anyBookmarkVisible && !anySubTagsVisible;
         if (tag.subTags) {
             filterTags(tag.subTags, searchText);
         }

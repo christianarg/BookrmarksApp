@@ -186,7 +186,8 @@ function filterTags(tags, searchText) {
         tag.bookmarks.forEach(function (bookmark) { return bookmark.hidden = !hasText(bookmark.name, searchText); });
         var anyBookmarkVisible = tag.bookmarks.some(function (b) { return !b.hidden; });
         var tagNameHasText = hasText(tag.name, searchText);
-        tag.hidden = !tagNameHasText && !anyBookmarkVisible;
+        var anySubTagsVisible = tag.subTags && tag.subTags.some(function (t) { return !t.hidden; });
+        tag.hidden = !tagNameHasText && !anyBookmarkVisible && !anySubTagsVisible;
         if (tag.subTags) {
             filterTags(tag.subTags, searchText);
         }
