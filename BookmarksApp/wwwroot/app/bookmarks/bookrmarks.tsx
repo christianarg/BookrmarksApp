@@ -24,7 +24,7 @@ function Bookmarks(props: BookmarProps) {
         <li key={bookmark.name} className="bookmark">
             <a href={bookmark.url} target="_blank" >{bookmark.name}</a>
         </li>)
-    return (<ul>{bookmarks}</ul>);
+    return (<ul style={{ listStyleType: 'none' }}>{bookmarks}</ul>);
 }
 
 type AddBookmarkProps = { onAdd: (newBookmark: BookmarkModel) => void };
@@ -147,11 +147,14 @@ function Tag(props: TagProps) {
     }
 
     return (
+
         <li className="tag">
-            <span>{tag.name}</span> <AddBookmark onAdd={(newBookmark) => props.onAddBookmark({ ...tag }, newBookmark)} />
-            <Bookmarks bookmarks={tag.bookmarks} />
-            {tag.subTags && <Tags tags={tag.subTags} onAddBookmark={props.onAddBookmark} onAddTag={props.onAddTag} />}
-            <AddTag onAdd={(newTag) => props.onAddTag(newTag, tag)} />
+            <fieldset>
+                <legend>Tag: {tag.name}</legend> <AddBookmark onAdd={(newBookmark) => props.onAddBookmark({ ...tag }, newBookmark)} />
+                <Bookmarks bookmarks={tag.bookmarks} />
+                {tag.subTags && <Tags tags={tag.subTags} onAddBookmark={props.onAddBookmark} onAddTag={props.onAddTag} />}
+                <AddTag key={`add${tag.name}`} onAdd={(newTag) => props.onAddTag(newTag, tag)} />
+            </fieldset>
         </li>);
 }
 
@@ -163,9 +166,10 @@ type TagsProps = {
 }
 
 function Tags(props: TagsProps) {
-    const tagItems = props.tags.map(tag => <Tag key={tag.name} tag={tag} onAddBookmark={props.onAddBookmark} onAddTag={props.onAddTag} />);
+    const tags = props.tags;
+    const tagItems = tags.map(tag => <Tag key={tag.name} tag={tag} onAddBookmark={props.onAddBookmark} onAddTag={props.onAddTag} />);
     return (
-        <ul>{tagItems}</ul>
+        <ul style={{ listStyleType:'none' }}>{tagItems}</ul>
     );
 }
 
@@ -278,7 +282,7 @@ export const sampleBookrmarks: TagModel[] = [
         ]
     },
     {
-        name: 'react',
+        name: 'React',
         bookmarks: [
             { name: 'react docs', url: 'https://reactjs.org/docs/getting-started.html' }
         ]
