@@ -1,4 +1,5 @@
 ﻿import * as React from 'react';
+import { url } from 'inspector';
 
 export type TagModel = {
     name: string;
@@ -26,11 +27,65 @@ function Bookmarks(props: BookmarProps) {
     return (<ul>{bookmarks}</ul>);
 }
 
+type AddBookmarkProps = { onAdd: (newBookmark: BookmarkModel) => void };
+type AddBookmarkState = { isFormVisible: boolean, name: string, url: string };
 
+class AddBookmark extends React.Component<AddBookmarkProps, AddBookmarkState>{
+    state: AddBookmarkState = { isFormVisible: false, name: null, url: null };
+
+    hasValue() {
+        const { name, url } = this.state;
+        return (name && url);
+    }
+
+    handleSubmit = (evt: React.FormEvent) => {
+        evt.preventDefault();
+        const { name, url } = this.state;
+        if (name && url) {
+            this.props.onAdd({ name: name, url: url });
+        }
+    }
+
+    handleNameChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
+        this.setState({ name: evt.target.value });
+    }
+
+    handleUrlChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
+        this.setState({ url: evt.target.value });
+    }
+
+    toggleShow = () => {
+        this.setState({ isFormVisible: !this.state.isFormVisible });
+    }
+
+    buttonStyle(): React.CSSProperties {
+        if (!this.hasValue()) {
+            return { cursor: 'not-allowed' };
+        }
+        return null;
+    }
+
+    render() {
+        const buttonStyle = { display: 'inline-block', textDecoration: 'underline', cursor: 'pointer' };
+        if (this.state.isFormVisible) {
+            return (
+                <div>
+                    <div style={buttonStyle} onClick={this.toggleShow}>Close</div>
+                    <form onSubmit={this.handleSubmit}>
+                        <div>Name: <input type="text" onChange={this.handleNameChange} placeholder="Bookmark name..." /></div>
+                        <div>Url:  <input type="text" onChange={this.handleUrlChange} placeholder="url..." /></div>
+                        <button value="Add" style={this.buttonStyle()}>Add</button>
+                    </form>
+                </div>);
+        }
+        return <div style={buttonStyle} onClick={this.toggleShow}>(Add Bookmark)</div>
+    }
+}
 
 
 type TagProps = {
     tag: TagModel;
+    onAddBookmark: (tag: TagModel, bookmark: BookmarkModel) => void;
 }
 
 function Tag(props: TagProps) {
@@ -38,18 +93,20 @@ function Tag(props: TagProps) {
     if (tag.hidden) {
         return null;
     }
-    const tagItem = <li className="tag">{tag.name}<Bookmarks bookmarks={tag.bookmarks} /></li>;
+    const tagItem = <li className="tag">{tag.name} <AddBookmark onAdd={(newBookmark) => props.onAddBookmark({ ...tag }, newBookmark)} /> 
+<Bookmarks bookmarks={tag.bookmarks} /></li>;
 
-    return (<>{tagItem}{tag.subTags && <Tags tags={tag.subTags} />} </>);
+    return (<>{tagItem}{tag.subTags && <Tags tags={tag.subTags} onAddBookmark={props.onAddBookmark} />}  </>);
 }
 
 
 type TagsProps = {
     tags: TagModel[];
+    onAddBookmark: (tag: TagModel, bookmark: BookmarkModel) => void;
 }
 
 function Tags(props: TagsProps) {
-    const tagItems = props.tags.map(tag => <Tag key={tag.name} tag={tag} />);
+    const tagItems = props.tags.map(tag => <Tag key={tag.name} tag={tag} onAddBookmark={props.onAddBookmark} />);
     return (
         <ul>{tagItems}</ul>
     );
@@ -84,6 +141,18 @@ export function filterTags(tags: TagModel[], searchText: string) {
     });
 }
 
+export function replaceTag(tags: TagModel[], newTag: TagModel): TagModel[] {
+    const newTags = tags.map(tag => tag.name == newTag.name ? newTag : { ...tag });
+
+    newTags.forEach(tag => {
+        tag.bookmarks = tag.bookmarks.slice();
+        if(tag.subTags){
+            tag.subTags = replaceTag(tag.subTags, newTag);
+        }
+    });
+    return newTags;
+}
+
 type TagsRootState = {
     tags: TagModel[];
     searachText: string;
@@ -103,12 +172,20 @@ export class TagsRoot extends React.Component<{}, TagsRootState> {
         this.setState({ tags: tags, searachText: searchValue });
     }
 
+    handleAddBookmark = (tag: TagModel, bookmarkModel: BookmarkModel) => {
+        let tags = this.state.tags.slice();
+        tag.bookmarks.push(bookmarkModel);
+
+        tags = replaceTag(tags, tag);
+        this.setState({ tags: tags });
+    }
+
     render() {
         if (this.state.tags) {
             return (
                 <div>
                     <TagSearch searachText={this.state.searachText} onSearchChange={this.handleSearch} />
-                    <Tags tags={this.state.tags} />
+                    <Tags tags={this.state.tags} onAddBookmark={this.handleAddBookmark} />
                 </div>);
         }
         return null;
