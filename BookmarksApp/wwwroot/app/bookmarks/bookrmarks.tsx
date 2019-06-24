@@ -169,7 +169,7 @@ function Tags(props: TagsProps) {
     const tags = props.tags;
     const tagItems = tags.map(tag => <Tag key={tag.name} tag={tag} onAddBookmark={props.onAddBookmark} onAddTag={props.onAddTag} />);
     return (
-        <ul style={{ listStyleType:'none' }}>{tagItems}</ul>
+        <ul style={{ listStyleType: 'none' }}>{tagItems}</ul>
     );
 }
 
@@ -243,6 +243,9 @@ export class TagsRoot extends React.Component<{}, TagsRootState> {
     handleAddTag = (newTag: TagModel, parentTag: TagModel) => {
         let tags = this.state.tags.slice();
         if (parentTag) {
+            if (parentTag.subTags == null)
+                parentTag.subTags = [];
+
             parentTag.subTags.push(newTag);
             replaceTag(tags, { ...parentTag });
         }
@@ -258,7 +261,8 @@ export class TagsRoot extends React.Component<{}, TagsRootState> {
             return (
                 <div>
                     <TagSearch searachText={this.state.searachText} onSearchChange={this.handleSearch} />
-                    <Tags tags={this.state.tags} onAddBookmark={this.handleAddBookmark} onAddTag={(newTag) => this.handleAddTag(newTag, null)} />
+                    <Tags tags={this.state.tags} onAddBookmark={this.handleAddBookmark} onAddTag={this.handleAddTag} />
+                    <AddTag onAdd={(newTag) => this.handleAddTag(newTag, null)} />
                 </div>);
         }
         return null;
