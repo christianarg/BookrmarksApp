@@ -44,6 +44,7 @@ class AddBookmark extends React.Component<AddBookmarkProps, AddBookmarkState>{
         if (name && url) {
             this.props.onAdd({ name: name, url: url });
         }
+        this.setState({ isFormVisible: false });
     }
 
     handleNameChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
@@ -142,10 +143,9 @@ export function filterTags(tags: TagModel[], searchText: string) {
 }
 
 export function replaceTag(tags: TagModel[], newTag: TagModel): TagModel[] {
-    const newTags = tags.map(tag => tag.name == newTag.name ? newTag : { ...tag });
+    const newTags = tags.map(tag => tag.name == newTag.name ? newTag : tag);
 
     newTags.forEach(tag => {
-        tag.bookmarks = tag.bookmarks.slice();
         if(tag.subTags){
             tag.subTags = replaceTag(tag.subTags, newTag);
         }
