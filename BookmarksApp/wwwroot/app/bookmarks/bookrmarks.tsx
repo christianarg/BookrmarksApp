@@ -84,9 +84,60 @@ class AddBookmark extends React.Component<AddBookmarkProps, AddBookmarkState>{
 }
 
 
+type AddTagProps = { onAdd: (newTag: TagModel) => void };
+type AddTagState = { isFormVisible: boolean, name: string };
+
+class AddTag extends React.Component<AddTagProps, AddTagState>{
+    state: AddTagState = { isFormVisible: false, name: null };
+
+    hasValue() {
+        return this.state.name != null;
+    }
+
+    handleSubmit = (evt: React.FormEvent) => {
+        evt.preventDefault();
+        const { name } = this.state;
+        if (name) {
+            this.props.onAdd({ name: name, bookmarks: [] });
+        }
+        this.setState({ isFormVisible: false });
+    }
+
+    handleNameChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
+        this.setState({ name: evt.target.value });
+    }
+
+    toggleShow = () => {
+        this.setState({ isFormVisible: !this.state.isFormVisible });
+    }
+
+    buttonStyle(): React.CSSProperties {
+        if (!this.hasValue()) {
+            return { cursor: 'not-allowed' };
+        }
+        return null;
+    }
+
+    render() {
+        const buttonStyle = { display: 'inline-block', textDecoration: 'underline', cursor: 'pointer' };
+        if (this.state.isFormVisible) {
+            return (
+                <div>
+                    <div style={buttonStyle} onClick={this.toggleShow}>Close</div>
+                    <form onSubmit={this.handleSubmit}>
+                        <div>Name: <input type="text" onChange={this.handleNameChange} placeholder="Tag name..." /></div>
+                        <button value="Add" style={this.buttonStyle()}>Add</button>
+                    </form>
+                </div>);
+        }
+        return <div style={buttonStyle} onClick={this.toggleShow}>(Add Tag)</div>
+    }
+}
+
 type TagProps = {
     tag: TagModel;
     onAddBookmark: (tag: TagModel, bookmark: BookmarkModel) => void;
+    onAddTag: (newTag: TagModel, parentTag: TagModel) => void;
 }
 
 function Tag(props: TagProps) {
@@ -94,20 +145,25 @@ function Tag(props: TagProps) {
     if (tag.hidden) {
         return null;
     }
-    const tagItem = <li className="tag">{tag.name} <AddBookmark onAdd={(newBookmark) => props.onAddBookmark({ ...tag }, newBookmark)} /> 
-<Bookmarks bookmarks={tag.bookmarks} /></li>;
 
-    return (<>{tagItem}{tag.subTags && <Tags tags={tag.subTags} onAddBookmark={props.onAddBookmark} />}  </>);
+    return (
+        <li className="tag">
+            <span>{tag.name}</span> <AddBookmark onAdd={(newBookmark) => props.onAddBookmark({ ...tag }, newBookmark)} />
+            <Bookmarks bookmarks={tag.bookmarks} />
+            {tag.subTags && <Tags tags={tag.subTags} onAddBookmark={props.onAddBookmark} onAddTag={props.onAddTag} />}
+            <AddTag onAdd={(newTag) => props.onAddTag(newTag, tag)} />
+        </li>);
 }
 
 
 type TagsProps = {
     tags: TagModel[];
     onAddBookmark: (tag: TagModel, bookmark: BookmarkModel) => void;
+    onAddTag: (newTag: TagModel, parentTag: TagModel) => void;
 }
 
 function Tags(props: TagsProps) {
-    const tagItems = props.tags.map(tag => <Tag key={tag.name} tag={tag} onAddBookmark={props.onAddBookmark} />);
+    const tagItems = props.tags.map(tag => <Tag key={tag.name} tag={tag} onAddBookmark={props.onAddBookmark} onAddTag={props.onAddTag} />);
     return (
         <ul>{tagItems}</ul>
     );
@@ -146,7 +202,7 @@ export function replaceTag(tags: TagModel[], newTag: TagModel): TagModel[] {
     const newTags = tags.map(tag => tag.name == newTag.name ? newTag : tag);
 
     newTags.forEach(tag => {
-        if(tag.subTags){
+        if (tag.subTags) {
             tag.subTags = replaceTag(tag.subTags, newTag);
         }
     });
@@ -180,12 +236,25 @@ export class TagsRoot extends React.Component<{}, TagsRootState> {
         this.setState({ tags: tags });
     }
 
+    handleAddTag = (newTag: TagModel, parentTag: TagModel) => {
+        let tags = this.state.tags.slice();
+        if (parentTag) {
+            parentTag.subTags.push(newTag);
+            replaceTag(tags, { ...parentTag });
+        }
+        else {
+            // sin parent
+            tags.push(newTag);
+        }
+        this.setState({ tags: tags });
+    }
+
     render() {
         if (this.state.tags) {
             return (
                 <div>
                     <TagSearch searachText={this.state.searachText} onSearchChange={this.handleSearch} />
-                    <Tags tags={this.state.tags} onAddBookmark={this.handleAddBookmark} />
+                    <Tags tags={this.state.tags} onAddBookmark={this.handleAddBookmark} onAddTag={(newTag) => this.handleAddTag(newTag, null)} />
                 </div>);
         }
         return null;
