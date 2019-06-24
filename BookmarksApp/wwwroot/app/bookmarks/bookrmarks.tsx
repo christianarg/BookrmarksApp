@@ -15,6 +15,8 @@ export type BookmarkModel = {
 }
 
 
+const ulStyle: React.CSSProperties = { listStyleType: 'none', paddingInlineStart: 0 };
+
 type BookmarProps = {
     bookmarks: BookmarkModel[];
 }
@@ -24,7 +26,7 @@ function Bookmarks(props: BookmarProps) {
         <li key={bookmark.name} className="bookmark">
             <a href={bookmark.url} target="_blank" >{bookmark.name}</a>
         </li>)
-    return (<ul style={{ listStyleType: 'none' }}>{bookmarks}</ul>);
+    return (<ul style={{ listStyleType:'square' }}>{bookmarks}</ul>);
 }
 
 type AddBookmarkProps = { onAdd: (newBookmark: BookmarkModel) => void };
@@ -150,9 +152,16 @@ function Tag(props: TagProps) {
 
         <li className="tag">
             <fieldset>
-                <legend>Tag: {tag.name}</legend> <AddBookmark onAdd={(newBookmark) => props.onAddBookmark({ ...tag }, newBookmark)} />
+                <legend>Tag: {tag.name}</legend>
+                <div>Bookmarks:</div>
                 <Bookmarks bookmarks={tag.bookmarks} />
-                {tag.subTags && <Tags tags={tag.subTags} onAddBookmark={props.onAddBookmark} onAddTag={props.onAddTag} />}
+
+                {tag.subTags &&
+                    <>
+                        <div>SubTags:</div>
+                        <Tags tags={tag.subTags} onAddBookmark={props.onAddBookmark} onAddTag={props.onAddTag} />
+                    </>}
+                <AddBookmark onAdd={(newBookmark) => props.onAddBookmark({ ...tag }, newBookmark)} />
                 <AddTag key={`add${tag.name}`} onAdd={(newTag) => props.onAddTag(newTag, tag)} />
             </fieldset>
         </li>);
@@ -169,7 +178,7 @@ function Tags(props: TagsProps) {
     const tags = props.tags;
     const tagItems = tags.map(tag => <Tag key={tag.name} tag={tag} onAddBookmark={props.onAddBookmark} onAddTag={props.onAddTag} />);
     return (
-        <ul style={{ listStyleType: 'none' }}>{tagItems}</ul>
+        <ul style={ulStyle}>{tagItems}</ul>
     );
 }
 
