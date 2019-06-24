@@ -45,8 +45,8 @@ class AddBookmark extends React.Component<AddBookmarkProps, AddBookmarkState>{
         const { name, url } = this.state;
         if (name && url) {
             this.props.onAdd({ name: name, url: url });
+            this.setState({ isFormVisible: false });
         }
-        this.setState({ isFormVisible: false });
     }
 
     handleNameChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
@@ -101,8 +101,8 @@ class AddTag extends React.Component<AddTagProps, AddTagState>{
         const { name } = this.state;
         if (name) {
             this.props.onAdd({ name: name, bookmarks: [] });
+            this.setState({ isFormVisible: false });
         }
-        this.setState({ isFormVisible: false });
     }
 
     handleNameChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
