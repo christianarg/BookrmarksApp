@@ -62,7 +62,8 @@ type TagSearchProps = {
 }
 
 function TagSearch(props: TagSearchProps) {
-    return (<div><input type="text" placeholder="Search tags..." value={props.searachText} onChange={(evt) => props.onSearchChange(evt.target.value)} /></div>)
+    const { searachText, onSearchChange } = props;
+    return (<div><input type="text" placeholder="Search tags..." value={searachText} onChange={(evt) => onSearchChange(evt.target.value)} /></div>)
 }
 
 
