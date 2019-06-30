@@ -17,16 +17,17 @@ export type BookmarkModel = {
 
 const ulStyle: React.CSSProperties = { listStyleType: 'none', paddingInlineStart: 0 };
 
-type BookmarProps = {
+type BookmarkProps = {
     bookmarks: BookmarkModel[];
+    onEdit: (bookrmark: BookmarkModel) => void;
 }
 
-function Bookmarks(props: BookmarProps) {
+function Bookmarks(props: BookmarkProps) {
     const bookmarks = props.bookmarks.map(bookmark => !bookmark.hidden &&
         <li key={bookmark.name} className="bookmark">
-            <a href={bookmark.url} target="_blank" >{bookmark.name}</a>
+            <a href={bookmark.url} target="_blank" >{bookmark.name}</a>&nbsp;&nbsp;<AddBookmark onAdd={bookrmark => props.onEdit(bookmark)} />
         </li>)
-    return (<ul style={{ listStyleType:'square' }}>{bookmarks}</ul>);
+    return (<ul style={{ listStyleType: 'square' }}>{bookmarks}</ul>);
 }
 
 type AddBookmarkProps = { onAdd: (newBookmark: BookmarkModel) => void };
@@ -139,6 +140,7 @@ class AddTag extends React.Component<AddTagProps, AddTagState>{
 type TagProps = {
     tag: TagModel;
     onAddBookmark: (tag: TagModel, bookmark: BookmarkModel) => void;
+    onEditBookmark: (tag: TagModel, bookmark: BookmarkModel) => void;
     onAddTag: (newTag: TagModel, parentTag: TagModel) => void;
 }
 
@@ -154,12 +156,12 @@ function Tag(props: TagProps) {
             <fieldset>
                 <legend>Tag: {tag.name}</legend>
                 <div>Bookmarks:</div>
-                <Bookmarks bookmarks={tag.bookmarks} />
+                <Bookmarks onEdit={bookmark => props.onEditBookmark(tag, bookmark)} bookmarks={tag.bookmarks} />
 
                 {tag.subTags &&
                     <>
-                        <div>SubTags:</div>
-                        <Tags tags={tag.subTags} onAddBookmark={props.onAddBookmark} onAddTag={props.onAddTag} />
+                    <div>SubTags:</div>
+                    <Tags tags={tag.subTags} onEditBookmark={props.onEditBookmark} onAddBookmark={props.onAddBookmark} onAddTag={props.onAddTag} />
                     </>}
                 <AddBookmark onAdd={(newBookmark) => props.onAddBookmark({ ...tag }, newBookmark)} />
                 <AddTag key={`add${tag.name}`} onAdd={(newTag) => props.onAddTag(newTag, tag)} />
@@ -171,12 +173,13 @@ function Tag(props: TagProps) {
 type TagsProps = {
     tags: TagModel[];
     onAddBookmark: (tag: TagModel, bookmark: BookmarkModel) => void;
+    onEditBookmark: (tag: TagModel, bookmark: BookmarkModel) => void;
     onAddTag: (newTag: TagModel, parentTag: TagModel) => void;
 }
 
 function Tags(props: TagsProps) {
     const tags = props.tags;
-    const tagItems = tags.map(tag => <Tag key={tag.name} tag={tag} onAddBookmark={props.onAddBookmark} onAddTag={props.onAddTag} />);
+    const tagItems = tags.map(tag => <Tag key={tag.name} tag={tag} onEditBookmark={props.onEditBookmark} onAddBookmark={props.onAddBookmark} onAddTag={props.onAddTag} />);
     return (
         <ul style={ulStyle}>{tagItems}</ul>
     );
@@ -265,12 +268,21 @@ export class TagsRoot extends React.Component<{}, TagsRootState> {
         this.setState({ tags: tags });
     }
 
+    handleEditBookmark = (tag: TagModel, editedBookmark: BookmarkModel) => {
+        let tags = this.state.tags.slice();
+        // replace bookmark
+        tag.bookmarks = tag.bookmarks.map(x => x.name == editedBookmark.name ? editedBookmark : x);
+
+        tags = replaceTag(tags, tag);
+        this.setState({ tags: tags });
+    }
+
     render() {
         if (this.state.tags) {
             return (
                 <div>
                     <TagSearch searachText={this.state.searachText} onSearchChange={this.handleSearch} />
-                    <Tags tags={this.state.tags} onAddBookmark={this.handleAddBookmark} onAddTag={this.handleAddTag} />
+                    <Tags tags={this.state.tags} onEditBookmark={this.handleEditBookmark} onAddBookmark={this.handleAddBookmark} onAddTag={this.handleAddTag} />
                     <AddTag onAdd={(newTag) => this.handleAddTag(newTag, null)} />
                 </div>);
         }
