@@ -8,6 +8,13 @@ export type TagModel = {
     hidden?: boolean;
 }
 
+type AddOrEditTagResult = TagModel & { oldName?: string; }
+
+//type EditTag = {
+//    name: string;
+//    oldName: string;
+//}
+
 export type BookmarkModel = {
     name: string;
     url: string;
@@ -27,7 +34,7 @@ type BookmarkProps = {
 function Bookmarks(props: BookmarkProps) {
     const bookmarks = props.bookmarks.map(bookmark => !bookmark.hidden &&
         <li key={bookmark.name} className="bookmark">
-        <a href={bookmark.url} target="_blank" >{bookmark.name}</a>&nbsp;&nbsp;<AddOrEditBookmark bookmarkToEdit={bookmark} onAddOrEdit={edited => props.onEdit(edited)} />
+            <a href={bookmark.url} target="_blank" >{bookmark.name}</a>&nbsp;&nbsp;<AddOrEditBookmark bookmarkToEdit={bookmark} onAddOrEdit={edited => props.onEdit(edited)} />
         </li>)
     return (<ul style={{ listStyleType: 'square' }}>{bookmarks}</ul>);
 }
@@ -106,11 +113,21 @@ class AddOrEditBookmark extends React.Component<AddOrEditBookmarkProps, AddOrEdi
 }
 
 
-type AddTagProps = {isRoot?:boolean, onAdd: (newTag: TagModel) => void };
+type AddTagProps = {
+    isRoot?: boolean;
+    tagToEdit?: TagModel;
+    onAddOrEdit: (newTag: AddOrEditTagResult) => void;
+};
+
 type AddTagState = { isFormVisible: boolean, name: string };
 
-class AddTag extends React.Component<AddTagProps, AddTagState>{
-    state: AddTagState = { isFormVisible: false, name: null };
+class AddOrEditTag extends React.Component<AddTagProps, AddTagState>{
+    constructor(props) {
+        super(props);
+
+        const tagToEdit = this.props.tagToEdit;
+        this.state = { isFormVisible: false, name:  tagToEdit && tagToEdit.name };
+    }
 
     hasValue() {
         return this.state.name != null;
@@ -119,8 +136,16 @@ class AddTag extends React.Component<AddTagProps, AddTagState>{
     handleSubmit = (evt: React.FormEvent) => {
         evt.preventDefault();
         const { name } = this.state;
+        const tagToEdit = this.props.tagToEdit;
         if (name) {
-            this.props.onAdd({ name: name, bookmarks: [] });
+            if (tagToEdit) {
+                const editTagResult: AddOrEditTagResult = { ...tagToEdit, oldName: tagToEdit.name };
+                editTagResult.name = name;
+                this.props.onAddOrEdit(editTagResult);
+
+            } else {
+                this.props.onAddOrEdit({ name: name, bookmarks: [] });
+            }
             this.setState({ isFormVisible: false });
         }
     }
@@ -142,15 +167,16 @@ class AddTag extends React.Component<AddTagProps, AddTagState>{
 
     render() {
         const buttonStyle = { display: 'inline-block', textDecoration: 'underline', cursor: 'pointer' };
-        const { isRoot } = this.props;
-        const toggleAddButtonText = isRoot ? '(Add Tags)' : '(Add SubTags)';
+        const { isRoot, tagToEdit } = this.props;
+        const toggleAddButtonText = isRoot ? '(Add Tags)' : tagToEdit ? '(Edit Tag)' : '(Add SubTags)';
+        const acceptText = tagToEdit ? 'Edit' : 'Add';
         if (this.state.isFormVisible) {
             return (
                 <div>
                     <div style={buttonStyle} onClick={this.toggleShow}>Close</div>
                     <form onSubmit={this.handleSubmit}>
-                        <div>Name: <input type="text" onChange={this.handleNameChange} placeholder="Tag name..." /></div>
-                        <button value="Add" style={this.buttonStyle()}>Add</button>
+                        <div>Name: <input type="text" value={this.state.name} onChange={this.handleNameChange} placeholder="Tag name..." /></div>
+                        <button value="Add" style={this.buttonStyle()}>{acceptText}</button>
                     </form>
                 </div>);
         }
@@ -159,6 +185,7 @@ class AddTag extends React.Component<AddTagProps, AddTagState>{
 }
 
 type TagProps = {
+    parentTag: TagModel;
     tag: TagModel;
     onAddBookmark: (tag: TagModel, bookmark: BookmarkModel) => void;
     onEditBookmark: (tag: TagModel, bookmark: EditBookmark) => void;
@@ -182,16 +209,18 @@ function Tag(props: TagProps) {
                 {tag.subTags &&
                     <>
                     <div>SubTags:</div>
-                    <Tags tags={tag.subTags} onEditBookmark={props.onEditBookmark} onAddBookmark={props.onAddBookmark} onAddTag={props.onAddTag} />
+                    <Tags tags={tag.subTags} parentTag={tag} onEditBookmark={props.onEditBookmark} onAddBookmark={props.onAddBookmark} onAddTag={props.onAddTag} />
                     </>}
                 <AddOrEditBookmark onAddOrEdit={(newBookmark) => props.onAddBookmark({ ...tag }, newBookmark)} />
-                <AddTag key={`add${tag.name}`} onAdd={(newTag) => props.onAddTag(newTag, tag)} />
+                <AddOrEditTag key={`add${tag.name}`} onAddOrEdit={(newTag) => props.onAddTag(newTag, tag)} />
+                <AddOrEditTag key={`edit{tag.name}`} tagToEdit={tag} onAddOrEdit={(newTag) => props.onAddTag(newTag, props.parentTag)} />
             </fieldset>
         </li>);
 }
 
 
 type TagsProps = {
+    parentTag: TagModel;
     tags: TagModel[];
     onAddBookmark: (tag: TagModel, bookmark: BookmarkModel) => void;
     onEditBookmark: (tag: TagModel, bookmark: EditBookmark) => void;
@@ -199,8 +228,8 @@ type TagsProps = {
 }
 
 function Tags(props: TagsProps) {
-    const tags = props.tags;
-    const tagItems = tags.map(tag => <Tag key={tag.name} tag={tag} onEditBookmark={props.onEditBookmark} onAddBookmark={props.onAddBookmark} onAddTag={props.onAddTag} />);
+    const { tags, parentTag } = props;
+    const tagItems = tags.map(tag => <Tag key={tag.name} parentTag={parentTag} tag={tag} onEditBookmark={props.onEditBookmark} onAddBookmark={props.onAddBookmark} onAddTag={props.onAddTag} />);
     return (
         <ul style={ulStyle}>{tagItems}</ul>
     );
@@ -273,18 +302,33 @@ export class TagsRoot extends React.Component<{}, TagsRootState> {
         this.setState({ tags: tags });
     }
 
-    handleAddTag = (newTag: TagModel, parentTag: TagModel) => {
+    handleAddOrEditTag = (addOrEditTagResult: AddOrEditTagResult, parentTag: TagModel) => {
         let tags = this.state.tags.slice();
         if (parentTag) {
             if (parentTag.subTags == null)
                 parentTag.subTags = [];
 
-            parentTag.subTags.push(newTag);
+            if (addOrEditTagResult.oldName) {
+                // replace
+                parentTag.subTags = parentTag.subTags.map(x => x.name == addOrEditTagResult.oldName ? addOrEditTagResult : x);
+            }
+            else {
+                // new
+                parentTag.subTags.push(addOrEditTagResult);
+            }
             replaceTag(tags, { ...parentTag });
         }
         else {
             // sin parent
-            tags.push(newTag);
+
+            if (addOrEditTagResult.oldName) {
+                // replace
+                tags = tags.map(x => x.name == addOrEditTagResult.oldName ? addOrEditTagResult : x);
+            }
+            else {
+                // new
+                tags.push(addOrEditTagResult);
+            }
         }
         this.setState({ tags: tags });
     }
@@ -303,8 +347,8 @@ export class TagsRoot extends React.Component<{}, TagsRootState> {
             return (
                 <div>
                     <TagSearch searachText={this.state.searachText} onSearchChange={this.handleSearch} />
-                    <Tags tags={this.state.tags} onEditBookmark={this.handleEditBookmark} onAddBookmark={this.handleAddBookmark} onAddTag={this.handleAddTag} />
-                    <AddTag isRoot={true} onAdd={(newTag) => this.handleAddTag(newTag, null)} />
+                    <Tags tags={this.state.tags} parentTag={null} onEditBookmark={this.handleEditBookmark} onAddBookmark={this.handleAddBookmark} onAddTag={this.handleAddOrEditTag} />
+                    <AddOrEditTag isRoot={true} onAddOrEdit={(newTag) => this.handleAddOrEditTag(newTag, null)} />
                 </div>);
         }
         return null;
