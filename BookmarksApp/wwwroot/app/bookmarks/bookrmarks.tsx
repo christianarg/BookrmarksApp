@@ -304,7 +304,7 @@ export class TagsRoot extends React.Component<{}, TagsRootState> {
                 <div>
                     <TagSearch searachText={this.state.searachText} onSearchChange={this.handleSearch} />
                     <Tags tags={this.state.tags} onEditBookmark={this.handleEditBookmark} onAddBookmark={this.handleAddBookmark} onAddTag={this.handleAddTag} />
-                    <AddTag onAdd={(newTag) => this.handleAddTag(newTag, null)} />
+                    <AddTag isRoot={true} onAdd={(newTag) => this.handleAddTag(newTag, null)} />
                 </div>);
         }
         return null;
