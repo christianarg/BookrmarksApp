@@ -106,7 +106,7 @@ class AddOrEditBookmark extends React.Component<AddOrEditBookmarkProps, AddOrEdi
 }
 
 
-type AddTagProps = { onAdd: (newTag: TagModel) => void };
+type AddTagProps = {isRoot?:boolean, onAdd: (newTag: TagModel) => void };
 type AddTagState = { isFormVisible: boolean, name: string };
 
 class AddTag extends React.Component<AddTagProps, AddTagState>{
@@ -142,6 +142,8 @@ class AddTag extends React.Component<AddTagProps, AddTagState>{
 
     render() {
         const buttonStyle = { display: 'inline-block', textDecoration: 'underline', cursor: 'pointer' };
+        const { isRoot } = this.props;
+        const toggleAddButtonText = isRoot ? '(Add Tags)' : '(Add SubTags)';
         if (this.state.isFormVisible) {
             return (
                 <div>
@@ -152,7 +154,7 @@ class AddTag extends React.Component<AddTagProps, AddTagState>{
                     </form>
                 </div>);
         }
-        return <div style={buttonStyle} onClick={this.toggleShow}>(Add Tag)</div>
+        return <div style={buttonStyle} onClick={this.toggleShow}>{toggleAddButtonText}</div>
     }
 }
 
