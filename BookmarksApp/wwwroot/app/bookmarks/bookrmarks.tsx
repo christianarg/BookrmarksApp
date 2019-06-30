@@ -14,27 +14,39 @@ export type BookmarkModel = {
     hidden?: boolean;
 }
 
+export type EditBookmark = BookmarkModel & { oldName: string };
+
 
 const ulStyle: React.CSSProperties = { listStyleType: 'none', paddingInlineStart: 0 };
 
 type BookmarkProps = {
     bookmarks: BookmarkModel[];
-    onEdit: (bookrmark: BookmarkModel) => void;
+    onEdit: (bookrmark: EditBookmark) => void;
 }
 
 function Bookmarks(props: BookmarkProps) {
     const bookmarks = props.bookmarks.map(bookmark => !bookmark.hidden &&
         <li key={bookmark.name} className="bookmark">
-            <a href={bookmark.url} target="_blank" >{bookmark.name}</a>&nbsp;&nbsp;<AddBookmark onAdd={bookrmark => props.onEdit(bookmark)} />
+        <a href={bookmark.url} target="_blank" >{bookmark.name}</a>&nbsp;&nbsp;<AddOrEditBookmark bookmarkToEdit={bookmark} onAddOrEdit={edited => props.onEdit(edited)} />
         </li>)
     return (<ul style={{ listStyleType: 'square' }}>{bookmarks}</ul>);
 }
 
-type AddBookmarkProps = { onAdd: (newBookmark: BookmarkModel) => void };
-type AddBookmarkState = { isFormVisible: boolean, name: string, url: string };
+type AddOrEditBookmarkProps = { bookmarkToEdit?: BookmarkModel; onAddOrEdit: (newBookmark: EditBookmark) => void };
+type AddOrEditBookmarkState = { isFormVisible: boolean, name: string, url: string };
 
-class AddBookmark extends React.Component<AddBookmarkProps, AddBookmarkState>{
-    state: AddBookmarkState = { isFormVisible: false, name: null, url: null };
+class AddOrEditBookmark extends React.Component<AddOrEditBookmarkProps, AddOrEditBookmarkState>{
+
+    constructor(props) {
+        super(props);
+        const bookmarkToEdit = this.props.bookmarkToEdit;
+        if (bookmarkToEdit) {
+            this.state = { isFormVisible: false, name: bookmarkToEdit.name, url: bookmarkToEdit.url };
+        }
+        else {
+            this.state = { isFormVisible: false, name: null, url: null };
+        }
+    }
 
     hasValue() {
         const { name, url } = this.state;
@@ -44,8 +56,9 @@ class AddBookmark extends React.Component<AddBookmarkProps, AddBookmarkState>{
     handleSubmit = (evt: React.FormEvent) => {
         evt.preventDefault();
         const { name, url } = this.state;
+        const bookmarkToEdit = this.props.bookmarkToEdit;
         if (name && url) {
-            this.props.onAdd({ name: name, url: url });
+            this.props.onAddOrEdit({ name: name, url: url, oldName: bookmarkToEdit && bookmarkToEdit.name });
             this.setState({ isFormVisible: false });
         }
     }
@@ -70,19 +83,25 @@ class AddBookmark extends React.Component<AddBookmarkProps, AddBookmarkState>{
     }
 
     render() {
+        let bookmarkToEdit = this.props.bookmarkToEdit;
+        const idEdit = bookmarkToEdit != null;
+
+        const addOrEditToggleButtonText = bookmarkToEdit ? '(Edit Bookmark)' : '(Add Bookmark)'
+        const addOrEdditAcceptButtonText = bookmarkToEdit ? 'Edit' : 'Add';
         const buttonStyle = { display: 'inline-block', textDecoration: 'underline', cursor: 'pointer' };
+
         if (this.state.isFormVisible) {
             return (
                 <div>
                     <div style={buttonStyle} onClick={this.toggleShow}>Close</div>
                     <form onSubmit={this.handleSubmit}>
-                        <div>Name: <input type="text" onChange={this.handleNameChange} placeholder="Bookmark name..." /></div>
-                        <div>Url:  <input type="text" onChange={this.handleUrlChange} placeholder="url..." /></div>
-                        <button value="Add" style={this.buttonStyle()}>Add</button>
+                        <div>Name: <input type="text" value={this.state.name} onChange={this.handleNameChange} placeholder="Bookmark name..." /></div>
+                        <div>Url:  <input type="text" value={this.state.url} onChange={this.handleUrlChange} placeholder="url..." /></div>
+                        <button value="Add" style={this.buttonStyle()}>{addOrEdditAcceptButtonText}</button>
                     </form>
                 </div>);
         }
-        return <div style={buttonStyle} onClick={this.toggleShow}>(Add Bookmark)</div>
+        return <div style={buttonStyle} onClick={this.toggleShow}>{addOrEditToggleButtonText}</div>
     }
 }
 
@@ -140,7 +159,7 @@ class AddTag extends React.Component<AddTagProps, AddTagState>{
 type TagProps = {
     tag: TagModel;
     onAddBookmark: (tag: TagModel, bookmark: BookmarkModel) => void;
-    onEditBookmark: (tag: TagModel, bookmark: BookmarkModel) => void;
+    onEditBookmark: (tag: TagModel, bookmark: EditBookmark) => void;
     onAddTag: (newTag: TagModel, parentTag: TagModel) => void;
 }
 
@@ -163,7 +182,7 @@ function Tag(props: TagProps) {
                     <div>SubTags:</div>
                     <Tags tags={tag.subTags} onEditBookmark={props.onEditBookmark} onAddBookmark={props.onAddBookmark} onAddTag={props.onAddTag} />
                     </>}
-                <AddBookmark onAdd={(newBookmark) => props.onAddBookmark({ ...tag }, newBookmark)} />
+                <AddOrEditBookmark onAddOrEdit={(newBookmark) => props.onAddBookmark({ ...tag }, newBookmark)} />
                 <AddTag key={`add${tag.name}`} onAdd={(newTag) => props.onAddTag(newTag, tag)} />
             </fieldset>
         </li>);
@@ -173,7 +192,7 @@ function Tag(props: TagProps) {
 type TagsProps = {
     tags: TagModel[];
     onAddBookmark: (tag: TagModel, bookmark: BookmarkModel) => void;
-    onEditBookmark: (tag: TagModel, bookmark: BookmarkModel) => void;
+    onEditBookmark: (tag: TagModel, bookmark: EditBookmark) => void;
     onAddTag: (newTag: TagModel, parentTag: TagModel) => void;
 }
 
@@ -268,10 +287,10 @@ export class TagsRoot extends React.Component<{}, TagsRootState> {
         this.setState({ tags: tags });
     }
 
-    handleEditBookmark = (tag: TagModel, editedBookmark: BookmarkModel) => {
+    handleEditBookmark = (tag: TagModel, editedBookmark: EditBookmark) => {
         let tags = this.state.tags.slice();
         // replace bookmark
-        tag.bookmarks = tag.bookmarks.map(x => x.name == editedBookmark.name ? editedBookmark : x);
+        tag.bookmarks = tag.bookmarks.map(x => x.name == editedBookmark.oldName ? editedBookmark : x);
 
         tags = replaceTag(tags, tag);
         this.setState({ tags: tags });
