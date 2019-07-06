@@ -10,6 +10,7 @@
     <Content Remove="wwwroot\app\app.js" />
     <Content Remove="wwwroot\app\app.js.map" />
     <Content Remove="wwwroot\app\app.tsx" />
+    <Content Remove="wwwroot\app\bookmarks-redux\actions.ts" />
     <Content Remove="wwwroot\app\bookmarks-redux\bookmarks-redux.test.tsx" />
     <Content Remove="wwwroot\app\bookmarks-redux\index.tsx" />
     <Content Remove="wwwroot\app\bookmarks\bookmarks.test.tsx" />
@@ -22,7 +23,6 @@
     <TypeScriptCompile Remove="wwwroot\app\bookmarks-redux\bookmarks.tsx" />
     <TypeScriptCompile Remove="wwwroot\app\bookmarks-redux\common.tsx" />
     <TypeScriptCompile Remove="wwwroot\app\bookmarks-redux\TagProps.tsx" />
-    <TypeScriptCompile Remove="wwwroot\app\bookmarks-redux\tags-root.tsx" />
     <TypeScriptCompile Remove="wwwroot\app\bookmarks-redux\Tags.tsx" />
     <TypeScriptCompile Remove="wwwroot\app\bookmarks-redux\TagSearchProps.tsx" />
   </ItemGroup>
