@@ -1,4 +1,4 @@
-﻿import * as Bookrmarks from './bookrmarks';
+﻿import * as Bookrmarks from './bookmarks';
 
 describe('filterTests', () => {
     test('filter', () => {

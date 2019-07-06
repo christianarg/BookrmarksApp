@@ -1,6 +1,6 @@
 ﻿import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { TagsRoot } from './bookmarks/bookrmarks';
+import { TagsRoot } from './bookmarks/bookmarks';
 
 class App extends React.Component{
     render() {

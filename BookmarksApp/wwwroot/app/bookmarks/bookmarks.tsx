@@ -10,11 +10,6 @@ export type TagModel = {
 
 type AddOrEditTagResult = TagModel & { oldName?: string; }
 
-//type EditTag = {
-//    name: string;
-//    oldName: string;
-//}
-
 export type BookmarkModel = {
     name: string;
     url: string;
