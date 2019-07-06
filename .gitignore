@@ -343,3 +343,5 @@ healthchecksdb
 /BookmarkApp/wwwroot/dist
 /BookmarksApp/wwwroot/dist/bundle.app.js.map
 /BookmarksApp/wwwroot/dist/bundle.app.js
+/BookmarksApp/wwwroot/dist/bundle.appRedux.js.map
+/BookmarksApp/wwwroot/dist/bundle.appRedux.js

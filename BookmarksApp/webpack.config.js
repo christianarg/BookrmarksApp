@@ -3,7 +3,8 @@
 module.exports = {
     //entry: "./Scripts/HelloWorld/HelloWorld.tsx",
     entry: {
-        app: "./wwwroot/app/app.tsx"
+        app: "./wwwroot/app/app.tsx",
+        appRedux: "./wwwroot/app/app-redux.tsx"
     },
     output: {
         filename: "bundle.[name].js",
