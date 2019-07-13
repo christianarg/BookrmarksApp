@@ -13,7 +13,9 @@
     <Content Remove="wwwroot\app\bookmarks-redux\actions.ts" />
     <Content Remove="wwwroot\app\bookmarks-redux\bookmarks-redux.test.tsx" />
     <Content Remove="wwwroot\app\bookmarks-redux\index.tsx" />
+    <Content Remove="wwwroot\app\bookmarks-redux\store.tsx" />
     <Content Remove="wwwroot\app\bookmarks\bookmarks.test.tsx" />
+    <Content Remove="wwwroot\app\provider.tsx" />
   </ItemGroup>
 
   <ItemGroup>
@@ -37,7 +39,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <TypeScriptCompile Update="wwwroot\app\app-redux.tsx">
+    <TypeScriptCompile Update="wwwroot\app\bookmarks-redux\app-redux.tsx">
       <SubType>Code</SubType>
     </TypeScriptCompile>
     <TypeScriptCompile Update="wwwroot\app\bookmarks-redux\bookmarks-redux.test.tsx">
