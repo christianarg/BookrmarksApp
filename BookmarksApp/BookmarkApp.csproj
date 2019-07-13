@@ -16,6 +16,9 @@
     <Content Remove="wwwroot\app\bookmarks-redux\store.tsx" />
     <Content Remove="wwwroot\app\bookmarks\bookmarks.test.tsx" />
     <Content Remove="wwwroot\app\provider.tsx" />
+    <Content Remove="wwwroot\app\redux-tutorials\basic\components\counter.tsx" />
+    <Content Remove="wwwroot\app\redux-tutorials\basic\reducers\index.tsx" />
+    <Content Remove="wwwroot\app\redux-tutorials\index.tsx" />
   </ItemGroup>
 
   <ItemGroup>
