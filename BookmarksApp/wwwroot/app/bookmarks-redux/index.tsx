@@ -1,5 +1,5 @@
 ﻿import * as React from 'react';
-import { BookmarkModel, TagModel, AddOrEditTagResult, EditBookmark } from "./bookmark-model";
+import { BookmarkModel, TagModel, AddOrEditTagResult, EditBookmark, TagModelState } from "./bookmark-model";
 import { replaceTag, filterTags } from './common';
 import { TagSearch } from './TagSearchProps';
 import { Tags } from './Tags';
@@ -74,6 +74,33 @@ export class TagsRoot extends React.Component<{}, TagsRootState> {
 }
 
 
+export type BookmarksAppState = {
+    bookmarks: BookmarkModel[];
+    tags: TagModelState[];
+}
+
+export const initialState: BookmarksAppState = {
+    tags: [{
+        name: '.Net',
+        bookmarks: ['download'],
+        subTags: ['Asp.net']
+    },
+    {
+        name: 'Asp.net',
+        bookmarks: ['asp.net', 'asp.net core']
+    },
+    {
+        name: 'React',
+        bookmarks: ['react docs']
+    }],
+    bookmarks: [
+        { name: 'download', url: 'https://dotnet.microsoft.com/download' },
+        { name: 'asp.net', url: 'https://dotnet.microsoft.com/apps/aspnet' },
+        { name: 'asp.net core', url: 'https://docs.microsoft.com/es-es/aspnet/core/?view=aspnetcore-2.2' },
+        { name: 'react docs', url: 'https://reactjs.org/docs/getting-started.html' }
+    ]
+
+};
 
 export const sampleBookrmarks: TagModel[] = [
     {

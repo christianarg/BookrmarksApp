@@ -11,6 +11,14 @@ export type TagModel = {
     hidden?: boolean;
 }
 
+export type TagModelState = {
+    name: string;
+    subTags?: string[];
+    bookmarks: string[];
+    hidden?: boolean;
+
+}
+
 export type AddOrEditTagResult = TagModel & { oldName?: string; }
 
 export type EditBookmark = BookmarkModel & { oldName: string };
