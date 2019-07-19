@@ -18,7 +18,7 @@ type TagProps = {
 };
 
 export function Tag(props: TagProps) {
-    const tag = props.tag;
+    const { tag, bookmarks } = props;
     if (tag.hidden) {
         return null;
     }
@@ -31,7 +31,7 @@ export function Tag(props: TagProps) {
             {tag.subTags &&
                 <>
                     <div>SubTags:</div>
-                    <Tags tags={props.subTags} parentTag={tag} onEditBookmark={props.onEditBookmark} onAddBookmark={props.onAddBookmark} onAddTag={props.onAddTag} />
+                <Tags tags={props.subTags} parentTag={tag} bookmarks={bookmarks} onEditBookmark={props.onEditBookmark} onAddBookmark={props.onAddBookmark} onAddTag={props.onAddTag} />
                 </>}
             <AddOrEditBookmark onAddOrEdit={(newBookmark) => props.onAddBookmark({ ...tag }, newBookmark)} />
             <AddOrEditTag key={`add${tag.name}`} onAddOrEdit={(newTag) => props.onAddTag(newTag, tag)} />
@@ -48,4 +48,4 @@ const mapStateToProps = (state: BookmarksAppState, ownProps: TagProps) => ({
     bookmarks: bookmarksById(ownProps.tag.bookmarks, state.bookmarks)
 });
 
-connect(mapStateToProps, null)(Tag);
+export const TagWithRedux = connect(mapStateToProps, null)(Tag);

@@ -7,7 +7,7 @@ import { AddOrEditTag } from './AddTagProps';
 import { connect } from "react-redux";
 
 export type TagsRootProps = {
-    tags?: TagModelState[];
+    tags: TagModelState[];
     searachText?: string;
 }
 
@@ -73,11 +73,12 @@ export class TagsRoot extends React.Component<TagsRootProps> {
     }
 }
 
+
 const mapStateToProps = (state: BookmarksAppState): TagsRootProps => ({
     tags: state.tags,
     searachText: ''
 })
-connect(mapStateToProps)(TagsRoot)
+export const TagsRootWithRedux = connect(mapStateToProps)(TagsRoot)
 
 export type BookmarksAppState = {
     bookmarks: BookmarkModel[];
