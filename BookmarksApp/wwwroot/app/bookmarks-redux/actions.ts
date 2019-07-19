@@ -1,4 +1,4 @@
-﻿import { BookmarkModel, TagModel, AddOrEditTagResult, EditBookmark } from "./bookmark-model";
+﻿import { BookmarkModel, TagModelState, AddOrEditTagResult, EditBookmark } from "./bookmark-model";
 
 export const ADD_BOOKMARK = 'ADD_BOOKMARK';
 export const ADD_OR_EDIT_TAG = 'ADD_OR_EDIT_TAG';

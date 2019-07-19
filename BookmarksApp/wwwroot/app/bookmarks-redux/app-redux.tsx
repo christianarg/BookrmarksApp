@@ -1,11 +1,17 @@
 ﻿import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { TagsRoot } from "./index";
-
+import { TagsRoot } from "./tagsRoot";
+import { createStore } from 'redux'
+import { bookmarkApp } from './reducers';
+import { Provider } from 'react-redux'
+const store = createStore(bookmarkApp);
 
 export class App extends React.Component{
     render() {
-        return (<TagsRoot />);
+        return (
+            <Provider store={store}>
+                <TagsRoot />
+            </Provider>);
     }
 }
 

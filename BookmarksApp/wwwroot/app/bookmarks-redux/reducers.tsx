@@ -1,4 +1,4 @@
-﻿import { initialState, BookmarksAppState } from "./index";
+﻿import { initialState, BookmarksAppState } from "./tagsRoot";
 import { BookmarkActionTypes, ADD_BOOKMARK } from "./actions";
 
 export function bookmarkApp(state: BookmarksAppState, action: BookmarkActionTypes): BookmarksAppState {

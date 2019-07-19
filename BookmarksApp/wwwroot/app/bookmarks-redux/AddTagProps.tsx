@@ -1,9 +1,9 @@
 ﻿import * as React from 'react';
-import { TagModel, AddOrEditTagResult } from './bookmark-model';
+import { TagModelState, AddOrEditTagResult } from './bookmark-model';
 
 type AddTagProps = {
     isRoot?: boolean;
-    tagToEdit?: TagModel;
+    tagToEdit?: TagModelState;
     onAddOrEdit: (newTag: AddOrEditTagResult) => void;
 };
 type AddTagState = {
