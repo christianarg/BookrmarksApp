@@ -2,7 +2,7 @@
 import { BookmarkModel, AddOrEditTagResult, EditBookmark, TagModelState } from "./bookmark-model";
 //import { replaceTag, filterTags } from './common';
 import { TagSearch } from './TagSearchProps';
-import { Tags } from './Tags';
+import { Tags } from './Tag';
 import { AddOrEditTag } from './AddTagProps';
 import { connect } from "react-redux";
 
@@ -74,10 +74,13 @@ export class TagsRoot extends React.Component<TagsRootProps> {
 }
 
 
-const mapStateToProps = (state: BookmarksAppState): TagsRootProps => ({
-    tags: state.tags,
-    searachText: ''
-})
+const mapStateToProps = (state: BookmarksAppState): TagsRootProps => {
+    debugger;
+    return {
+        tags: state.tags,
+        searachText: ''
+    };
+}
 export const TagsRootWithRedux = connect(mapStateToProps)(TagsRoot)
 
 export type BookmarksAppState = {

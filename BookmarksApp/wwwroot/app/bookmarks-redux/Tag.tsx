@@ -3,9 +3,11 @@ import { BookmarkModel, TagModelState, EditBookmark } from './bookmark-model';
 import { Bookmarks } from './bookmarks';
 import { AddOrEditBookmark } from './add-or-edit-bookmark-props';
 import { AddOrEditTag } from './AddTagProps';
-import { Tags } from "./Tags";
+import { ulStyle } from './common';
 import { connect } from 'react-redux';
 import { BookmarksAppState } from './tagsRoot';
+
+
 
 type TagProps = {
     parentTag: TagModelState;
@@ -31,7 +33,7 @@ export function Tag(props: TagProps) {
             {tag.subTags &&
                 <>
                     <div>SubTags:</div>
-                <Tags tags={props.subTags} parentTag={tag} bookmarks={bookmarks} onEditBookmark={props.onEditBookmark} onAddBookmark={props.onAddBookmark} onAddTag={props.onAddTag} />
+                    <Tags tags={props.subTags} parentTag={tag} onEditBookmark={props.onEditBookmark} onAddBookmark={props.onAddBookmark} onAddTag={props.onAddTag} />
                 </>}
             <AddOrEditBookmark onAddOrEdit={(newBookmark) => props.onAddBookmark({ ...tag }, newBookmark)} />
             <AddOrEditTag key={`add${tag.name}`} onAddOrEdit={(newTag) => props.onAddTag(newTag, tag)} />
@@ -44,8 +46,37 @@ const bookmarksById = (bookmarkIds: string[], allBookmarks: BookmarkModel[]) => 
     return allBookmarks.filter(bookmark => bookmarkIds.some(x => x == bookmark.name));
 }
 
-const mapStateToProps = (state: BookmarksAppState, ownProps: TagProps) => ({
-    bookmarks: bookmarksById(ownProps.tag.bookmarks, state.bookmarks)
-});
+const tagByName = (tagName: string, tags: TagModelState[]) => {
+    return tags.find(x => x.name == tagName);
+}
 
-export const TagWithRedux = connect(mapStateToProps, null)(Tag);
+const mapStateToProps = (state: BookmarksAppState, ownProps: ConnectedTagProps) => {
+    const tag = tagByName(ownProps.tagName, state.tags);
+    return ({
+        tag: tag,
+        bookmarks: bookmarksById(tag.bookmarks, state.bookmarks)
+    })
+};
+
+type ConnectedTagProps = {
+    parentTagName: string;
+    tagName: string;
+}
+
+export const ConnectedTag: React.ComponentClass<ConnectedTagProps> = connect(mapStateToProps)(Tag);
+
+
+type TagsProps = {
+    parentTag: TagModelState;
+    tags: TagModelState[];
+    onAddBookmark: (tag: TagModelState, bookmark: BookmarkModel) => void;
+    onEditBookmark: (tag: TagModelState, bookmark: EditBookmark) => void;
+    onAddTag: (newTag: TagModelState, parentTag: TagModelState) => void;
+};
+
+export function Tags(props: TagsProps) {
+    const { tags, parentTag } = props;
+    const tagItems = tags.map(tag => <ConnectedTag key={tag.name} parentTagName={parentTag.name} tagName={tag.name} />);
+    return (<ul style={ulStyle}>{tagItems}</ul>);
+}
+

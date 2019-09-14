@@ -1,6 +1,6 @@
 ﻿import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { TagsRoot } from "./tagsRoot";
+import { TagsRootWithRedux } from "./tagsRoot";
 import { createStore } from 'redux'
 import { bookmarkApp } from './reducers';
 import { Provider } from 'react-redux'
