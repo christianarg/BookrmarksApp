@@ -28,7 +28,6 @@
     <TypeScriptCompile Remove="wwwroot\app\bookmarks-redux\bookmarks.tsx" />
     <TypeScriptCompile Remove="wwwroot\app\bookmarks-redux\common.tsx" />
     <TypeScriptCompile Remove="wwwroot\app\bookmarks-redux\TagProps.tsx" />
-    <TypeScriptCompile Remove="wwwroot\app\bookmarks-redux\Tags.tsx" />
     <TypeScriptCompile Remove="wwwroot\app\bookmarks-redux\TagSearchProps.tsx" />
   </ItemGroup>
 

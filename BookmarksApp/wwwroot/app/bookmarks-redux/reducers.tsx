@@ -1,4 +1,4 @@
-﻿import { initialState, BookmarksAppState } from "./tagsRoot";
+﻿import { BookmarksAppState } from "./tagsRoot";
 import { BookmarkActionTypes, ADD_BOOKMARK } from "./actions";
 
 export function bookmarkApp(state: BookmarksAppState, action: BookmarkActionTypes): BookmarksAppState {
@@ -20,3 +20,25 @@ export function bookmarkApp(state: BookmarksAppState, action: BookmarkActionType
     }
 }
 
+export const initialState: BookmarksAppState = {
+    tags: [{
+        name: '.Net',
+        bookmarks: ['download'],
+        subTags: ['Asp.net']
+    },
+    {
+        name: 'Asp.net',
+        bookmarks: ['asp.net', 'asp.net core']
+    },
+    {
+        name: 'React',
+        bookmarks: ['react docs']
+    }],
+    bookmarks: [
+        { name: 'download', url: 'https://dotnet.microsoft.com/download' },
+        { name: 'asp.net', url: 'https://dotnet.microsoft.com/apps/aspnet' },
+        { name: 'asp.net core', url: 'https://docs.microsoft.com/es-es/aspnet/core/?view=aspnetcore-2.2' },
+        { name: 'react docs', url: 'https://reactjs.org/docs/getting-started.html' }
+    ]
+
+};

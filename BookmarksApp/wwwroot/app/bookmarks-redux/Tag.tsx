@@ -75,8 +75,13 @@ type TagsProps = {
 };
 
 export function Tags(props: TagsProps) {
+    debugger;
     const { tags, parentTag } = props;
-    const tagItems = tags.map(tag => <ConnectedTag key={tag.name} parentTagName={parentTag.name} tagName={tag.name} />);
-    return (<ul style={ulStyle}>{tagItems}</ul>);
+    if (tags) {
+        const parentTagName = parentTag && parentTag.name;
+        const tagItems = tags.map(tag => <ConnectedTag key={tag.name} parentTagName={parentTagName} tagName={tag.name} />);
+        return (<ul style={ulStyle}>{tagItems}</ul>);
+    }
+    return null;
 }
 
