@@ -36,7 +36,7 @@ export function Tag(props: TagProps) {
             {tag.subTags &&
                 <>
                     <div>SubTags:</div>
-                    <Tags tags={props.subTags} parentTag={tag} onEditBookmark={props.onEditBookmark} onAddBookmark={null} onAddTag={props.onAddTag} />
+                    <Tags tags={props.subTags} parentTag={tag} />
                 </>}
             <AddOrEditBookmark onAddOrEdit={(newBookmark) => props.addBookmark(newBookmark, tag.name)} />
             <AddOrEditTag key={`add${tag.name}`} onAddOrEdit={(newTag) => props.onAddTag(newTag, tag)} />
@@ -77,9 +77,6 @@ export const ConnectedTag: React.ComponentClass<ConnectedTagProps> = connect(map
 type TagsProps = {
     parentTag: TagModelState;
     tags: TagModelState[];
-    onAddBookmark: (tag: TagModelState, bookmark: BookmarkModel) => void;
-    onEditBookmark: (tag: TagModelState, bookmark: EditBookmark) => void;
-    onAddTag: (newTag: TagModelState, parentTag: TagModelState) => void;
 };
 
 export function Tags(props: TagsProps) {
