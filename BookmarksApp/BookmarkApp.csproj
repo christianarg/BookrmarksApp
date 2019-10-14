@@ -23,7 +23,7 @@
 
   <ItemGroup>
     <TypeScriptCompile Remove="wwwroot\app\bookmarks-redux\add-or-edit-bookmark-props.tsx" />
-    <TypeScriptCompile Remove="wwwroot\app\bookmarks-redux\AddTagProps.tsx" />
+    <TypeScriptCompile Remove="wwwroot\app\bookmarks-redux\add-or-edit-tag.tsx" />
     <TypeScriptCompile Remove="wwwroot\app\bookmarks-redux\bookmark-model.tsx" />
     <TypeScriptCompile Remove="wwwroot\app\bookmarks-redux\bookmarks.tsx" />
     <TypeScriptCompile Remove="wwwroot\app\bookmarks-redux\common.tsx" />

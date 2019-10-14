@@ -3,7 +3,7 @@ import { BookmarkModel, AddOrEditTagResult, EditBookmark, TagModelState } from "
 //import { replaceTag, filterTags } from './common';
 import { TagSearch } from './TagSearchProps';
 import { Tags } from './Tag';
-import { AddOrEditTag } from './AddTagProps';
+import { AddOrEditTag } from './add-or-edit-tag';
 import { connect, MapDispatchToPropsParam } from "react-redux";
 import { Action } from 'redux';
 import { addBookmark } from './actions';
@@ -84,13 +84,7 @@ const mapStateToProps = (state: BookmarksAppState) => {
     };
 }
 
-const mapDispatchToProps = (dispatch: React.Dispatch<Action<any>>) => {
-    return {
-        addBookmark: (bookmarkModel: BookmarkModel, tagName: string) => dispatch(addBookmark(bookmarkModel, tagName))
-    }
-}
-
-export const ConnectedTagsRoot = connect(mapStateToProps, mapDispatchToProps)(TagsRoot)
+export const ConnectedTagsRoot = connect(mapStateToProps)(TagsRoot)
 
 export type BookmarksAppState = {
     bookmarks: BookmarkModel[];

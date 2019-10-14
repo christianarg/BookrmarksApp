@@ -7,8 +7,9 @@ export function bookmarkApp(state: BookmarksAppState, action: BookmarkActionType
     }
     switch (action.type) {
         case ADD_BOOKMARK:
-            const tag = state.tags.find(x => x.name == action.tagName);
-            tag.bookmarks.concat(action.bookmarkModel.name);
+            let tag = state.tags.find(x => x.name == action.tagName);
+            tag = { ...tag };
+            tag.bookmarks = tag.bookmarks.concat(action.bookmarkModel.name);
             return {
                 ...state,
                 bookmarks: state.bookmarks.concat(action.bookmarkModel),    // añadir bookmark
