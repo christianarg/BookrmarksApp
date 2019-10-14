@@ -75,7 +75,6 @@ type TagsProps = {
 };
 
 export function Tags(props: TagsProps) {
-    debugger;
     const { tags, parentTag } = props;
     if (tags) {
         const parentTagName = parentTag && parentTag.name;

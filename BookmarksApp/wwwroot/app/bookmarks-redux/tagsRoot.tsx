@@ -4,11 +4,14 @@ import { BookmarkModel, AddOrEditTagResult, EditBookmark, TagModelState } from "
 import { TagSearch } from './TagSearchProps';
 import { Tags } from './Tag';
 import { AddOrEditTag } from './AddTagProps';
-import { connect } from "react-redux";
+import { connect, MapDispatchToPropsParam } from "react-redux";
+import { Action } from 'redux';
+import { addBookmark } from './actions';
 
 export type TagsRootProps = {
     tags: TagModelState[];
     searachText?: string;
+    addBookmark: (bookmarkModel: BookmarkModel, tagName: string) => void;
 }
 
 export class TagsRoot extends React.Component<TagsRootProps> {
@@ -74,13 +77,20 @@ export class TagsRoot extends React.Component<TagsRootProps> {
 }
 
 
-const mapStateToProps = (state: BookmarksAppState): TagsRootProps => {
+const mapStateToProps = (state: BookmarksAppState) => {
     return {
         tags: state.tags,
         searachText: ''
     };
 }
-export const TagsRootWithRedux = connect(mapStateToProps)(TagsRoot)
+
+const mapDispatchToProps = (dispatch: React.Dispatch<Action<any>>) => {
+    return {
+        addBookmark: (bookmarkModel: BookmarkModel, tagName: string) => dispatch(addBookmark(bookmarkModel, tagName))
+    }
+}
+
+export const ConnectedTagsRoot = connect(mapStateToProps, mapDispatchToProps)(TagsRoot)
 
 export type BookmarksAppState = {
     bookmarks: BookmarkModel[];
