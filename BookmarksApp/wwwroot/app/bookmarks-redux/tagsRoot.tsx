@@ -11,7 +11,7 @@ import { addBookmark } from './actions';
 export type TagsRootProps = {
     tags: TagModelState[];
     searachText?: string;
-    addBookmark: (bookmarkModel: BookmarkModel, tagName: string) => void;
+    //addBookmark: (bookmarkModel: BookmarkModel, tagName: string) => void;
 }
 
 export class TagsRoot extends React.Component<TagsRootProps> {
@@ -83,6 +83,12 @@ const mapStateToProps = (state: BookmarksAppState) => {
         searachText: ''
     };
 }
+
+//const mapDispatchToProps = (dispatch: React.Dispatch<Action<any>>) => {
+//    return {
+//        addBookmark: (bookmarkModel: BookmarkModel, tagName: string) => dispatch(addBookmark(bookmarkModel, tagName))
+//    }
+//}
 
 export const ConnectedTagsRoot = connect(mapStateToProps)(TagsRoot)
 
