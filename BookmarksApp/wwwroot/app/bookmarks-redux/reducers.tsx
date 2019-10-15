@@ -35,7 +35,8 @@ export function bookmarkApp(state: BookmarksAppState, action: BookmarkActionType
                     parentTag.subTags = [];
                 }
                 parentTag.subTags = parentTag.subTags.concat(tagToAddOrEdit.name);
-                tags = replaceTag(tags, parentTag);
+                //tags = replaceTag(tags, parentTag);
+                tags = tags.map(x => x.name == parentTag.name ? parentTag : x);
             }
             return {
                 ...state,
