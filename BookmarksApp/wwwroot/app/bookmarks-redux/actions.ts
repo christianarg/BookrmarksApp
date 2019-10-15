@@ -19,15 +19,20 @@ export function addBookmark(bookmarkModel: BookmarkModel, tagName: string): AddB
     }
 }
 
-//export type AddOrEditTag = {
-//    type: typeof ADD_OR_EDIT_TAG;
-//    addOrEditTagResult: AddOrEditTagResult;
-//    parentTag: TagModel;
-//}
+export type AddOrEditTag = {
+    type: typeof ADD_OR_EDIT_TAG;
+    addOrEditTagResult: AddOrEditTagResult;
+    parentTagName: string;
+}
 
-//export function addOrEditTag(addOrEditTagResult: AddOrEditTagResult, parentTag: TagModel): AddOrEditTag  {
-//    return { ...args, type: ADD_OR_EDIT_TAG }
-//}
+
+export function addOrEditTag(addOrEditTagResult: AddOrEditTagResult, parentTagName: string): AddOrEditTag  {
+    return {
+        type: ADD_OR_EDIT_TAG,
+        addOrEditTagResult: addOrEditTagResult,
+        parentTagName: parentTagName
+    }
+}
 
 //export type EditBookmark = {
 //    tag: TagModel, editedBookmark: EditBookmark
@@ -46,7 +51,7 @@ export function search(searchValue: string) {
 
 
 export type BookmarkActionTypes =
-    AddBookmark;
+    AddBookmark | AddOrEditTag
     //|
     //EditBookmark |
     //AddOrEditTag;

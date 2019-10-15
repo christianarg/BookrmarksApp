@@ -1,5 +1,5 @@
 ﻿import * as React from 'react';
-import { BookmarkModel, TagModelState, EditBookmark } from './bookmark-model';
+import { BookmarkModel, TagModelState, EditBookmark, AddOrEditTagResult } from './bookmark-model';
 import { Bookmarks } from './bookmarks';
 import { AddOrEditBookmark } from './add-or-edit-bookmark-props';
 import { AddOrEditTag } from './add-or-edit-tag';
@@ -7,7 +7,7 @@ import { ulStyle } from './common';
 import { connect } from 'react-redux';
 import { BookmarksAppState } from './tagsRoot';
 import { Action } from 'redux';
-import { addBookmark } from './actions';
+import { addBookmark, addOrEditTag } from './actions';
 
 
 
@@ -17,7 +17,7 @@ type TagProps = {
     subTags?: TagModelState[];
     bookmarks: BookmarkModel[];
     addBookmark: (bookmarkModel: BookmarkModel, tagName: string) => void;
-
+    addOrEditTag: (addOrEditTagResult: AddOrEditTagResult, parentTagName: string) => void;
     onEditBookmark: (tag: TagModelState, bookmark: EditBookmark) => void;
     onAddTag: (newTag: TagModelState, parentTag: TagModelState) => void;
 };
@@ -39,8 +39,8 @@ export function Tag(props: TagProps) {
                     <Tags tags={props.subTags} parentTag={tag} />
                 </>}
             <AddOrEditBookmark onAddOrEdit={(newBookmark) => props.addBookmark(newBookmark, tag.name)} />
-            <AddOrEditTag key={`add${tag.name}`} onAddOrEdit={(newTag) => props.onAddTag(newTag, tag)} />
-            <AddOrEditTag key={`edit{tag.name}`} tagToEdit={tag} onAddOrEdit={(newTag) => props.onAddTag(newTag, props.parentTag)} />
+            <AddOrEditTag key={`add${tag.name}`} onAddOrEdit={(newTag) => props.addOrEditTag(newTag, tag.name)} />
+            <AddOrEditTag key={`edit{tag.name}`} tagToEdit={tag} onAddOrEdit={(newTag) => props.addOrEditTag(newTag, tag.name)} />
         </fieldset>
     </li>);
 }
@@ -63,9 +63,11 @@ const mapStateToProps = (state: BookmarksAppState, ownProps: ConnectedTagProps) 
 
 const mapDispatchToProps = (dispatch: React.Dispatch<Action<any>>) => {
     return {
-        addBookmark: (bookmarkModel: BookmarkModel, tagName: string) => dispatch(addBookmark(bookmarkModel, tagName))
+        addBookmark: (bookmarkModel: BookmarkModel, tagName: string) => dispatch(addBookmark(bookmarkModel, tagName)),
+        addOrEditTag: (addOrEditTagResult: AddOrEditTagResult, parentTagName: string) => dispatch(addOrEditTag(addOrEditTagResult, parentTagName))
     }
 }
+
 type ConnectedTagProps = {
     parentTagName: string;
     tagName: string;
