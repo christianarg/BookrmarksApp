@@ -23,7 +23,7 @@ type TagProps = {
 };
 
 export function Tag(props: TagProps) {
-    const { tag, bookmarks } = props;
+    const { tag, bookmarks, parentTag } = props;
     if (tag.hidden) {
         return null;
     }
@@ -39,8 +39,8 @@ export function Tag(props: TagProps) {
                     <Tags tags={props.subTags} parentTag={tag} />
                 </>}
             <AddOrEditBookmark onAddOrEdit={(newBookmark) => props.addBookmark(newBookmark, tag.name)} />
-            <AddOrEditTag key={`add${tag.name}`} onAddOrEdit={(newTag) => props.addOrEditTag(newTag, tag.name)} />
-            <AddOrEditTag key={`edit{tag.name}`} tagToEdit={tag} onAddOrEdit={(newTag) => props.addOrEditTag(newTag, tag.name)} />
+            <AddOrEditTag key={`add${tag.name}`} onAddOrEdit={(newTag) => props.addOrEditTag(newTag, parentTag.name)} />
+            <AddOrEditTag key={`edit{tag.name}`} tagToEdit={tag} onAddOrEdit={(newTag) => props.addOrEditTag(newTag, parentTag.name)} />
         </fieldset>
     </li>);
 }
@@ -58,7 +58,8 @@ const mapStateToProps = (state: BookmarksAppState, ownProps: ConnectedTagProps) 
     return ({
         tag: tag,
         subTags: tag.subTags && state.tags.filter(x => tag.subTags.some(tagName => tagName == x.name)),
-        bookmarks: bookmarksById(tag.bookmarks, state.bookmarks)
+        bookmarks: bookmarksById(tag.bookmarks, state.bookmarks),
+        parentTag: tagByName(ownProps.parentTagName, state.tags)
     })
 };
 
