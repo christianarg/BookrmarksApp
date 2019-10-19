@@ -40,7 +40,7 @@ export function bookmarkApp(state: BookmarksAppState, action: BookmarkActionType
             }
             return {
                 ...state,
-                bookmarks: state.bookmarks,
+                bookmarks: state.bookmarks.splice(0),
                 tags: tags
             };
 

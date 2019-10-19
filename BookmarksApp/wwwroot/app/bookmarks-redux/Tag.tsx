@@ -1,7 +1,7 @@
 ﻿import * as React from 'react';
 import { BookmarkModel, TagModelState, EditBookmark, AddOrEditTagResult } from './bookmark-model';
 import { Bookmarks } from './bookmarks';
-import { AddOrEditBookmark } from './add-or-edit-bookmark-props';
+import { AddOrEditBookmark } from './add-or-edit-bookmark';
 import { AddOrEditTag } from './add-or-edit-tag';
 import { ulStyle } from './common';
 import { connect } from 'react-redux';
@@ -57,6 +57,7 @@ const mapStateToProps = (state: BookmarksAppState, ownProps: ConnectedTagProps) 
     const tag = tagByName(ownProps.tagName, state.tags);
     return ({
         tag: tag,
+        subTags: tag.subTags && state.tags.filter(x => tag.subTags.some(tagName => tagName == x.name)),
         bookmarks: bookmarksById(tag.bookmarks, state.bookmarks)
     })
 };

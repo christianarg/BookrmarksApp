@@ -1,6 +1,6 @@
 ﻿import * as React from 'react';
 import { BookmarkModel, EditBookmark } from './bookmark-model';
-import { AddOrEditBookmark } from "./add-or-edit-bookmark-props";
+import { AddOrEditBookmark } from "./add-or-edit-bookmark";
 type BookmarkProps = {
     bookmarks: BookmarkModel[];
     onEdit: (bookrmark: EditBookmark) => void;

@@ -13,7 +13,7 @@ type AddTagState = {
 export class AddOrEditTag extends React.Component<AddTagProps, AddTagState> {
     constructor(props) {
         super(props);
-        const tagToEdit = this.props.tagToEdit;
+        const tagToEdit = this.props.tagToEdit || '';
         this.state = { isFormVisible: false, name: tagToEdit && tagToEdit.name };
     }
     hasValue() {
@@ -32,7 +32,7 @@ export class AddOrEditTag extends React.Component<AddTagProps, AddTagState> {
             else {
                 this.props.onAddOrEdit({ name: name, bookmarks: [] });
             }
-            this.setState({ isFormVisible: false });
+            this.setState({ isFormVisible: false, name: '' });
         }
     };
     handleNameChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
