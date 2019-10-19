@@ -24,8 +24,12 @@ export function bookmarkApp(state: BookmarksAppState, action: BookmarkActionType
             let tagToAddOrEdit = state.tags.find(x => x.name == action.addOrEditTagResult.oldName);
             if (tagToAddOrEdit) {  // edit
                 tagToAddOrEdit = { ...tagToAddOrEdit };
+                tags = state.tags.splice(0);
                 tagToAddOrEdit.name = action.addOrEditTagResult.name;
-                tagToAddOrEdit = state.tags.map(x => x.name == action.addOrEditTagResult.oldName ? tagToAddOrEdit : x) as any;
+               // tagToAddOrEdit = state.tags.map(x => x.name == action.addOrEditTagResult.oldName ? tagToAddOrEdit : x) as any;
+
+                tags = tags.map(x => x.name == action.addOrEditTagResult.oldName ? tagToAddOrEdit : x);
+                // todo buscar y reemplazar subtags :(
             } else {
                 tagToAddOrEdit = { ...action.addOrEditTagResult };
                 tags = state.tags.concat(tagToAddOrEdit);
