@@ -18,7 +18,7 @@ export class AddOrEditBookmark extends React.Component<AddOrEditBookmarkProps, A
             this.state = { isFormVisible: false, name: bookmarkToEdit.name, url: bookmarkToEdit.url };
         }
         else {
-            this.state = { isFormVisible: false, name: null, url: null };
+            this.state = { isFormVisible: false, name: "", url: "" };
         }
     }
     hasValue() {
@@ -31,7 +31,7 @@ export class AddOrEditBookmark extends React.Component<AddOrEditBookmarkProps, A
         const bookmarkToEdit = this.props.bookmarkToEdit;
         if (name && url) {
             this.props.onAddOrEdit({ name: name, url: url, oldName: bookmarkToEdit && bookmarkToEdit.name });
-            this.setState({ isFormVisible: false });
+            this.setState({ isFormVisible: false, url: "", name: "" });
         }
     };
     handleNameChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
