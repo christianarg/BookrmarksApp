@@ -31,21 +31,27 @@ export function bookmarkApp(state: BookmarksAppState, action: BookmarkActionType
 
                 // en el padre reemplazar el subtag por el nuevo nombre
                 let parentTag = state.tags.find(x => x.name == action.parentTagName);
-                parentTag = { ...parentTag };
-                parentTag.subTags = parentTag.subTags.map(x => x == action.addOrEditTagResult.oldName ? tagToAddOrEdit.name : x);
-
-                tags = tags.map(x => x.name == parentTag.name ? parentTag: x);
+                if (parentTag) {
+                    parentTag = { ...parentTag };
+                    parentTag.subTags = parentTag.subTags.map(x => x == action.addOrEditTagResult.oldName ? tagToAddOrEdit.name : x);
+                    tags = tags.map(x => x.name == parentTag.name ? parentTag: x);
+                }
             } else {
                 tagToAddOrEdit = { ...action.addOrEditTagResult };
                 tags = state.tags.concat(tagToAddOrEdit);
                 let parentTag = state.tags.find(x => x.name == action.parentTagName);
-                parentTag = { ...parentTag };
-                if (!parentTag.subTags) {
-                    parentTag.subTags = [];
+                if (parentTag) {
+                    parentTag = { ...parentTag };
+                    if (!parentTag.subTags) {
+                        parentTag.subTags = [];
+                    }
+                    parentTag.subTags = parentTag.subTags.concat(tagToAddOrEdit.name);
+                    //tags = replaceTag(tags, parentTag);
+                    tags = tags.map(x => x.name == parentTag.name ? parentTag : x);
                 }
-                parentTag.subTags = parentTag.subTags.concat(tagToAddOrEdit.name);
-                //tags = replaceTag(tags, parentTag);
-                tags = tags.map(x => x.name == parentTag.name ? parentTag : x);
+                else {
+                    tagToAddOrEdit.isRoot = true;
+                }
             }
             return {
                 ...state,

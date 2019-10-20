@@ -40,7 +40,7 @@ export function Tag(props: TagProps) {
                 </>}
             <AddOrEditBookmark onAddOrEdit={(newBookmark) => props.addBookmark(newBookmark, tag.name)} />
             <AddOrEditTag key={`add${tag.name}`} onAddOrEdit={(newTag) => props.addOrEditTag(newTag, parentTag.name)} />
-            <AddOrEditTag key={`edit{tag.name}`} tagToEdit={tag} onAddOrEdit={(newTag) => props.addOrEditTag(newTag, parentTag.name)} />
+            <AddOrEditTag key={`edit{tag.name}`} tagToEdit={tag} onAddOrEdit={(newTag) => props.addOrEditTag(newTag, parentTag && parentTag.name)} />
         </fieldset>
     </li>);
 }
