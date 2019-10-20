@@ -6,42 +6,44 @@ import { Tags } from './Tag';
 import { AddOrEditTag } from './add-or-edit-tag';
 import { connect, MapDispatchToPropsParam } from "react-redux";
 import { Action } from 'redux';
-import { addBookmark, addOrEditTag } from './actions';
+import { addBookmark, addOrEditTag, search } from './actions';
 
-export type TagsRootProps = {
+export type TagsRootDispatchProps = {
+    addOrEditTag: (addOrEditTagResult: AddOrEditTagResult) => void;
+    search: (searchValue: string) => void;
+}
+
+export type TagsRootStateProps = {
     tags: TagModelState[];
     searachText?: string;
-    addOrEditTag: (addOrEditTagResult: AddOrEditTagResult) => void;
 }
 
-export class TagsRoot extends React.Component<TagsRootProps> {
+export type TagsRootProps = TagsRootStateProps & TagsRootDispatchProps;
 
-    handleSearch = (searchValue: string) => {
+export function TagsRoot(props: TagsRootProps) {
+    const { tags, search, searachText, addOrEditTag } = props;
 
-    };
-    render() {
-        if (this.props.tags) {
-            return (<div>
-                <TagSearch searachText={this.props.searachText} onSearchChange={this.handleSearch} />
-                <Tags tags={this.props.tags} parentTag={null} />
-                <AddOrEditTag isRoot={true} onAddOrEdit={(newTag) => this.props.addOrEditTag(newTag)} />
-            </div>);
-        }
-        return null;
+    if (tags) {
+        return (<div>
+            <TagSearch searachText={searachText} onSearchChange={search} />
+            <Tags tags={tags} parentTag={null} />
+            <AddOrEditTag isRoot={true} onAddOrEdit={(newTag) => addOrEditTag(newTag)} />
+        </div>);
     }
+    return null;
 }
 
-
-const mapStateToProps = (state: BookmarksAppState) => {
+const mapStateToProps = (state: BookmarksAppState): TagsRootStateProps => {
     return {
         tags: state.tags.filter(x => x.isRoot),
         searachText: ''
     };
 }
 
-const mapDispatchToProps = (dispatch: React.Dispatch<Action<any>>) => {
+const mapDispatchToProps = (dispatch: React.Dispatch<Action<any>>): TagsRootDispatchProps => {
     return {
-        addOrEditTag: (addOrEditTagResult: AddOrEditTagResult) => dispatch(addOrEditTag(addOrEditTagResult, null))
+        addOrEditTag: (addOrEditTagResult: AddOrEditTagResult) => dispatch(addOrEditTag(addOrEditTagResult, null)),
+        search: (searchValue: string) => dispatch(search(searchValue))
     }
 }
 

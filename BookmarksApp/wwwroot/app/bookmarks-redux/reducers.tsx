@@ -1,5 +1,5 @@
 ﻿import { BookmarksAppState } from "./tagsRoot";
-import { BookmarkActionTypes, ADD_BOOKMARK, ADD_OR_EDIT_TAG } from "./actions";
+import { BookmarkActionTypes, ADD_BOOKMARK, ADD_OR_EDIT_TAG, SEARCH } from "./actions";
 import { TagModelState } from "./bookmark-model";
 
 export function bookmarkApp(state: BookmarksAppState, action: BookmarkActionTypes): BookmarksAppState {
@@ -7,6 +7,9 @@ export function bookmarkApp(state: BookmarksAppState, action: BookmarkActionType
         return initialState;
     }
     switch (action.type) {
+        case SEARCH:
+
+            return { ...state }
         case ADD_BOOKMARK:
 
             let tag = state.tags.find(x => x.name == action.tagName);
@@ -53,6 +56,7 @@ export function bookmarkApp(state: BookmarksAppState, action: BookmarkActionType
                     tagToAddOrEdit.isRoot = true;
                 }
             }
+
             return {
                 ...state,
                 bookmarks: state.bookmarks.slice(0),

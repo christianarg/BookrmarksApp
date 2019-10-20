@@ -34,15 +34,13 @@ export function addOrEditTag(addOrEditTagResult: AddOrEditTagResult, parentTagNa
     }
 }
 
-//export type EditBookmark = {
-//    tag: TagModel, editedBookmark: EditBookmark
-//}
+export type Search = {
+    type: typeof SEARCH;
+    searchValue: string;
+}
 
-//export function editBookmark(args: EditBookmark): EditBookmark {
-//    return { ...args, type: EDIT_BOOKMARK }
-//}
 
-export function search(searchValue: string) {
+export function search(searchValue: string): Search {
     return {
         type: SEARCH,
         searchValue: searchValue
@@ -51,8 +49,4 @@ export function search(searchValue: string) {
 
 
 export type BookmarkActionTypes =
-    AddBookmark | AddOrEditTag
-    //|
-    //EditBookmark |
-    //AddOrEditTag;
-
+    AddBookmark | AddOrEditTag | Search;
