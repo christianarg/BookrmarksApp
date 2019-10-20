@@ -38,7 +38,7 @@ export class TagsRoot extends React.Component<TagsRootProps> {
 
 const mapStateToProps = (state: BookmarksAppState) => {
     return {
-        tags: state.tags,
+        tags: state.tags.filter(x => x.isRoot),
         searachText: ''
     };
 }

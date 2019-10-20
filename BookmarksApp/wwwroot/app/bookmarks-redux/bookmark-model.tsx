@@ -6,6 +6,7 @@
 
 export type TagModelState = {
     name: string;
+    isRoot?: boolean;
     subTags?: string[];
     bookmarks: string[];
     hidden?: boolean;

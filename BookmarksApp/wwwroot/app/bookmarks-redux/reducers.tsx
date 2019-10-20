@@ -33,6 +33,8 @@ export function bookmarkApp(state: BookmarksAppState, action: BookmarkActionType
                 let parentTag = state.tags.find(x => x.name == action.parentTagName);
                 parentTag = { ...parentTag };
                 parentTag.subTags = parentTag.subTags.map(x => x == action.addOrEditTagResult.oldName ? tagToAddOrEdit.name : x);
+
+                tags = tags.map(x => x.name == parentTag.name ? parentTag: x);
             } else {
                 tagToAddOrEdit = { ...action.addOrEditTagResult };
                 tags = state.tags.concat(tagToAddOrEdit);
@@ -65,7 +67,8 @@ export const initialState: BookmarksAppState = {
     tags: [{
         name: '.Net',
         bookmarks: ['download'],
-        subTags: ['Asp.net']
+        subTags: ['Asp.net'],
+        isRoot: true
     },
     {
         name: 'Asp.net',
@@ -73,7 +76,8 @@ export const initialState: BookmarksAppState = {
     },
     {
         name: 'React',
-        bookmarks: ['react docs']
+        bookmarks: ['react docs'],
+        isRoot: true
     }],
     bookmarks: [
         { name: 'download', url: 'https://dotnet.microsoft.com/download' },
