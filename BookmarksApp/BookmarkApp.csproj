@@ -40,4 +40,8 @@
     </TypeScriptCompile>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\app\bookmarks\__snapshots__\" />
+  </ItemGroup>
+
 </Project>

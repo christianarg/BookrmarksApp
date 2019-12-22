@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Render root tag when no tags 1`] = `
+exports[`TagsRoot tests Render root tag test 1`] = `
 <div>
   <TagSearch
     onSearchChange={[Function]}

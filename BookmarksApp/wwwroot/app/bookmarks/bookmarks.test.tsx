@@ -4,57 +4,50 @@ import { TagsRoot } from './bookmarks';
 import { shallow } from 'enzyme';
 import { shallowToJson } from 'enzyme-to-json';
 
-test("Render root tag when no tags", () => {
-    // ARRANGE
-    // ACT
-    const tagsRoot = shallow(<TagsRoot />);
+describe("TagsRoot tests", () => {
 
-    // ASSERT
-    expect(shallowToJson(tagsRoot)).toMatchSnapshot();
+    test("Render root tag test", () => {
+        // ARRANGE
+        // ACT
+        const tagsRoot = shallow(<TagsRoot />);
+
+        // ASSERT
+        expect(shallowToJson(tagsRoot)).toMatchSnapshot();
+    });
+
+    test("Add root tag", () => {
+        // ARRANGE
+
+        // ACT
+
+        // ASSERT
+    });
+
+    test("Remove root tag", () => {
+        // ARRANGE
+
+        // ACT
+
+        // ASSERT
+    });
+
+    test("Edit root tag", () => {
+        // ARRANGE
+
+        // ACT
+
+        // ASSERT
+    });
+
+    test("Render nested tag", () => {
+        // ARRANGE
+
+        // ACT
+
+        // ASSERT
+    });
+
 });
-
-test("Render root tag when has tags", () => {
-    // ARRANGE
-    const tagsRoot = shallow(<TagsRoot />);
-    // ACT
-
-    // ASSERT
-});
-
-
-
-test("Add root tag", () => {
-    // ARRANGE
-
-    // ACT
-
-    // ASSERT
-});
-
-test("Remove root tag", () => {
-    // ARRANGE
-
-    // ACT
-
-    // ASSERT
-});
-
-test("Edit root tag", () => {
-    // ARRANGE
-
-    // ACT
-
-    // ASSERT
-});
-
-test("Render nested tag", () => {
-    // ARRANGE
-
-    // ACT
-
-    // ASSERT
-});
-
 
 test("Add nested tag", () => {
     // ARRANGE
