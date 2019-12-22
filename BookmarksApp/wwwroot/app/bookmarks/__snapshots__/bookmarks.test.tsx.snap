@@ -1,0 +1,57 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Render root tag when no tags 1`] = `
+<div>
+  <TagSearch
+    onSearchChange={[Function]}
+    searachText=""
+  />
+  <Tags
+    onAddBookmark={[Function]}
+    onAddTag={[Function]}
+    onEditBookmark={[Function]}
+    parentTag={null}
+    tags={
+      Array [
+        Object {
+          "bookmarks": Array [
+            Object {
+              "name": "download",
+              "url": "https://dotnet.microsoft.com/download",
+            },
+          ],
+          "name": ".Net",
+          "subTags": Array [
+            Object {
+              "bookmarks": Array [
+                Object {
+                  "name": "asp.net",
+                  "url": "https://dotnet.microsoft.com/apps/aspnet",
+                },
+                Object {
+                  "name": "asp.net core",
+                  "url": "https://docs.microsoft.com/es-es/aspnet/core/?view=aspnetcore-2.2",
+                },
+              ],
+              "name": "Asp.net",
+            },
+          ],
+        },
+        Object {
+          "bookmarks": Array [
+            Object {
+              "name": "react docs",
+              "url": "https://reactjs.org/docs/getting-started.html",
+            },
+          ],
+          "name": "React",
+        },
+      ]
+    }
+  />
+  <AddOrEditTag
+    isRoot={true}
+    onAddOrEdit={[Function]}
+  />
+</div>
+`;
