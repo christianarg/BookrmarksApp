@@ -1,8 +1,9 @@
 ﻿import * as React from 'react';
-import { ulStyle } from './common';
 import { connect, MapDispatchToPropsParam } from "react-redux";
 import { Action } from 'redux';
 import { addBookmark, addOrEditTag, search } from './actions';
+
+export const ulStyle: React.CSSProperties = { listStyleType: 'none', paddingInlineStart: 0 };
 
 type AddTagProps = {
     isRoot?: boolean;
