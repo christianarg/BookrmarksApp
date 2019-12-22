@@ -11,9 +11,9 @@
     <Content Remove="wwwroot\app\app.js.map" />
     <Content Remove="wwwroot\app\app.tsx" />
     <Content Remove="wwwroot\app\bookmarks-redux\actions.ts" />
+    <Content Remove="wwwroot\app\bookmarks-redux\bookmarks-redux.tsx" />
     <Content Remove="wwwroot\app\bookmarks-redux\reducers.tsx" />
     <Content Remove="wwwroot\app\bookmarks-redux\store.tsx" />
-    <Content Remove="wwwroot\app\bookmarks-redux\tagsRoot.tsx" />
     <Content Remove="wwwroot\app\bookmarks\bookmarks.test.tsx" />
     <Content Remove="wwwroot\app\provider.tsx" />
     <Content Remove="wwwroot\app\redux-tutorials\basic\components\counter.tsx" />
@@ -22,12 +22,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <TypeScriptCompile Remove="wwwroot\app\bookmarks-redux\add-or-edit-bookmark.tsx" />
-    <TypeScriptCompile Remove="wwwroot\app\bookmarks-redux\add-or-edit-tag.tsx" />
-    <TypeScriptCompile Remove="wwwroot\app\bookmarks-redux\bookmark-model.tsx" />
-    <TypeScriptCompile Remove="wwwroot\app\bookmarks-redux\bookmarks.tsx" />
-    <TypeScriptCompile Remove="wwwroot\app\bookmarks-redux\common.tsx" />
-    <TypeScriptCompile Remove="wwwroot\app\bookmarks-redux\tag-search.tsx" />
     <TypeScriptCompile Remove="wwwroot\app\bookmarks-redux\TagProps.tsx" />
   </ItemGroup>
 

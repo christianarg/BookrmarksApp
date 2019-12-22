@@ -1,6 +1,6 @@
 ﻿import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { ConnectedTagsRoot } from "./tagsRoot";
+import { ConnectedTagsRoot } from "./bookmarks-redux";
 import { createStore } from 'redux'
 import { bookmarkApp } from './reducers';
 import { Provider } from 'react-redux'
