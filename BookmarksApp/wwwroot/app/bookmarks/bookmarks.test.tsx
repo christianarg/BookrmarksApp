@@ -1,7 +1,7 @@
 ﻿import * as React from 'react';
 import * as Bookmarks from './bookmarks';
 import { TagsRoot } from './bookmarks';
-import { shallow } from 'enzyme';
+import { shallow, render } from 'enzyme';
 import { shallowToJson } from 'enzyme-to-json';
 
 describe("TagsRoot tests", () => {
@@ -17,7 +17,9 @@ describe("TagsRoot tests", () => {
 
     test("Add root tag", () => {
         // ARRANGE
-
+        // TODO: me dapalo
+        //const tagRoot = render(<TagsRoot />);
+        //tagRoot.find("input")
         // ACT
 
         // ASSERT
