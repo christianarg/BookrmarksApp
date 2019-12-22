@@ -1,5 +1,6 @@
 ﻿import * as React from 'react';
 
+// Models
 export type TagModel = {
     name: string;
     subTags?: TagModel[];
@@ -20,6 +21,8 @@ export type EditBookmark = BookmarkModel & { oldName: string };
 
 const ulStyle: React.CSSProperties = { listStyleType: 'none', paddingInlineStart: 0 };
 
+// BookmarkComponent
+
 type BookmarkProps = {
     bookmarks: BookmarkModel[];
     onEdit: (bookrmark: EditBookmark) => void;
@@ -32,6 +35,8 @@ function Bookmarks(props: BookmarkProps) {
         </li>)
     return (<ul style={{ listStyleType: 'square' }}>{bookmarks}</ul>);
 }
+
+// AddOrEditBookmarkComponent
 
 type AddOrEditBookmarkProps = { bookmarkToEdit?: BookmarkModel; onAddOrEdit: (newBookmark: EditBookmark) => void };
 type AddOrEditBookmarkState = { isFormVisible: boolean, name: string, url: string };
@@ -106,6 +111,7 @@ class AddOrEditBookmark extends React.Component<AddOrEditBookmarkProps, AddOrEdi
     }
 }
 
+// AddOrEditTagComponent
 
 type AddTagProps = {
     isRoot?: boolean;
@@ -178,6 +184,8 @@ class AddOrEditTag extends React.Component<AddTagProps, AddTagState>{
     }
 }
 
+// **TagComponent**
+
 type TagProps = {
     parentTag: TagModel;
     tag: TagModel;
@@ -212,6 +220,7 @@ function Tag(props: TagProps) {
         </li>);
 }
 
+// **TagsComponent**
 
 type TagsProps = {
     parentTag: TagModel;
@@ -229,6 +238,7 @@ function Tags(props: TagsProps) {
     );
 }
 
+// **TagSearchComponent**
 
 type TagSearchProps = {
     searachText: string;
@@ -240,6 +250,7 @@ function TagSearch(props: TagSearchProps) {
     return (<div><input type="text" placeholder="Search tags..." value={searachText} onChange={(evt) => onSearchChange(evt.target.value)} /></div>)
 }
 
+// **TagsRootComponent**
 
 function hasText(text: string, searchText: string) {
     return text.toLowerCase().includes(searchText.toLowerCase());

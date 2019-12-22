@@ -3,113 +3,8 @@ import { connect, MapDispatchToPropsParam } from "react-redux";
 import { Action } from 'redux';
 import { addBookmark, addOrEditTag, search } from './actions';
 
-export const ulStyle: React.CSSProperties = { listStyleType: 'none', paddingInlineStart: 0 };
 
-type AddTagProps = {
-    isRoot?: boolean;
-    tagToEdit?: TagModelState;
-    onAddOrEdit: (newTag: AddOrEditTagResult) => void;
-};
-type AddTagState = {
-    isFormVisible: boolean;
-    name: string;
-};
-export class AddOrEditTag extends React.Component<AddTagProps, AddTagState> {
-    constructor(props) {
-        super(props);
-        const tagToEdit = this.props.tagToEdit || '';
-        this.state = { isFormVisible: false, name: tagToEdit && tagToEdit.name };
-    }
-    hasValue() {
-        return this.state.name != null;
-    }
-    handleSubmit = (evt: React.FormEvent) => {
-        evt.preventDefault();
-        const { name } = this.state;
-        const tagToEdit = this.props.tagToEdit;
-        if (name) {
-            if (tagToEdit) {
-                const editTagResult: AddOrEditTagResult = { ...tagToEdit, oldName: tagToEdit.name };
-                editTagResult.name = name;
-                this.props.onAddOrEdit(editTagResult);
-            }
-            else {
-                this.props.onAddOrEdit({ name: name, bookmarks: [] });
-            }
-            this.setState({ isFormVisible: false, name: '' });
-        }
-    };
-    handleNameChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
-        this.setState({ name: evt.target.value });
-    };
-    toggleShow = () => {
-        this.setState({ isFormVisible: !this.state.isFormVisible });
-    };
-    buttonStyle(): React.CSSProperties {
-        if (!this.hasValue()) {
-            return { cursor: 'not-allowed' };
-        }
-        return null;
-    }
-    render() {
-        const buttonStyle = { display: 'inline-block', textDecoration: 'underline', cursor: 'pointer' };
-        const { isRoot, tagToEdit } = this.props;
-        const toggleAddButtonText = isRoot ? '(Add Tags)' : tagToEdit ? '(Edit Tag)' : '(Add SubTags)';
-        const acceptText = tagToEdit ? 'Edit' : 'Add';
-        if (this.state.isFormVisible) {
-            return (<div>
-                <div style={buttonStyle} onClick={this.toggleShow}>Close</div>
-                <form onSubmit={this.handleSubmit}>
-                    <div>Name: <input type="text" value={this.state.name} onChange={this.handleNameChange} placeholder="Tag name..." /></div>
-                    <button value="Add" style={this.buttonStyle()}>{acceptText}</button>
-                </form>
-            </div>);
-        }
-        return <div style={buttonStyle} onClick={this.toggleShow}>{toggleAddButtonText}</div>;
-    }
-}
-
-export type TagsRootDispatchProps = {
-    addOrEditTag: (addOrEditTagResult: AddOrEditTagResult) => void;
-    search: (searchValue: string) => void;
-}
-
-export type TagsRootStateProps = {
-    tags: TagModelState[];
-    searachText?: string;
-}
-
-export type TagsRootProps = TagsRootStateProps & TagsRootDispatchProps;
-
-export function TagsRoot(props: TagsRootProps) {
-    const { tags, search, searachText, addOrEditTag } = props;
-
-    if (tags) {
-        return (<div>
-            <TagSearch searachText={searachText} onSearchChange={search} />
-            <Tags tags={tags} parentTag={null} />
-            <AddOrEditTag isRoot={true} onAddOrEdit={(newTag) => addOrEditTag(newTag)} />
-        </div>);
-    }
-    return null;
-}
-
-const tagsRootMapStateToProps = (state: BookmarksAppState): TagsRootStateProps => {
-    return {
-        tags: state.tags.filter(x => x.isRoot),
-        searachText: ''
-    };
-}
-
-const tagsRootMapDispatchToProps = (dispatch: React.Dispatch<Action<any>>): TagsRootDispatchProps => {
-    return {
-        addOrEditTag: (addOrEditTagResult: AddOrEditTagResult) => dispatch(addOrEditTag(addOrEditTagResult, null)),
-        search: (searchValue: string) => dispatch(search(searchValue))
-    }
-}
-
-export const ConnectedTagsRoot = connect(tagsRootMapStateToProps, tagsRootMapDispatchToProps )(TagsRoot)
-
+// **Models**
 export type BookmarksAppState = {
     bookmarks: BookmarkModel[];
     tags: TagModelState[];
@@ -132,6 +27,22 @@ export type TagModelState = {
 export type AddOrEditTagResult = TagModelState & { oldName?: string; }
 
 export type EditBookmark = BookmarkModel & { oldName: string };
+
+// **BookmarkComponent**
+
+type BookmarkProps = {
+    bookmarks: BookmarkModel[];
+    onEdit: (bookrmark: EditBookmark) => void;
+};
+export function Bookmarks(props: BookmarkProps) {
+    const bookmarks = props.bookmarks.map(bookmark => !bookmark.hidden &&
+        <li key={bookmark.name} className="bookmark">
+            <a href={bookmark.url} target="_blank">{bookmark.name}</a>&nbsp;&nbsp;<AddOrEditBookmark bookmarkToEdit={bookmark} onAddOrEdit={edited => props.onEdit(edited)} />
+        </li>);
+    return (<ul style={{ listStyleType: 'square' }}>{bookmarks}</ul>);
+}
+
+// **AddOrEditBookmarkComponent**
 
 type AddOrEditBookmarkProps = {
     bookmarkToEdit?: BookmarkModel;
@@ -201,19 +112,73 @@ export class AddOrEditBookmark extends React.Component<AddOrEditBookmarkProps, A
     }
 }
 
-
-type BookmarkProps = {
-    bookmarks: BookmarkModel[];
-    onEdit: (bookrmark: EditBookmark) => void;
+// **AddOrEditTagComponent**
+type AddTagProps = {
+    isRoot?: boolean;
+    tagToEdit?: TagModelState;
+    onAddOrEdit: (newTag: AddOrEditTagResult) => void;
 };
-export function Bookmarks(props: BookmarkProps) {
-    const bookmarks = props.bookmarks.map(bookmark => !bookmark.hidden &&
-        <li key={bookmark.name} className="bookmark">
-            <a href={bookmark.url} target="_blank">{bookmark.name}</a>&nbsp;&nbsp;<AddOrEditBookmark bookmarkToEdit={bookmark} onAddOrEdit={edited => props.onEdit(edited)} />
-        </li>);
-    return (<ul style={{ listStyleType: 'square' }}>{bookmarks}</ul>);
+type AddTagState = {
+    isFormVisible: boolean;
+    name: string;
+};
+
+export class AddOrEditTag extends React.Component<AddTagProps, AddTagState> {
+    constructor(props) {
+        super(props);
+        const tagToEdit = this.props.tagToEdit || '';
+        this.state = { isFormVisible: false, name: tagToEdit && tagToEdit.name };
+    }
+    hasValue() {
+        return this.state.name != null;
+    }
+    handleSubmit = (evt: React.FormEvent) => {
+        evt.preventDefault();
+        const { name } = this.state;
+        const tagToEdit = this.props.tagToEdit;
+        if (name) {
+            if (tagToEdit) {
+                const editTagResult: AddOrEditTagResult = { ...tagToEdit, oldName: tagToEdit.name };
+                editTagResult.name = name;
+                this.props.onAddOrEdit(editTagResult);
+            }
+            else {
+                this.props.onAddOrEdit({ name: name, bookmarks: [] });
+            }
+            this.setState({ isFormVisible: false, name: '' });
+        }
+    };
+    handleNameChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
+        this.setState({ name: evt.target.value });
+    };
+    toggleShow = () => {
+        this.setState({ isFormVisible: !this.state.isFormVisible });
+    };
+    buttonStyle(): React.CSSProperties {
+        if (!this.hasValue()) {
+            return { cursor: 'not-allowed' };
+        }
+        return null;
+    }
+    render() {
+        const buttonStyle = { display: 'inline-block', textDecoration: 'underline', cursor: 'pointer' };
+        const { isRoot, tagToEdit } = this.props;
+        const toggleAddButtonText = isRoot ? '(Add Tags)' : tagToEdit ? '(Edit Tag)' : '(Add SubTags)';
+        const acceptText = tagToEdit ? 'Edit' : 'Add';
+        if (this.state.isFormVisible) {
+            return (<div>
+                <div style={buttonStyle} onClick={this.toggleShow}>Close</div>
+                <form onSubmit={this.handleSubmit}>
+                    <div>Name: <input type="text" value={this.state.name} onChange={this.handleNameChange} placeholder="Tag name..." /></div>
+                    <button value="Add" style={this.buttonStyle()}>{acceptText}</button>
+                </form>
+            </div>);
+        }
+        return <div style={buttonStyle} onClick={this.toggleShow}>{toggleAddButtonText}</div>;
+    }
 }
 
+// **TagComponent**
 
 type TagDispatchProps = {
     addBookmark: (bookmarkModel: BookmarkModel, tagName: string) => void;
@@ -262,7 +227,7 @@ const tagByName = (tagName: string, tags: TagModelState[]) => {
     return tags.find(x => x.name == tagName);
 }
 
-const mapStateToProps = (state: BookmarksAppState, ownProps: ConnectedTagProps): TagStateProps => {
+const TagMapStateToProps = (state: BookmarksAppState, ownProps: ConnectedTagProps): TagStateProps => {
     const tag = tagByName(ownProps.tagName, state.tags);
     return ({
         tag: tag,
@@ -272,7 +237,7 @@ const mapStateToProps = (state: BookmarksAppState, ownProps: ConnectedTagProps):
     })
 };
 
-const mapDispatchToProps = (dispatch: React.Dispatch<Action<any>>): TagDispatchProps => {
+const TagMapDispatchToProps = (dispatch: React.Dispatch<Action<any>>): TagDispatchProps => {
     return {
         addBookmark: (bookmarkModel: BookmarkModel, tagName: string) => dispatch(addBookmark(bookmarkModel, tagName)),
         addOrEditTag: (addOrEditTagResult: AddOrEditTagResult, parentTagName: string) => dispatch(addOrEditTag(addOrEditTagResult, parentTagName))
@@ -284,8 +249,9 @@ type ConnectedTagProps = {
     tagName: string;
 }
 
-export const ConnectedTag: React.ComponentClass<ConnectedTagProps> = connect(mapStateToProps, mapDispatchToProps)(Tag);
+export const ConnectedTag: React.ComponentClass<ConnectedTagProps> = connect(TagMapStateToProps, TagMapDispatchToProps )(Tag);
 
+// **TagsComponent**
 
 type TagsProps = {
     parentTag: TagModelState;
@@ -297,16 +263,62 @@ export function Tags(props: TagsProps) {
     if (tags) {
         const parentTagName = parentTag && parentTag.name;
         const tagItems = tags.map(tag => <ConnectedTag key={tag.name} parentTagName={parentTagName} tagName={tag.name} />);
-        return (<ul style={ulStyle}>{tagItems}</ul>);
+        return (<ul style={{ listStyleType: 'none', paddingInlineStart: 0 }}>{tagItems}</ul>);
     }
     return null;
 }
+
+// **TagSearchComponent**
 
 type TagSearchProps = {
     searachText: string;
     onSearchChange: (value: string) => void;
 };
+
 export function TagSearch(props: TagSearchProps) {
     const { searachText, onSearchChange } = props;
     return (<div><input type="text" placeholder="Search tags..." value={searachText} onChange={(evt) => onSearchChange(evt.target.value)} /></div>);
 }
+
+// **TagsRootComponent**
+
+export type TagsRootDispatchProps = {
+    addOrEditTag: (addOrEditTagResult: AddOrEditTagResult) => void;
+    search: (searchValue: string) => void;
+}
+
+export type TagsRootStateProps = {
+    tags: TagModelState[];
+    searachText?: string;
+}
+
+export type TagsRootProps = TagsRootStateProps & TagsRootDispatchProps;
+
+export function TagsRoot(props: TagsRootProps) {
+    const { tags, search, searachText, addOrEditTag } = props;
+
+    if (tags) {
+        return (<div>
+            <TagSearch searachText={searachText} onSearchChange={search} />
+            <Tags tags={tags} parentTag={null} />
+            <AddOrEditTag isRoot={true} onAddOrEdit={(newTag) => addOrEditTag(newTag)} />
+        </div>);
+    }
+    return null;
+}
+
+const tagsRootMapStateToProps = (state: BookmarksAppState): TagsRootStateProps => {
+    return {
+        tags: state.tags.filter(x => x.isRoot),
+        searachText: ''
+    };
+}
+
+const tagsRootMapDispatchToProps = (dispatch: React.Dispatch<Action<any>>): TagsRootDispatchProps => {
+    return {
+        addOrEditTag: (addOrEditTagResult: AddOrEditTagResult) => dispatch(addOrEditTag(addOrEditTagResult, null)),
+        search: (searchValue: string) => dispatch(search(searchValue))
+    }
+}
+
+export const ConnectedTagsRoot = connect(tagsRootMapStateToProps, tagsRootMapDispatchToProps)(TagsRoot);
