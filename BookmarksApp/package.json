@@ -13,6 +13,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@reduxjs/toolkit": "^1.1.0",
     "@types/enzyme-adapter-react-16": "^1.0.4",
     "@types/react": "^16.7.20",
     "@types/react-dom": "^16.0.11",

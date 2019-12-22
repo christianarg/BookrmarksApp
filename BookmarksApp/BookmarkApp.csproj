@@ -10,6 +10,11 @@
     <Content Remove="wwwroot\app\app.js" />
     <Content Remove="wwwroot\app\app.js.map" />
     <Content Remove="wwwroot\app\app.tsx" />
+    <Content Remove="wwwroot\app\bookmarks-redux-toolkit\actions.ts" />
+    <Content Remove="wwwroot\app\bookmarks-redux-toolkit\app-redux-toolkit.tsx" />
+    <Content Remove="wwwroot\app\bookmarks-redux-toolkit\bookmark-slice.tsx" />
+    <Content Remove="wwwroot\app\bookmarks-redux-toolkit\bookmarks-redux.toolkit.tsx" />
+    <Content Remove="wwwroot\app\bookmarks-redux-toolkit\reducers.tsx" />
     <Content Remove="wwwroot\app\bookmarks-redux\actions.ts" />
     <Content Remove="wwwroot\app\bookmarks-redux\bookmarks-redux.tsx" />
     <Content Remove="wwwroot\app\bookmarks-redux\reducers.tsx" />
@@ -35,6 +40,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <TypeScriptCompile Update="wwwroot\app\bookmarks-redux-toolkit\app-redux-toolkit.tsx">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
     <TypeScriptCompile Update="wwwroot\app\bookmarks-redux\app-redux.tsx">
       <SubType>Code</SubType>
     </TypeScriptCompile>
