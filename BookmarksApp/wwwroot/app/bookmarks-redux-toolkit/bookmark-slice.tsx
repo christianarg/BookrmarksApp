@@ -1,5 +1,5 @@
 ﻿import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { BookmarksAppState, TagModelState, BookmarkModel } from '../bookmarks-redux/bookmarks-redux';
+import { BookmarksAppState, TagModelState, BookmarkModel, EditBookmark } from '../bookmarks-redux/bookmarks-redux';
 import { AddOrEditTagResult } from './bookmarks-redux-toolkit';
 
 
@@ -46,7 +46,7 @@ const bookmarksSlice = createSlice({
     name: 'bookmarks',
     initialState: initialState,
     reducers: {
-        addBookmark(state: BookmarksAppState, action: PayloadAction<AddBookmark>) {
+        addBookmark(state, action: PayloadAction<AddBookmark>) {
             let { tags, bookmarks } = state;
             const { tagName, bookmarkModel } = action.payload;
             let tag = tags.find(x => x.name == tagName);
@@ -56,7 +56,7 @@ const bookmarksSlice = createSlice({
 
             return state;
         },
-        addOrEditTag(state: BookmarksAppState, action: PayloadAction<AddOrEditTagParams>) {
+        addOrEditTag(state, action: PayloadAction<AddOrEditTagParams>) {
             let tags = state.tags;
             const { addOrEditTagResult, parentTagName } = action.payload;
             let tagToAddOrEdit = state.tags.find(x => x.name == addOrEditTagResult.oldName);
@@ -87,6 +87,14 @@ const bookmarksSlice = createSlice({
             }
             return state;
         },
+        editBookmark(state, action: PayloadAction<EditBookmark>) {
+            const { oldName } = action.payload
+            let bookmarks = state.bookmarks;
+            // reemplazar // TODO NO VA
+            const bookMarkIndex = bookmarks.findIndex(x => x.name == oldName);
+            bookmarks[bookMarkIndex] = action.payload;
+            return state;
+        },
         search(state: BookmarksAppState, action: PayloadAction<Search>) {
             return state    // TODO:
         }
@@ -96,6 +104,7 @@ const bookmarksSlice = createSlice({
 export const {
     addBookmark,
     addOrEditTag,
+    editBookmark,
     search
 } = bookmarksSlice.actions;
 

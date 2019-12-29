@@ -6228,12 +6228,20 @@ var bookmarksSlice = toolkit_1.createSlice({
             }
             return state;
         },
+        editBookmark: function (state, action) {
+            var oldName = action.payload.oldName;
+            var bookmarks = state.bookmarks;
+            // reemplazar // TODO NO VA
+            var bookMarkIndex = bookmarks.findIndex(function (x) { return x.name == oldName; });
+            bookmarks[bookMarkIndex] = action.payload;
+            return state;
+        },
         search: function (state, action) {
             return state; // TODO:
         }
     }
 });
-exports.addBookmark = (_a = bookmarksSlice.actions, _a.addBookmark), exports.addOrEditTag = _a.addOrEditTag, exports.search = _a.search;
+exports.addBookmark = (_a = bookmarksSlice.actions, _a.addBookmark), exports.addOrEditTag = _a.addOrEditTag, exports.editBookmark = _a.editBookmark, exports.search = _a.search;
 exports.default = bookmarksSlice.reducer;
 
 
@@ -6434,7 +6442,7 @@ var bookmarksById = function (bookmarkIds, allBookmarks) {
 var tagByName = function (tagName, tags) {
     return tags.find(function (x) { return x.name == tagName; });
 };
-var TagMapStateToProps = function (state, ownProps) {
+var tagMapStateToProps = function (state, ownProps) {
     var tag = tagByName(ownProps.tagName, state.tags);
     return ({
         tag: tag,
@@ -6443,13 +6451,14 @@ var TagMapStateToProps = function (state, ownProps) {
         parentTag: tagByName(ownProps.parentTagName, state.tags)
     });
 };
-var TagMapDispatchToProps = function (dispatch) {
+var tagMapDispatchToProps = function (dispatch) {
     return {
         addBookmark: function (bookmarkModel, tagName) { return dispatch(bookmark_slice_1.addBookmark({ bookmarkModel: bookmarkModel, tagName: tagName })); },
-        addOrEditTag: function (addOrEditTagResult, parentTagName) { return dispatch(bookmark_slice_1.addOrEditTag({ addOrEditTagResult: addOrEditTagResult, parentTagName: parentTagName })); }
+        addOrEditTag: function (addOrEditTagResult, parentTagName) { return dispatch(bookmark_slice_1.addOrEditTag({ addOrEditTagResult: addOrEditTagResult, parentTagName: parentTagName })); },
+        onEditBookmark: function (tag, bookmark) { return dispatch(bookmark_slice_1.editBookmark(bookmark)); }
     };
 };
-exports.ConnectedTag = react_redux_1.connect(TagMapStateToProps, TagMapDispatchToProps)(Tag);
+exports.ConnectedTag = react_redux_1.connect(tagMapStateToProps, tagMapDispatchToProps)(Tag);
 function Tags(props) {
     var tags = props.tags, parentTag = props.parentTag;
     if (tags) {
