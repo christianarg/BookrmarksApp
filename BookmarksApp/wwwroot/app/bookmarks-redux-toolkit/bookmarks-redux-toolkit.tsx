@@ -235,11 +235,10 @@ const TagMapStateToProps = (state: BookmarksAppState, ownProps: ConnectedTagProp
         parentTag: tagByName(ownProps.parentTagName, state.tags)
     })
 };
-
 const TagMapDispatchToProps = (dispatch: React.Dispatch<Action<any>>): TagDispatchProps => {
     return {
-        addBookmark: (bookmarkModel: BookmarkModel, tagName: string) => dispatch(addBookmark<AddBookmark>({ bookmarkModel: bookmarkModel, tagName: tagName })),
-        addOrEditTag: (addOrEditTagResult: AddOrEditTagResult, parentTagName: string) => dispatch(addOrEditTag<AddOrEditTagParams>({ addOrEditTagResult: addOrEditTagResult, parentTagName: parentTagName }))
+        addBookmark: (bookmarkModel: BookmarkModel, tagName: string) => dispatch(addBookmark({ bookmarkModel: bookmarkModel, tagName: tagName })),
+        addOrEditTag: (addOrEditTagResult: AddOrEditTagResult, parentTagName: string) => dispatch(addOrEditTag({ addOrEditTagResult: addOrEditTagResult, parentTagName: parentTagName }))
     }
 }
 
@@ -315,7 +314,7 @@ const tagsRootMapStateToProps = (state: BookmarksAppState): TagsRootStateProps =
 
 const tagsRootMapDispatchToProps = (dispatch: React.Dispatch<Action<any>>): TagsRootDispatchProps => {
     return {
-        addOrEditTag: (addOrEditTagResult: AddOrEditTagResult) => dispatch(addOrEditTag<AddOrEditTagParams>({ addOrEditTagResult: addOrEditTagResult, parentTagName: null})),
+        addOrEditTag: (addOrEditTagResult: AddOrEditTagResult) => dispatch(addOrEditTag({ addOrEditTagResult: addOrEditTagResult, parentTagName: null})),
         search: (searchValue: string) => dispatch(search({ searchValue: searchValue }))
     }
 }
