@@ -5,6 +5,7 @@ module.exports = {
     entry: {
         app: "./wwwroot/app/bookmarks/app.tsx",
         appRedux: "./wwwroot/app/bookmarks-redux/app-redux.tsx",
+        appReduxToolkit: "./wwwroot/app/bookmarks-redux-toolkit/app-redux-toolkit.tsx",
         tutorialReduxBasic: "./wwwroot/app/redux-tutorials/basic/index.tsx"
     },
     output: {

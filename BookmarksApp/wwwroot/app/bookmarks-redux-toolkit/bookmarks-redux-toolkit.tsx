@@ -1,8 +1,7 @@
 ﻿import * as React from 'react';
 import { connect, MapDispatchToPropsParam } from "react-redux";
 import { Action } from 'redux';
-import { addBookmark, addOrEditTag, search } from './actions';
-
+import { addBookmark, addOrEditTag, search, AddBookmark, AddOrEditTagParams } from './bookmark-slice'
 
 // **Models**
 export type BookmarksAppState = {
@@ -239,8 +238,8 @@ const TagMapStateToProps = (state: BookmarksAppState, ownProps: ConnectedTagProp
 
 const TagMapDispatchToProps = (dispatch: React.Dispatch<Action<any>>): TagDispatchProps => {
     return {
-        addBookmark: (bookmarkModel: BookmarkModel, tagName: string) => dispatch(addBookmark(bookmarkModel, tagName)),
-        addOrEditTag: (addOrEditTagResult: AddOrEditTagResult, parentTagName: string) => dispatch(addOrEditTag(addOrEditTagResult, parentTagName))
+        addBookmark: (bookmarkModel: BookmarkModel, tagName: string) => dispatch(addBookmark<AddBookmark>({ bookmarkModel: bookmarkModel, tagName: tagName })),
+        addOrEditTag: (addOrEditTagResult: AddOrEditTagResult, parentTagName: string) => dispatch(addOrEditTag<AddOrEditTagParams>({ addOrEditTagResult: addOrEditTagResult, parentTagName: parentTagName }))
     }
 }
 
@@ -249,7 +248,7 @@ type ConnectedTagProps = {
     tagName: string;
 }
 
-export const ConnectedTag: React.ComponentClass<ConnectedTagProps> = connect(TagMapStateToProps, TagMapDispatchToProps )(Tag);
+export const ConnectedTag: React.ComponentClass<ConnectedTagProps> = connect(TagMapStateToProps, TagMapDispatchToProps)(Tag);
 
 // **TagsComponent**
 
@@ -316,8 +315,8 @@ const tagsRootMapStateToProps = (state: BookmarksAppState): TagsRootStateProps =
 
 const tagsRootMapDispatchToProps = (dispatch: React.Dispatch<Action<any>>): TagsRootDispatchProps => {
     return {
-        addOrEditTag: (addOrEditTagResult: AddOrEditTagResult) => dispatch(addOrEditTag(addOrEditTagResult, null)),
-        search: (searchValue: string) => dispatch(search(searchValue))
+        addOrEditTag: (addOrEditTagResult: AddOrEditTagResult) => dispatch(addOrEditTag<AddOrEditTagParams>({ addOrEditTagResult: addOrEditTagResult, parentTagName: null})),
+        search: (searchValue: string) => dispatch(search({ searchValue: searchValue }))
     }
 }
 

@@ -1,9 +1,9 @@
 ﻿import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { BookmarksAppState, TagModelState, BookmarkModel } from '../bookmarks-redux/bookmarks-redux';
+import { AddOrEditTagResult } from './bookmarks-redux-toolkit';
 
 
-
-export const initialState: BookmarksAppState = {
+const initialState: BookmarksAppState = {
     tags: [{
         name: '.Net',
         bookmarks: ['download'],
@@ -33,30 +33,70 @@ export type AddBookmark = {
     bookmarkModel: BookmarkModel;
 }
 
-function addBookmark(state: BookmarksAppState, action) {
-    let { tags, bookmarks } = state;
-    let tag = tags.find(x => x.name == action.tagName);
-    tag.bookmarks.push(action.bookmarkModel);
-    bookmarks.push(action.bookmarkModel);    // añadir bookmark
-    tags = tags.map(x => x.name == tag.name ? tag : x); // reeplazar tag
-    
-    return state;
+export type AddOrEditTagParams = {
+    addOrEditTagResult: AddOrEditTagResult;
+    parentTagName: string;
 }
 
-function addOrEditTag(state) {
-    return state;
+export type Search = {
+    searchValue: string;
 }
 
-
-createSlice<BookmarksAppState, {}>({
+const bookmarksSlice = createSlice({
     name: 'bookmarks',
     initialState: initialState,
     reducers: {
-        ADD_BOOKMARK: addBookmark,
-        ADD_OR_EDIT_TAG: addOrEditTag
+        addBookmark(state: BookmarksAppState, action: PayloadAction<AddBookmark>) {
+            let { tags, bookmarks } = state;
+            const { tagName, bookmarkModel } = action.payload;
+            let tag = tags.find(x => x.name == tagName);
+            tag.bookmarks.push(bookmarkModel.name);
+            bookmarks.push(bookmarkModel);    // añadir bookmark
+            tags = tags.map(x => x.name == tag.name ? tag : x); // reeplazar tag
+
+            return state;
+        },
+        addOrEditTag(state: BookmarksAppState, action: PayloadAction<AddOrEditTagParams>) {
+            let tags = state.tags;
+            const { addOrEditTagResult, parentTagName } = action.payload;
+            let tagToAddOrEdit = state.tags.find(x => x.name == addOrEditTagResult.oldName);
+            if (tagToAddOrEdit) {  // edit
+                tagToAddOrEdit.name = addOrEditTagResult.name;
+                tags = tags.map(x => x.name == addOrEditTagResult.oldName ? tagToAddOrEdit : x);
+
+                // en el padre reemplazar el subtag por el nuevo nombre
+                let parentTag = state.tags.find(x => x.name == parentTagName);
+                if (parentTag) {
+                    parentTag.subTags = parentTag.subTags.map(x => x == addOrEditTagResult.oldName ? tagToAddOrEdit.name : x);
+                    tags = tags.map(x => x.name == parentTag.name ? parentTag : x);
+                }
+            } else {
+                tagToAddOrEdit = addOrEditTagResult;
+                tags.push(tagToAddOrEdit);
+                let parentTag = tags.find(x => x.name == parentTagName);
+                if (parentTag) {
+                    if (!parentTag.subTags) {
+                        parentTag.subTags = [];
+                    }
+                    parentTag.subTags.push(tagToAddOrEdit.name);
+                    tags = tags.map(x => x.name == parentTag.name ? parentTag : x);
+                }
+                else {
+                    tagToAddOrEdit.isRoot = true;
+                }
+            }
+            return state;
+        },
+        search(state: BookmarksAppState, action: PayloadAction<Search>) {
+            return state    // TODO:
+        }
     }
 });
 
-function replaceTag(tags: TagModelState[], tag: TagModelState): TagModelState[] {
-    return tags.map(x => x.name == tag.name ? tag : x);
-}
+export const {
+    addBookmark,
+    addOrEditTag,
+    search
+} = bookmarksSlice.actions;
+
+export default bookmarksSlice.reducer;
