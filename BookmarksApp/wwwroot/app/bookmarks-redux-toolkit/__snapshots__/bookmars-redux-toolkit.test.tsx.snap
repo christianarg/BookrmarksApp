@@ -1,0 +1,43 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TagsRoot tests Render root tag  empty tags 1`] = `
+<div>
+  <TagSearch
+    onSearchChange={null}
+  />
+  <Tags
+    parentTag={null}
+    tags={Array []}
+  />
+  <AddOrEditTag
+    isRoot={true}
+    onAddOrEdit={[Function]}
+  />
+</div>
+`;
+
+exports[`TagsRoot tests Render root tag with tags 1`] = `
+<div>
+  <TagSearch
+    onSearchChange={null}
+  />
+  <Tags
+    parentTag={null}
+    tags={
+      Array [
+        Object {
+          "bookmarks": Array [
+            "bookmark1",
+            "bookmark2",
+          ],
+          "name": "tag",
+        },
+      ]
+    }
+  />
+  <AddOrEditTag
+    isRoot={true}
+    onAddOrEdit={[Function]}
+  />
+</div>
+`;

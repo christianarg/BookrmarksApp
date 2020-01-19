@@ -21,7 +21,6 @@ export function bookmarkApp(state: BookmarksAppState, action: BookmarkActionType
             };
 
         case ADD_OR_EDIT_TAG:
-
             let tags: TagModelState[];
             let tagToAddOrEdit = state.tags.find(x => x.name == action.addOrEditTagResult.oldName);
             if (tagToAddOrEdit) {  // edit
