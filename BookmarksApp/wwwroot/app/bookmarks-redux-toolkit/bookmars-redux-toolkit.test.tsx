@@ -1,8 +1,12 @@
 ﻿import * as React from 'react';
 import { shallow, render } from 'enzyme';
 import { shallowToJson } from 'enzyme-to-json';
-import { TagsRoot } from '../bookmarks-redux/bookmarks-redux';
+import { TagsRoot, ConnectedTagsRoot } from '../bookmarks-redux/bookmarks-redux';
 import { TagModelState } from './bookmarks-redux-toolkit';
+import { Provider } from 'react-redux';
+import reducer, { addBookmark } from './bookmark-slice'
+import { configureStore } from '@reduxjs/toolkit';
+
 
 
 describe("TagsRoot tests", () => {
@@ -29,6 +33,7 @@ describe("TagsRoot tests", () => {
         // ASSERT
         expect(shallowToJson(tagsRoot)).toMatchSnapshot();
     });
+    
 
     test("Add root tag", () => {
         // ARRANGE
@@ -56,12 +61,45 @@ describe("TagsRoot tests", () => {
         // ASSERT
     });
 
-    test("Render nested tag", () => {
-        // ARRANGE
+    
 
+});
+
+
+describe("ConnectedTagsRoot tests", () => {
+
+    test("Render ConnectedRoot tag  empty tags", () => {
+        // ARRANGE
+        const tags: TagModelState[] = []
+        const store = configureStore({ reducer: reducer });
         // ACT
+        const tagsRoot = shallow(<Provider store={store}><ConnectedTagsRoot /></Provider>);
 
         // ASSERT
+        expect(shallowToJson(tagsRoot)).toMatchSnapshot();
     });
 
+    //test("Render ConnectedRoot  with tags", () => {
+    //    // ARRANGE
+    //    const tags: TagModelState[] = [{
+    //        name: 'tag',
+    //        bookmarks: ['bookmark1', 'bookmark2']
+    //    }]
+    //    // ACT
+    //    const tagsRoot = shallow(<ConnectedTagsRoot/>);
+
+    //    // ASSERT
+    //    expect(shallowToJson(tagsRoot)).toMatchSnapshot();
+    //});
+});
+
+
+describe("test actions", () => {
+    test('add bookmark', () => {
+        // ARRANGE
+        const store = configureStore({ reducer: reducer });
+        // ACT
+        //addBookmark({});
+        // ASSERT
+    });
 });

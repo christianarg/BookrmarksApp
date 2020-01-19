@@ -1,5 +1,42 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`ConnectedTagsRoot tests Render ConnectedRoot tag  empty tags 1`] = `
+<ContextProvider
+  value={
+    Object {
+      "store": Object {
+        "dispatch": [Function],
+        "getState": [Function],
+        "replaceReducer": [Function],
+        "subscribe": [Function],
+        Symbol(observable): [Function],
+      },
+      "subscription": Subscription {
+        "handleChangeWrapper": [Function],
+        "listeners": Object {
+          "clear": [Function],
+          "get": [Function],
+          "notify": [Function],
+          "subscribe": [Function],
+        },
+        "onStateChange": [Function],
+        "parentSub": undefined,
+        "store": Object {
+          "dispatch": [Function],
+          "getState": [Function],
+          "replaceReducer": [Function],
+          "subscribe": [Function],
+          Symbol(observable): [Function],
+        },
+        "unsubscribe": [Function],
+      },
+    }
+  }
+>
+  <Connect(TagsRoot) />
+</ContextProvider>
+`;
+
 exports[`TagsRoot tests Render root tag  empty tags 1`] = `
 <div>
   <TagSearch

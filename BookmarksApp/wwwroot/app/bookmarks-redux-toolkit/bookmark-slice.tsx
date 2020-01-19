@@ -4,6 +4,11 @@ import { AddOrEditTagResult } from './bookmarks-redux-toolkit';
 
 
 const initialState: BookmarksAppState = {
+    bookmarks: [],
+    tags: []
+};
+
+export const sampleState: BookmarksAppState = {
     tags:
         [
             {
@@ -32,6 +37,11 @@ const initialState: BookmarksAppState = {
 
 };
 
+/**Para tests o carga inicial */
+export type SetAllState = {
+    newState: BookmarksAppState;
+}
+
 export type AddBookmark = {
     tagName: string;
     bookmarkModel: BookmarkModel;
@@ -50,6 +60,10 @@ const bookmarksSlice = createSlice({
     name: 'bookmarks',
     initialState: initialState,
     reducers: {
+        recieveState(state, action: PayloadAction<SetAllState>) {
+            state.bookmarks = action.payload.newState.bookmarks;
+            state.tags = action.payload.newState.tags;
+        },
         addBookmark(state, action: PayloadAction<AddBookmark>) {
             let { tags, bookmarks } = state;
             const { tagName, bookmarkModel } = action.payload;
@@ -117,7 +131,8 @@ export const {
     addBookmark,
     addOrEditTag,
     editBookmark,
-    search
+    search,
+    recieveState
 } = bookmarksSlice.actions;
 
 export default bookmarksSlice.reducer;

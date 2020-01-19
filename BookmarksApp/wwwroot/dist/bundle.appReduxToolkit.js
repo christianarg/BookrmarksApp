@@ -6136,6 +6136,10 @@ var App = /** @class */ (function (_super) {
     function App() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    App.prototype.componentDidMount = function () {
+        // Estado inicial de pruebas (aqui habría que hacer un fetch)
+        store.dispatch(bookmark_slice_1.recieveState({ newState: bookmark_slice_1.sampleState }));
+    };
     App.prototype.render = function () {
         return (React.createElement(react_redux_1.Provider, { store: store },
             React.createElement(bookmarks_redux_toolkit_1.ConnectedTagsRoot, null)));
@@ -6161,6 +6165,10 @@ var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 var toolkit_1 = __webpack_require__(/*! @reduxjs/toolkit */ "./node_modules/@reduxjs/toolkit/dist/redux-toolkit.esm.js");
 var initialState = {
+    bookmarks: [],
+    tags: []
+};
+exports.sampleState = {
     tags: [
         {
             name: '.Net',
@@ -6189,6 +6197,10 @@ var bookmarksSlice = toolkit_1.createSlice({
     name: 'bookmarks',
     initialState: initialState,
     reducers: {
+        recieveState: function (state, action) {
+            state.bookmarks = action.payload.newState.bookmarks;
+            state.tags = action.payload.newState.tags;
+        },
         addBookmark: function (state, action) {
             var tags = state.tags, bookmarks = state.bookmarks;
             var _a = action.payload, tagName = _a.tagName, bookmarkModel = _a.bookmarkModel;
@@ -6248,7 +6260,7 @@ var bookmarksSlice = toolkit_1.createSlice({
         }
     }
 });
-exports.addBookmark = (_a = bookmarksSlice.actions, _a.addBookmark), exports.addOrEditTag = _a.addOrEditTag, exports.editBookmark = _a.editBookmark, exports.search = _a.search;
+exports.addBookmark = (_a = bookmarksSlice.actions, _a.addBookmark), exports.addOrEditTag = _a.addOrEditTag, exports.editBookmark = _a.editBookmark, exports.search = _a.search, exports.recieveState = _a.recieveState;
 exports.default = bookmarksSlice.reducer;
 
 
