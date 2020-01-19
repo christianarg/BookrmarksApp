@@ -6230,11 +6230,17 @@ var bookmarksSlice = toolkit_1.createSlice({
             return state;
         },
         editBookmark: function (state, action) {
-            var oldName = action.payload.oldName;
-            var bookmarks = state.bookmarks;
-            // reemplazar // TODO NO VA
+            var _a = action.payload, oldName = _a.oldName, name = _a.name;
+            var bookmarks = state.bookmarks, tags = state.tags;
+            // reemplazar el bookmar en el estado global
             var bookMarkIndex = bookmarks.findIndex(function (x) { return x.name == oldName; });
             bookmarks[bookMarkIndex] = action.payload;
+            // si cambia el nombre hay que reemplazarlo en el bookmark del tag (si hacen falta id's sino esto se puede liar, o bien que el bookmark tenga el tagname)
+            if (name != oldName) {
+                var tagWithChangedBookmark = tags.find(function (x) { return x.bookmarks.some(function (bookmarkName) { return bookmarkName == oldName; }); });
+                var bookMarkIndexInTag = tagWithChangedBookmark.bookmarks.findIndex(function (x) { return x == oldName; });
+                tagWithChangedBookmark.bookmarks[bookMarkIndexInTag] = name;
+            }
             return state;
         },
         search: function (state, action) {

@@ -92,11 +92,19 @@ const bookmarksSlice = createSlice({
             return state;
         },
         editBookmark(state, action: PayloadAction<EditBookmark>) {
-            const { oldName } = action.payload
-            let bookmarks = state.bookmarks;
-            // reemplazar // TODO NO VA
+            const { oldName, name } = action.payload
+            let { bookmarks, tags } = state;
+
+            // reemplazar el bookmar en el estado global
             const bookMarkIndex = bookmarks.findIndex(x => x.name == oldName);
             bookmarks[bookMarkIndex] = action.payload;
+
+            // si cambia el nombre hay que reemplazarlo en el bookmark del tag (si hacen falta id's sino esto se puede liar, o bien que el bookmark tenga el tagname)
+            if (name != oldName) {
+                const tagWithChangedBookmark = tags.find(x => x.bookmarks.some(bookmarkName => bookmarkName == oldName));
+                const bookMarkIndexInTag = tagWithChangedBookmark.bookmarks.findIndex(x => x == oldName);
+                tagWithChangedBookmark.bookmarks[bookMarkIndexInTag] = name;
+            }
             return state;
         },
         search(state: BookmarksAppState, action: PayloadAction<Search>) {

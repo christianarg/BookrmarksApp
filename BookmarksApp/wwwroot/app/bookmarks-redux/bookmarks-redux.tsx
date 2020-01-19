@@ -26,7 +26,7 @@ export type TagModelState = {
 
 export type AddOrEditTagResult = TagModelState & { oldName?: string; }
 
-export type EditBookmark = BookmarkModel & { oldName: string };
+export type EditBookmark = BookmarkModel & { oldName: string; };
 
 // **BookmarkComponent**
 
@@ -249,7 +249,7 @@ type ConnectedTagProps = {
     tagName: string;
 }
 
-export const ConnectedTag: React.ComponentClass<ConnectedTagProps> = connect(TagMapStateToProps, TagMapDispatchToProps )(Tag);
+export const ConnectedTag: React.ComponentClass<ConnectedTagProps> = connect(TagMapStateToProps, TagMapDispatchToProps)(Tag);
 
 // **TagsComponent**
 
