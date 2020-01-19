@@ -436,7 +436,6 @@ function getDefaultMiddleware(options) {
   if (true) {
     if (immutableCheck) {
       /* PROD_START_REMOVE_UMD */
-      // UMD-ONLY: const createImmutableStateInvariantMiddleware = require('redux-immutable-state-invariant').default
       var immutableOptions = {};
 
       if (!isBoolean(immutableCheck)) {
@@ -6162,7 +6161,8 @@ var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 var toolkit_1 = __webpack_require__(/*! @reduxjs/toolkit */ "./node_modules/@reduxjs/toolkit/dist/redux-toolkit.esm.js");
 var initialState = {
-    tags: [{
+    tags: [
+        {
             name: '.Net',
             bookmarks: ['download'],
             subTags: ['Asp.net'],
@@ -6176,7 +6176,8 @@ var initialState = {
             name: 'React',
             bookmarks: ['react docs'],
             isRoot: true
-        }],
+        }
+    ],
     bookmarks: [
         { name: 'download', url: 'https://dotnet.microsoft.com/download' },
         { name: 'asp.net', url: 'https://dotnet.microsoft.com/apps/aspnet' },
@@ -6194,7 +6195,7 @@ var bookmarksSlice = toolkit_1.createSlice({
             var tag = tags.find(function (x) { return x.name == tagName; });
             tag.bookmarks.push(bookmarkModel.name);
             bookmarks.push(bookmarkModel); // añadir bookmark
-            tags = tags.map(function (x) { return x.name == tag.name ? tag : x; }); // reeplazar tag
+            //tags = tags.map(x => x.name == tag.name ? tag : x); // reeplazar tag (no hace falta por el immer)
             return state;
         },
         addOrEditTag: function (state, action) {
@@ -6295,8 +6296,9 @@ function Bookmarks(props) {
 exports.Bookmarks = Bookmarks;
 var AddOrEditBookmark = /** @class */ (function (_super) {
     __extends(AddOrEditBookmark, _super);
-    function AddOrEditBookmark(props) {
-        var _this = _super.call(this, props) || this;
+    function AddOrEditBookmark() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.state = { isFormVisible: false, name: "", url: "" };
         _this.handleSubmit = function (evt) {
             evt.preventDefault();
             var _a = _this.state, name = _a.name, url = _a.url;
@@ -6315,15 +6317,25 @@ var AddOrEditBookmark = /** @class */ (function (_super) {
         _this.toggleShow = function () {
             _this.setState({ isFormVisible: !_this.state.isFormVisible });
         };
-        var bookmarkToEdit = _this.props.bookmarkToEdit;
-        if (bookmarkToEdit) {
-            _this.state = { isFormVisible: false, name: bookmarkToEdit.name, url: bookmarkToEdit.url };
-        }
-        else {
-            _this.state = { isFormVisible: false, name: "", url: "" };
-        }
         return _this;
     }
+    AddOrEditBookmark.prototype.componentDidMount = function () {
+        this.updateFormWithBookmark();
+    };
+    AddOrEditBookmark.prototype.componentDidUpdate = function (prevProps) {
+        if (prevProps.bookmarkToEdit != this.props.bookmarkToEdit) {
+            this.updateFormWithBookmark();
+        }
+    };
+    AddOrEditBookmark.prototype.updateFormWithBookmark = function () {
+        var bookmarkToEdit = this.props.bookmarkToEdit;
+        if (bookmarkToEdit) {
+            this.setState({ name: bookmarkToEdit.name, url: bookmarkToEdit.url });
+        }
+        else {
+            this.setState({ name: "", url: "" });
+        }
+    };
     AddOrEditBookmark.prototype.hasValue = function () {
         var _a = this.state, name = _a.name, url = _a.url;
         return (name && url);

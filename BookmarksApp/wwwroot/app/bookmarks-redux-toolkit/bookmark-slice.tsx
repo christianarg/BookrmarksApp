@@ -4,27 +4,31 @@ import { AddOrEditTagResult } from './bookmarks-redux-toolkit';
 
 
 const initialState: BookmarksAppState = {
-    tags: [{
-        name: '.Net',
-        bookmarks: ['download'],
-        subTags: ['Asp.net'],
-        isRoot: true
-    },
-    {
-        name: 'Asp.net',
-        bookmarks: ['asp.net', 'asp.net core']
-    },
-    {
-        name: 'React',
-        bookmarks: ['react docs'],
-        isRoot: true
-    }],
-    bookmarks: [
-        { name: 'download', url: 'https://dotnet.microsoft.com/download' },
-        { name: 'asp.net', url: 'https://dotnet.microsoft.com/apps/aspnet' },
-        { name: 'asp.net core', url: 'https://docs.microsoft.com/es-es/aspnet/core/?view=aspnetcore-2.2' },
-        { name: 'react docs', url: 'https://reactjs.org/docs/getting-started.html' }
-    ]
+    tags:
+        [
+            {
+                name: '.Net',
+                bookmarks: ['download'],
+                subTags: ['Asp.net'],
+                isRoot: true
+            },
+            {
+                name: 'Asp.net',
+                bookmarks: ['asp.net', 'asp.net core']
+            },
+            {
+                name: 'React',
+                bookmarks: ['react docs'],
+                isRoot: true
+            }
+        ],
+    bookmarks:
+        [
+            { name: 'download', url: 'https://dotnet.microsoft.com/download' },
+            { name: 'asp.net', url: 'https://dotnet.microsoft.com/apps/aspnet' },
+            { name: 'asp.net core', url: 'https://docs.microsoft.com/es-es/aspnet/core/?view=aspnetcore-2.2' },
+            { name: 'react docs', url: 'https://reactjs.org/docs/getting-started.html' }
+        ]
 
 };
 
@@ -52,7 +56,7 @@ const bookmarksSlice = createSlice({
             let tag = tags.find(x => x.name == tagName);
             tag.bookmarks.push(bookmarkModel.name);
             bookmarks.push(bookmarkModel);    // añadir bookmark
-            tags = tags.map(x => x.name == tag.name ? tag : x); // reeplazar tag
+            //tags = tags.map(x => x.name == tag.name ? tag : x); // reeplazar tag (no hace falta por el immer)
 
             return state;
         },

@@ -47,26 +47,43 @@ type AddOrEditBookmarkProps = {
     bookmarkToEdit?: BookmarkModel;
     onAddOrEdit: (newBookmark: EditBookmark) => void;
 };
+
 type AddOrEditBookmarkState = {
     isFormVisible: boolean;
     name: string;
     url: string;
 };
+
 export class AddOrEditBookmark extends React.Component<AddOrEditBookmarkProps, AddOrEditBookmarkState> {
-    constructor(props) {
-        super(props);
-        const bookmarkToEdit = this.props.bookmarkToEdit;
-        if (bookmarkToEdit) {
-            this.state = { isFormVisible: false, name: bookmarkToEdit.name, url: bookmarkToEdit.url };
-        }
-        else {
-            this.state = { isFormVisible: false, name: "", url: "" };
+
+    state: AddOrEditBookmarkState = { isFormVisible: false, name: "", url: "" };
+
+    componentDidMount() {
+        this.updateFormWithBookmark();
+    }
+
+    componentDidUpdate(prevProps: AddOrEditBookmarkProps) {
+        if (prevProps.bookmarkToEdit != this.props.bookmarkToEdit) {
+            this.updateFormWithBookmark();
         }
     }
+
+    updateFormWithBookmark() {
+        const bookmarkToEdit = this.props.bookmarkToEdit;
+        if (bookmarkToEdit) {
+            this.setState({ name: bookmarkToEdit.name, url: bookmarkToEdit.url });
+        }
+        else {
+            this.setState({ name: "", url: "" });
+        }
+    }
+
     hasValue() {
         const { name, url } = this.state;
         return (name && url);
     }
+
+
     handleSubmit = (evt: React.FormEvent) => {
         evt.preventDefault();
         const { name, url } = this.state;
@@ -76,6 +93,7 @@ export class AddOrEditBookmark extends React.Component<AddOrEditBookmarkProps, A
             this.setState({ isFormVisible: false, url: "", name: "" });
         }
     };
+
     handleNameChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
         this.setState({ name: evt.target.value });
     };
@@ -85,12 +103,14 @@ export class AddOrEditBookmark extends React.Component<AddOrEditBookmarkProps, A
     toggleShow = () => {
         this.setState({ isFormVisible: !this.state.isFormVisible });
     };
+
     buttonStyle(): React.CSSProperties {
         if (!this.hasValue()) {
             return { cursor: 'not-allowed' };
         }
         return null;
     }
+
     render() {
         let bookmarkToEdit = this.props.bookmarkToEdit;
         const idEdit = bookmarkToEdit != null;
@@ -314,7 +334,7 @@ const tagsRootMapStateToProps = (state: BookmarksAppState): TagsRootStateProps =
 
 const tagsRootMapDispatchToProps = (dispatch: React.Dispatch<Action<any>>): TagsRootDispatchProps => {
     return {
-        addOrEditTag: (addOrEditTagResult: AddOrEditTagResult) => dispatch(addOrEditTag({ addOrEditTagResult: addOrEditTagResult, parentTagName: null})),
+        addOrEditTag: (addOrEditTagResult: AddOrEditTagResult) => dispatch(addOrEditTag({ addOrEditTagResult: addOrEditTagResult, parentTagName: null })),
         search: (searchValue: string) => dispatch(search({ searchValue: searchValue }))
     }
 }
