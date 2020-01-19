@@ -1,6 +1,5 @@
-﻿import { BookmarksAppState } from "./tagsRoot";
+﻿import { BookmarksAppState, TagModelState } from "./bookmarks-redux";
 import { BookmarkActionTypes, ADD_BOOKMARK, ADD_OR_EDIT_TAG, SEARCH } from "./actions";
-import { TagModelState } from "./bookmark-model";
 
 export function bookmarkApp(state: BookmarksAppState, action: BookmarkActionTypes): BookmarksAppState {
     if (state == null) {
