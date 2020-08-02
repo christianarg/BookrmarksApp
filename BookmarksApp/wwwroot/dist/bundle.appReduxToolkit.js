@@ -5921,12 +5921,16 @@ function getTags(state, tagNames) {
     var allTags = state.tags;
     return allTags.filter(function (x) { return tagNames.some(function (tagName) { return tagName == x.name; }); });
 }
+function getBookmarks(state, bookmarkNames) {
+    var allBookmarks = state.bookmarks;
+    return allBookmarks.filter(function (x) { return bookmarkNames.some(function (bookmarkName) { return bookmarkName == x.name; }); });
+}
 function filterTags(state, tags, searchText) {
     var allTags = state.tags;
     tags.forEach(function (tag) {
-        var _a, _b;
-        var hiddenBookMarksOfThisTag = (_a = tag.bookmarks) === null || _a === void 0 ? void 0 : _a.map(function (bookmark) { return !hasText(bookmark, searchText); });
-        var anyBookmarkVisible = ((_b = tag.bookmarks) === null || _b === void 0 ? void 0 : _b.length) > (hiddenBookMarksOfThisTag === null || hiddenBookMarksOfThisTag === void 0 ? void 0 : hiddenBookMarksOfThisTag.length);
+        var bookmarks = getBookmarks(state, tag.bookmarks);
+        bookmarks.forEach(function (bookmark) { return bookmark.hidden = !hasText(bookmark.name, searchText); });
+        var anyBookmarkVisible = bookmarks.some(function (b) { return !b.hidden; });
         var tagNameHasText = hasText(tag.name, searchText);
         var anySubTagsVisible = tag.subTags && getTags(state, tag.subTags).some(function (t) { return !t.hidden; });
         tag.hidden = !tagNameHasText && !anyBookmarkVisible && !anySubTagsVisible;

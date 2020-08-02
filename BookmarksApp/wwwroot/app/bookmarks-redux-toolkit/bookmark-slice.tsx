@@ -146,13 +146,21 @@ function getTags(state: BookmarksAppState, tagNames: string[]): TagModelState[] 
     return allTags.filter(x => tagNames.some(tagName => tagName == x.name));
 }
 
+function getBookmarks(state: BookmarksAppState, bookmarkNames: string[]): BookmarkModel[] {
+    const allBookmarks = state.bookmarks;
+
+    return allBookmarks.filter(x => bookmarkNames.some(bookmarkName => bookmarkName == x.name));
+}
+
 export function filterTags(state: BookmarksAppState, tags: TagModelState[], searchText: string) {
     const allTags = state.tags;
 
     tags.forEach(tag => {
-        const hiddenBookMarksOfThisTag = tag.bookmarks?.map(bookmark => !hasText(bookmark, searchText));
+        const bookmarks = getBookmarks(state, tag.bookmarks);
 
-        const anyBookmarkVisible = tag.bookmarks?.length > hiddenBookMarksOfThisTag?.length;
+        bookmarks.forEach(bookmark => bookmark.hidden = !hasText(bookmark.name, searchText));
+        const anyBookmarkVisible = bookmarks.some(b => !b.hidden);
+
         const tagNameHasText = hasText(tag.name, searchText);
 
         const anySubTagsVisible = tag.subTags && getTags(state, tag.subTags).some(t => !t.hidden);
