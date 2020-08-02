@@ -1,11 +1,12 @@
 ﻿import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { BookmarksAppState, TagModelState, BookmarkModel, EditBookmark } from '../bookmarks-redux/bookmarks-redux';
+import { BookmarksAppState, TagModelState, BookmarkModel, EditBookmark } from './bookmarks-redux-toolkit';
 import { AddOrEditTagResult } from './bookmarks-redux-toolkit';
 
 
 const initialState: BookmarksAppState = {
     bookmarks: [],
-    tags: []
+    tags: [],
+    searchValue: ''
 };
 
 export const sampleState: BookmarksAppState = {
@@ -33,8 +34,8 @@ export const sampleState: BookmarksAppState = {
             { name: 'asp.net', url: 'https://dotnet.microsoft.com/apps/aspnet' },
             { name: 'asp.net core', url: 'https://docs.microsoft.com/es-es/aspnet/core/?view=aspnetcore-2.2' },
             { name: 'react docs', url: 'https://reactjs.org/docs/getting-started.html' }
-        ]
-
+        ],
+    searchValue: ''
 };
 
 /**Para tests o carga inicial */
@@ -122,10 +123,34 @@ const bookmarksSlice = createSlice({
             return state;
         },
         search(state: BookmarksAppState, action: PayloadAction<Search>) {
+            const searchText = action.payload.searchValue;
+            state.searchValue = searchText;
+            const tags = state.tags;
+            const bookmarks = state.bookmarks;
+
+            //bookmarks.forEach(bookmark => bookmark.hidden = !hasText(bookmark.name, searchText));
+            tags.forEach(tag => tag.hidden = !hasText(tag.name, searchText));
             return state    // TODO:
         }
     }
 });
+
+function hasText(text: string, searchText: string) {
+    return text.toLowerCase().includes(searchText.toLowerCase());
+}
+
+//export function filterTags(tags: TagModelState[], searchText: string) {
+//    tags.forEach(tag => {
+//        tag.bookmarks.forEach(bookmark => bookmark.hidden = !hasText(bookmark.name, searchText));
+//        const anyBookmarkVisible = tag.bookmarks.some(b => !b.hidden);
+//        const tagNameHasText = hasText(tag.name, searchText);
+//        const anySubTagsVisible = tag.subTags && tag.subTags.some(t => !t.hidden);
+//        tag.hidden = !tagNameHasText && !anyBookmarkVisible && !anySubTagsVisible;
+//        if (tag.subTags) {
+//            filterTags(tag.subTags, searchText);
+//        }
+//    });
+//}
 
 export const {
     addBookmark,

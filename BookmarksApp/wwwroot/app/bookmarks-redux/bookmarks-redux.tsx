@@ -8,6 +8,7 @@ import { addBookmark, addOrEditTag, search } from './actions';
 export type BookmarksAppState = {
     bookmarks: BookmarkModel[];
     tags: TagModelState[];
+    searchValue: string;
 }
 
 export type BookmarkModel = {
@@ -310,7 +311,7 @@ export function TagsRoot(props: TagsRootProps) {
 const tagsRootMapStateToProps = (state: BookmarksAppState): TagsRootStateProps => {
     return {
         tags: state.tags.filter(x => x.isRoot),
-        searachText: ''
+        searachText: state.searchValue
     };
 }
 

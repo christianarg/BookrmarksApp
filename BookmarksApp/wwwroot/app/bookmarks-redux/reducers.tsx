@@ -92,6 +92,6 @@ export const initialState: BookmarksAppState = {
         { name: 'asp.net', url: 'https://dotnet.microsoft.com/apps/aspnet' },
         { name: 'asp.net core', url: 'https://docs.microsoft.com/es-es/aspnet/core/?view=aspnetcore-2.2' },
         { name: 'react docs', url: 'https://reactjs.org/docs/getting-started.html' }
-    ]
-
+    ],
+    searchValue: ''
 };
