@@ -125,11 +125,12 @@ const bookmarksSlice = createSlice({
         search(state: BookmarksAppState, action: PayloadAction<Search>) {
             const searchText = action.payload.searchValue;
             state.searchValue = searchText;
-            const tags = state.tags;
-            const bookmarks = state.bookmarks;
+            filterTags(state, state.tags, state.searchValue);
+            //const tags = state.tags;
+            //const bookmarks = state.bookmarks;
 
-            //bookmarks.forEach(bookmark => bookmark.hidden = !hasText(bookmark.name, searchText));
-            tags.forEach(tag => tag.hidden = !hasText(tag.name, searchText));
+            ////bookmarks.forEach(bookmark => bookmark.hidden = !hasText(bookmark.name, searchText));
+            //tags.forEach(tag => tag.hidden = !hasText(tag.name, searchText));
             return state    // TODO:
         }
     }
@@ -139,18 +140,28 @@ function hasText(text: string, searchText: string) {
     return text.toLowerCase().includes(searchText.toLowerCase());
 }
 
-//export function filterTags(tags: TagModelState[], searchText: string) {
-//    tags.forEach(tag => {
-//        tag.bookmarks.forEach(bookmark => bookmark.hidden = !hasText(bookmark.name, searchText));
-//        const anyBookmarkVisible = tag.bookmarks.some(b => !b.hidden);
-//        const tagNameHasText = hasText(tag.name, searchText);
-//        const anySubTagsVisible = tag.subTags && tag.subTags.some(t => !t.hidden);
-//        tag.hidden = !tagNameHasText && !anyBookmarkVisible && !anySubTagsVisible;
-//        if (tag.subTags) {
-//            filterTags(tag.subTags, searchText);
-//        }
-//    });
-//}
+function getTags(state: BookmarksAppState, tagNames: string[]): TagModelState[] {
+    const allTags = state.tags;
+
+    return allTags.filter(x => tagNames.some(tagName => tagName == x.name));
+}
+
+export function filterTags(state: BookmarksAppState, tags: TagModelState[], searchText: string) {
+    const allTags = state.tags;
+
+    tags.forEach(tag => {
+        const hiddenBookMarksOfThisTag = tag.bookmarks?.map(bookmark => !hasText(bookmark, searchText));
+
+        const anyBookmarkVisible = tag.bookmarks?.length > hiddenBookMarksOfThisTag?.length;
+        const tagNameHasText = hasText(tag.name, searchText);
+
+        const anySubTagsVisible = tag.subTags && getTags(state, tag.subTags).some(t => !t.hidden);
+        tag.hidden = !tagNameHasText && !anyBookmarkVisible && !anySubTagsVisible;
+        if (tag.subTags) {
+            filterTags(state, getTags(state, tag.subTags), searchText);
+        }
+    });
+}
 
 export const {
     addBookmark,

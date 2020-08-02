@@ -5767,6 +5767,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.App = void 0;
 var React = __webpack_require__(/*! react */ "react");
 var ReactDOM = __webpack_require__(/*! react-dom */ "react-dom");
 var bookmarks_redux_toolkit_1 = __webpack_require__(/*! ./bookmarks-redux-toolkit */ "./wwwroot/app/bookmarks-redux-toolkit/bookmarks-redux-toolkit.tsx");
@@ -5806,6 +5807,7 @@ ReactDOM.render(React.createElement(App, null), document.getElementById('root'))
 
 var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.recieveState = exports.search = exports.editBookmark = exports.addOrEditTag = exports.addBookmark = exports.filterTags = exports.sampleState = void 0;
 var toolkit_1 = __webpack_require__(/*! @reduxjs/toolkit */ "./node_modules/@reduxjs/toolkit/dist/redux-toolkit.esm.js");
 var initialState = {
     bookmarks: [],
@@ -5903,10 +5905,11 @@ var bookmarksSlice = toolkit_1.createSlice({
         search: function (state, action) {
             var searchText = action.payload.searchValue;
             state.searchValue = searchText;
-            var tags = state.tags;
-            var bookmarks = state.bookmarks;
-            //bookmarks.forEach(bookmark => bookmark.hidden = !hasText(bookmark.name, searchText));
-            tags.forEach(function (tag) { return tag.hidden = !hasText(tag.name, searchText); });
+            filterTags(state, state.tags, state.searchValue);
+            //const tags = state.tags;
+            //const bookmarks = state.bookmarks;
+            ////bookmarks.forEach(bookmark => bookmark.hidden = !hasText(bookmark.name, searchText));
+            //tags.forEach(tag => tag.hidden = !hasText(tag.name, searchText));
             return state; // TODO:
         }
     }
@@ -5914,18 +5917,25 @@ var bookmarksSlice = toolkit_1.createSlice({
 function hasText(text, searchText) {
     return text.toLowerCase().includes(searchText.toLowerCase());
 }
-//export function filterTags(tags: TagModelState[], searchText: string) {
-//    tags.forEach(tag => {
-//        tag.bookmarks.forEach(bookmark => bookmark.hidden = !hasText(bookmark.name, searchText));
-//        const anyBookmarkVisible = tag.bookmarks.some(b => !b.hidden);
-//        const tagNameHasText = hasText(tag.name, searchText);
-//        const anySubTagsVisible = tag.subTags && tag.subTags.some(t => !t.hidden);
-//        tag.hidden = !tagNameHasText && !anyBookmarkVisible && !anySubTagsVisible;
-//        if (tag.subTags) {
-//            filterTags(tag.subTags, searchText);
-//        }
-//    });
-//}
+function getTags(state, tagNames) {
+    var allTags = state.tags;
+    return allTags.filter(function (x) { return tagNames.some(function (tagName) { return tagName == x.name; }); });
+}
+function filterTags(state, tags, searchText) {
+    var allTags = state.tags;
+    tags.forEach(function (tag) {
+        var _a, _b;
+        var hiddenBookMarksOfThisTag = (_a = tag.bookmarks) === null || _a === void 0 ? void 0 : _a.map(function (bookmark) { return !hasText(bookmark, searchText); });
+        var anyBookmarkVisible = ((_b = tag.bookmarks) === null || _b === void 0 ? void 0 : _b.length) > (hiddenBookMarksOfThisTag === null || hiddenBookMarksOfThisTag === void 0 ? void 0 : hiddenBookMarksOfThisTag.length);
+        var tagNameHasText = hasText(tag.name, searchText);
+        var anySubTagsVisible = tag.subTags && getTags(state, tag.subTags).some(function (t) { return !t.hidden; });
+        tag.hidden = !tagNameHasText && !anyBookmarkVisible && !anySubTagsVisible;
+        if (tag.subTags) {
+            filterTags(state, getTags(state, tag.subTags), searchText);
+        }
+    });
+}
+exports.filterTags = filterTags;
 exports.addBookmark = (_a = bookmarksSlice.actions, _a.addBookmark), exports.addOrEditTag = _a.addOrEditTag, exports.editBookmark = _a.editBookmark, exports.search = _a.search, exports.recieveState = _a.recieveState;
 exports.default = bookmarksSlice.reducer;
 
@@ -5966,6 +5976,7 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ConnectedTagsRoot = exports.TagsRoot = exports.TagSearch = exports.Tags = exports.ConnectedTag = exports.Tag = exports.AddOrEditTag = exports.AddOrEditBookmark = exports.Bookmarks = void 0;
 var React = __webpack_require__(/*! react */ "react");
 var react_redux_1 = __webpack_require__(/*! react-redux */ "./node_modules/react-redux/es/index.js");
 var bookmark_slice_1 = __webpack_require__(/*! ./bookmark-slice */ "./wwwroot/app/bookmarks-redux-toolkit/bookmark-slice.tsx");
@@ -6063,7 +6074,7 @@ var AddOrEditTag = /** @class */ (function (_super) {
             var tagToEdit = _this.props.tagToEdit;
             if (name) {
                 if (tagToEdit) {
-                    var editTagResult = __assign({}, tagToEdit, { oldName: tagToEdit.name });
+                    var editTagResult = __assign(__assign({}, tagToEdit), { oldName: tagToEdit.name });
                     editTagResult.name = name;
                     _this.props.onAddOrEdit(editTagResult);
                 }
