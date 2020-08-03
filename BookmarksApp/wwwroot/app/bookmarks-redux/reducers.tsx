@@ -1,16 +1,15 @@
 ﻿import { BookmarksAppState, TagModelState } from "./bookmarks-redux";
-import { BookmarkActionTypes, ADD_BOOKMARK, ADD_OR_EDIT_TAG, SEARCH } from "./actions";
+import { BookmarkActionTypes, ADD_BOOKMARK, ADD_OR_EDIT_TAG, SEARCH, EDIT_BOOKMARK } from "./actions";
 
 export function bookmarkApp(state: BookmarksAppState, action: BookmarkActionTypes): BookmarksAppState {
     if (state == null) {
         return initialState;
     }
     switch (action.type) {
-        case SEARCH:
-
+        case SEARCH: {
             return { ...state }
-        case ADD_BOOKMARK:
-
+        }
+        case ADD_BOOKMARK: {
             let tag = state.tags.find(x => x.name == action.tagName);
             tag = { ...tag };
             tag.bookmarks = tag.bookmarks.concat(action.bookmarkModel.name);
@@ -19,8 +18,11 @@ export function bookmarkApp(state: BookmarksAppState, action: BookmarkActionType
                 bookmarks: state.bookmarks.concat(action.bookmarkModel),    // añadir bookmark
                 tags: state.tags.map(x => x.name == tag.name ? tag : x) // reeplazar tag
             };
+        }
 
-        case ADD_OR_EDIT_TAG:
+
+
+        case ADD_OR_EDIT_TAG: {
             let tags: TagModelState[];
             let tagToAddOrEdit = state.tags.find(x => x.name == action.addOrEditTagResult.oldName);
             if (tagToAddOrEdit) {  // edit
@@ -35,7 +37,7 @@ export function bookmarkApp(state: BookmarksAppState, action: BookmarkActionType
                 if (parentTag) {
                     parentTag = { ...parentTag };
                     parentTag.subTags = parentTag.subTags.map(x => x == action.addOrEditTagResult.oldName ? tagToAddOrEdit.name : x);
-                    tags = tags.map(x => x.name == parentTag.name ? parentTag: x);
+                    tags = tags.map(x => x.name == parentTag.name ? parentTag : x);
                 }
             } else {
                 tagToAddOrEdit = { ...action.addOrEditTagResult };
@@ -60,6 +62,18 @@ export function bookmarkApp(state: BookmarksAppState, action: BookmarkActionType
                 bookmarks: state.bookmarks.slice(0),
                 tags: tags
             };
+        }
+
+        case EDIT_BOOKMARK: {
+            let bookmarks = state.bookmarks.slice(0);
+            const editedBookmark = action.edit;
+            // replace bookmark
+            bookmarks = bookmarks.map(x => x.name == editedBookmark.oldName ? editedBookmark : x);
+            return {
+                ...state,
+                bookmarks
+            }
+        }
 
         default:
             throw 'Action desconocida';

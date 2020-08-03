@@ -47,6 +47,18 @@ export function search(searchValue: string): Search {
     }
 }
 
+export type EditBookmarkAction = {
+    type: typeof EDIT_BOOKMARK;
+    edit: EditBookmark;
+}
+
+
+export function editBookmark(edit: EditBookmark): EditBookmarkAction {
+    return {
+        type: EDIT_BOOKMARK,
+        edit: edit
+    }
+}
 
 export type BookmarkActionTypes =
-    AddBookmark | AddOrEditTag | Search;
+    AddBookmark | AddOrEditTag | Search | EditBookmarkAction;
