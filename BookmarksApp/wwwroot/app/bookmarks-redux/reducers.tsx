@@ -1,4 +1,4 @@
-﻿import { BookmarksAppState, TagModelState } from "./bookmarks-redux";
+﻿import { BookmarksAppState, TagModelState, BookmarkModel } from "./bookmarks-redux";
 import { BookmarkActionTypes, ADD_BOOKMARK, ADD_OR_EDIT_TAG, SEARCH, EDIT_BOOKMARK } from "./actions";
 import { editBookmark } from "../bookmarks-redux-toolkit/bookmark-slice";
 
@@ -8,6 +8,11 @@ export function bookmarkApp(state: BookmarksAppState, action: BookmarkActionType
     }
     switch (action.type) {
         case SEARCH: {
+            // TODO
+            const searchText = action.searchValue;
+            state.searchValue = searchText;
+            filterTags(state, state.tags, state.searchValue);
+
             return { ...state }
         }
         case ADD_BOOKMARK: {
@@ -94,6 +99,43 @@ export function bookmarkApp(state: BookmarksAppState, action: BookmarkActionType
             throw 'Action desconocida';
 
     }
+}
+
+function getTags(state: BookmarksAppState, tagNames: string[]): TagModelState[] {
+    const allTags = state.tags;
+
+    return allTags.filter(x => tagNames.some(tagName => tagName == x.name));
+}
+
+function getBookmarks(state: BookmarksAppState, bookmarkNames: string[]): BookmarkModel[] {
+    const allBookmarks = state.bookmarks;
+
+    return allBookmarks.filter(x => bookmarkNames.some(bookmarkName => bookmarkName == x.name));
+}
+
+// TODO: WARNING copiado del redux-toolkit y no copio objetos creo que se tiene que hacer
+export function filterTags(state: BookmarksAppState, tags: TagModelState[], searchText: string) {
+    const allTags = state.tags;
+
+    tags.forEach(tag => {
+        const bookmarks = getBookmarks(state, tag.bookmarks);
+
+        bookmarks.forEach(bookmark => bookmark.hidden = !hasText(bookmark.name, searchText));
+        const anyBookmarkVisible = bookmarks.some(b => !b.hidden);
+
+        const tagNameHasText = hasText(tag.name, searchText);
+
+        const anySubTagsVisible = tag.subTags && getTags(state, tag.subTags).some(t => !t.hidden);
+        tag.hidden = !tagNameHasText && !anyBookmarkVisible && !anySubTagsVisible;
+        if (tag.subTags) {
+            filterTags(state, getTags(state, tag.subTags), searchText);
+        }
+    });
+}
+
+
+function hasText(text: string, searchText: string) {
+    return text.toLowerCase().includes(searchText.toLowerCase());
 }
 
 function replaceTag(tags: TagModelState[], tag: TagModelState): TagModelState[] {

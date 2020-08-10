@@ -126,12 +126,8 @@ const bookmarksSlice = createSlice({
             const searchText = action.payload.searchValue;
             state.searchValue = searchText;
             filterTags(state, state.tags, state.searchValue);
-            //const tags = state.tags;
-            //const bookmarks = state.bookmarks;
-
-            ////bookmarks.forEach(bookmark => bookmark.hidden = !hasText(bookmark.name, searchText));
-            //tags.forEach(tag => tag.hidden = !hasText(tag.name, searchText));
-            return state    // TODO:
+           
+            return state;
         }
     }
 });
