@@ -14,7 +14,7 @@ export type AddBookmark = {
 export function addBookmark(bookmarkModel: BookmarkModel, tagName: string): AddBookmark {
     return {
         type: ADD_BOOKMARK,
-        bookmarkModel: bookmarkModel, 
+        bookmarkModel: bookmarkModel,
         tagName: tagName
     }
 }
@@ -26,7 +26,7 @@ export type AddOrEditTag = {
 }
 
 
-export function addOrEditTag(addOrEditTagResult: AddOrEditTagResult, parentTagName: string): AddOrEditTag  {
+export function addOrEditTag(addOrEditTagResult: AddOrEditTagResult, parentTagName: string): AddOrEditTag {
     return {
         type: ADD_OR_EDIT_TAG,
         addOrEditTagResult: addOrEditTagResult,
@@ -50,13 +50,15 @@ export function search(searchValue: string): Search {
 export type EditBookmarkAction = {
     type: typeof EDIT_BOOKMARK;
     edit: EditBookmark;
+    tag: TagModelState;
 }
 
 
-export function editBookmark(edit: EditBookmark): EditBookmarkAction {
+export function editBookmark(tag: TagModelState, edit: EditBookmark): EditBookmarkAction {
     return {
         type: EDIT_BOOKMARK,
-        edit: edit
+        edit: edit,
+        tag: tag
     }
 }
 

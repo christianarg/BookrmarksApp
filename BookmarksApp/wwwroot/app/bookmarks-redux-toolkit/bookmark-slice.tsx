@@ -110,7 +110,7 @@ const bookmarksSlice = createSlice({
             const { oldName, name } = action.payload
             let { bookmarks, tags } = state;
 
-            // reemplazar el bookmar en el estado global
+            // reemplazar el bookmar en el estado global (se podría hacer con un map, estoy probando esta manera altenrativa)
             const bookMarkIndex = bookmarks.findIndex(x => x.name == oldName);
             bookmarks[bookMarkIndex] = action.payload;
 

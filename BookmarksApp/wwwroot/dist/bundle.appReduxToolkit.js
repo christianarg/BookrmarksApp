@@ -5891,7 +5891,7 @@ var bookmarksSlice = toolkit_1.createSlice({
         editBookmark: function (state, action) {
             var _a = action.payload, oldName = _a.oldName, name = _a.name;
             var bookmarks = state.bookmarks, tags = state.tags;
-            // reemplazar el bookmar en el estado global
+            // reemplazar el bookmar en el estado global (se podría hacer con un map, estoy probando esta manera altenrativa)
             var bookMarkIndex = bookmarks.findIndex(function (x) { return x.name == oldName; });
             bookmarks[bookMarkIndex] = action.payload;
             // si cambia el nombre hay que reemplazarlo en el bookmark del tag (si hacen falta id's sino esto se puede liar, o bien que el bookmark tenga el tagname)

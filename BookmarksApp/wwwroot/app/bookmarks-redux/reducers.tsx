@@ -1,5 +1,6 @@
 ﻿import { BookmarksAppState, TagModelState } from "./bookmarks-redux";
 import { BookmarkActionTypes, ADD_BOOKMARK, ADD_OR_EDIT_TAG, SEARCH, EDIT_BOOKMARK } from "./actions";
+import { editBookmark } from "../bookmarks-redux-toolkit/bookmark-slice";
 
 export function bookmarkApp(state: BookmarksAppState, action: BookmarkActionTypes): BookmarksAppState {
     if (state == null) {
@@ -66,12 +67,26 @@ export function bookmarkApp(state: BookmarksAppState, action: BookmarkActionType
 
         case EDIT_BOOKMARK: {
             let bookmarks = state.bookmarks.slice(0);
-            const editedBookmark = action.edit;
+            const editedBookmark = { ...action.edit };
             // replace bookmark
             bookmarks = bookmarks.map(x => x.name == editedBookmark.oldName ? editedBookmark : x);
+
+            if (editedBookmark.oldName != editedBookmark.name) {
+                let tags = state.tags.slice(0);
+
+                const tag = { ...action.tag };
+                // replace bookmark
+                tag.bookmarks = tag.bookmarks.map(x => x == editedBookmark.oldName ? editedBookmark.name : x);
+                tags = replaceTag(state.tags, tag);
+                return {
+                    ...state,
+                    bookmarks,
+                    tags
+                }
+            }
             return {
                 ...state,
-                bookmarks
+                bookmarks,
             }
         }
 

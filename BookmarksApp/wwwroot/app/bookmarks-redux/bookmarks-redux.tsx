@@ -1,7 +1,7 @@
 ﻿import * as React from 'react';
 import { connect, MapDispatchToPropsParam } from "react-redux";
 import { Action } from 'redux';
-import { addBookmark, addOrEditTag, search } from './actions';
+import { addBookmark, addOrEditTag, search, editBookmark, EditBookmarkAction } from './actions';
 
 
 // **Models**
@@ -55,16 +55,28 @@ type AddOrEditBookmarkState = {
     url: string;
 };
 export class AddOrEditBookmark extends React.Component<AddOrEditBookmarkProps, AddOrEditBookmarkState> {
-    constructor(props) {
-        super(props);
-        const bookmarkToEdit = this.props.bookmarkToEdit;
-        if (bookmarkToEdit) {
-            this.state = { isFormVisible: false, name: bookmarkToEdit.name, url: bookmarkToEdit.url };
-        }
-        else {
-            this.state = { isFormVisible: false, name: "", url: "" };
+    state: AddOrEditBookmarkState = { isFormVisible: false, name: "", url: "" };
+
+    componentDidMount() {
+        this.updateFormWithBookmark();
+    }
+
+    componentDidUpdate(prevProps: AddOrEditBookmarkProps) {
+        if (prevProps.bookmarkToEdit != this.props.bookmarkToEdit) {
+            this.updateFormWithBookmark();
         }
     }
+
+    updateFormWithBookmark() {
+        const bookmarkToEdit = this.props.bookmarkToEdit;
+        if (bookmarkToEdit) {
+            this.setState({ name: bookmarkToEdit.name, url: bookmarkToEdit.url });
+        }
+        else {
+            this.setState({ name: "", url: "" });
+        }
+    }
+
     hasValue() {
         const { name, url } = this.state;
         return (name && url);
@@ -184,6 +196,7 @@ export class AddOrEditTag extends React.Component<AddTagProps, AddTagState> {
 type TagDispatchProps = {
     addBookmark: (bookmarkModel: BookmarkModel, tagName: string) => void;
     addOrEditTag: (addOrEditTagResult: AddOrEditTagResult, parentTagName: string) => void;
+    onEditBookmark: (tag: TagModelState, bookmark: EditBookmark) => void;
 }
 
 type TagStateProps = {
@@ -194,7 +207,6 @@ type TagStateProps = {
 }
 
 type TagProps = {
-    onEditBookmark: (tag: TagModelState, bookmark: EditBookmark) => void;   // TODO
 } & TagStateProps & TagDispatchProps;
 
 export function Tag(props: TagProps) {
@@ -228,7 +240,7 @@ const tagByName = (tagName: string, tags: TagModelState[]) => {
     return tags.find(x => x.name == tagName);
 }
 
-const TagMapStateToProps = (state: BookmarksAppState, ownProps: ConnectedTagProps): TagStateProps => {
+const tagMapStateToProps = (state: BookmarksAppState, ownProps: ConnectedTagProps): TagStateProps => {
     const tag = tagByName(ownProps.tagName, state.tags);
     return ({
         tag: tag,
@@ -238,10 +250,11 @@ const TagMapStateToProps = (state: BookmarksAppState, ownProps: ConnectedTagProp
     })
 };
 
-const TagMapDispatchToProps = (dispatch: React.Dispatch<Action<any>>): TagDispatchProps => {
+const tagMapDispatchToProps = (dispatch: React.Dispatch<Action<any>>): TagDispatchProps => {
     return {
         addBookmark: (bookmarkModel: BookmarkModel, tagName: string) => dispatch(addBookmark(bookmarkModel, tagName)),
-        addOrEditTag: (addOrEditTagResult: AddOrEditTagResult, parentTagName: string) => dispatch(addOrEditTag(addOrEditTagResult, parentTagName))
+        addOrEditTag: (addOrEditTagResult: AddOrEditTagResult, parentTagName: string) => dispatch(addOrEditTag(addOrEditTagResult, parentTagName)),
+        onEditBookmark: (tag: TagModelState, bookmark: EditBookmark) => dispatch(editBookmark(tag, bookmark))
     }
 }
 
@@ -250,7 +263,7 @@ type ConnectedTagProps = {
     tagName: string;
 }
 
-export const ConnectedTag: React.ComponentClass<ConnectedTagProps> = connect(TagMapStateToProps, TagMapDispatchToProps)(Tag);
+export const ConnectedTag: React.ComponentClass<ConnectedTagProps> = connect(tagMapStateToProps, tagMapDispatchToProps)(Tag);
 
 // **TagsComponent**
 
