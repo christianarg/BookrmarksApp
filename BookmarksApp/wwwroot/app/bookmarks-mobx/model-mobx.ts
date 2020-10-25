@@ -1,13 +1,16 @@
-import { makeAutoObservable } from "mobx"
+import { makeAutoObservable, observable } from "mobx"
 
 // Global state
 
 export class BookmarksStore {
-    tags: TagModel[];
-    searachText: string;
+    tags: TagModel[] = [];
+    searachText: string = ""
     
     constructor(){
-        makeAutoObservable(this);
+        makeAutoObservable(this, {
+            tags: observable,
+            searachText: observable
+        });
     }
 
     coso(){

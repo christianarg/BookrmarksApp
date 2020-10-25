@@ -6366,7 +6366,12 @@ var mobx_1 = __webpack_require__(/*! mobx */ "./node_modules/mobx/dist/mobx.esm.
 // Global state
 var BookmarksStore = /** @class */ (function () {
     function BookmarksStore() {
-        mobx_1.makeAutoObservable(this);
+        this.tags = [];
+        this.searachText = "";
+        mobx_1.makeAutoObservable(this, {
+            tags: mobx_1.observable,
+            searachText: mobx_1.observable
+        });
     }
     BookmarksStore.prototype.coso = function () {
         this.tags[0].name = this.tags[0].name + '1';
