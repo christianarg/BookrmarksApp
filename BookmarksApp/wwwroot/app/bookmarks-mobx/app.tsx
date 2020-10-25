@@ -4,7 +4,7 @@ import * as ReactDOM from 'react-dom';
 import { sampleBookrmarks, TagsRootNew } from './bookmarks-mobx';
 import { BookmarksStore } from './model-mobx';
 
-var store = new BookmarksStore();
+const store = new BookmarksStore();
 store.tags = sampleBookrmarks;
 
 

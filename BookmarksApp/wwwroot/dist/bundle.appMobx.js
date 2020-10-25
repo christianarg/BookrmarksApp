@@ -6065,11 +6065,21 @@ var ulStyle = { listStyleType: 'none', paddingInlineStart: 0 };
 function Bookmarks(props) {
     var bookmarks = props.bookmarks.map(function (bookmark) { return !bookmark.hidden &&
         React.createElement("li", { key: bookmark.name, className: "bookmark" },
-            React.createElement("a", { href: bookmark.url, target: "_blank" }, bookmark.name),
-            "\u00A0\u00A0",
-            React.createElement(AddOrEditBookmark, { bookmarkToEdit: bookmark, onAddOrEdit: function (edited) { return props.onEdit(edited); } })); });
+            React.createElement(BookmarkComponent, { bookmark: bookmark })); });
     return (React.createElement("ul", { style: { listStyleType: 'square' } }, bookmarks));
 }
+var BookmarkComponent = function (props) {
+    var onEdit = function (editBookmark) {
+        var bookmark = props.bookmark;
+        bookmark.name = editBookmark.name;
+        bookmark.url = editBookmark.url;
+    };
+    var bookmark = props.bookmark;
+    return React.createElement(React.Fragment, null,
+        React.createElement("a", { href: bookmark.url, target: "_blank" }, bookmark.name),
+        "\u00A0\u00A0",
+        React.createElement(AddOrEditBookmark, { name: bookmark.name, url: bookmark.url, isEdit: true, onAddOrEdit: onEdit }));
+};
 var AddOrEditBookmark = /** @class */ (function (_super) {
     __extends(AddOrEditBookmark, _super);
     function AddOrEditBookmark(props) {
@@ -6077,9 +6087,9 @@ var AddOrEditBookmark = /** @class */ (function (_super) {
         _this.handleSubmit = function (evt) {
             evt.preventDefault();
             var _a = _this.state, name = _a.name, url = _a.url;
-            var bookmarkToEdit = _this.props.bookmarkToEdit;
+            var bookmarkToEdit = _this.props.isEdit;
             if (name && url) {
-                _this.props.onAddOrEdit({ name: name, url: url, oldName: bookmarkToEdit && bookmarkToEdit.name });
+                _this.props.onAddOrEdit({ name: name, url: url, oldName: bookmarkToEdit && _this.props.name });
                 _this.setState({ isFormVisible: false });
             }
         };
@@ -6092,9 +6102,9 @@ var AddOrEditBookmark = /** @class */ (function (_super) {
         _this.toggleShow = function () {
             _this.setState({ isFormVisible: !_this.state.isFormVisible });
         };
-        var bookmarkToEdit = _this.props.bookmarkToEdit;
+        var bookmarkToEdit = _this.props.isEdit;
         if (bookmarkToEdit) {
-            _this.state = { isFormVisible: false, name: bookmarkToEdit.name, url: bookmarkToEdit.url };
+            _this.state = { isFormVisible: false, name: props.name, url: props.url };
         }
         else {
             _this.state = { isFormVisible: false, name: null, url: null };
@@ -6112,10 +6122,8 @@ var AddOrEditBookmark = /** @class */ (function (_super) {
         return null;
     };
     AddOrEditBookmark.prototype.render = function () {
-        var bookmarkToEdit = this.props.bookmarkToEdit;
-        var idEdit = bookmarkToEdit != null;
-        var addOrEditToggleButtonText = bookmarkToEdit ? '(Edit Bookmark)' : '(Add Bookmark)';
-        var addOrEdditAcceptButtonText = bookmarkToEdit ? 'Edit' : 'Add';
+        var addOrEditToggleButtonText = this.props.isEdit ? '(Edit Bookmark)' : '(Add Bookmark)';
+        var addOrEdditAcceptButtonText = this.props.isEdit ? 'Edit' : 'Add';
         var buttonStyle = { display: 'inline-block', textDecoration: 'underline', cursor: 'pointer' };
         if (this.state.isFormVisible) {
             return (React.createElement("div", null,
@@ -6191,6 +6199,9 @@ var AddOrEditTag = /** @class */ (function (_super) {
     return AddOrEditTag;
 }(React.Component));
 function Tag(props) {
+    var onAddBookmark = function (bookmark) {
+        props.tag.bookmarks.push(bookmark);
+    };
     var tag = props.tag;
     if (tag.hidden) {
         return null;
@@ -6206,7 +6217,7 @@ function Tag(props) {
                 React.createElement(React.Fragment, null,
                     React.createElement("div", null, "SubTags:"),
                     React.createElement(Tags, { tags: tag.subTags, parentTag: tag, onEditBookmark: props.onEditBookmark, onAddBookmark: props.onAddBookmark, onAddTag: props.onAddTag })),
-            React.createElement(AddOrEditBookmark, { onAddOrEdit: function (newBookmark) { return props.onAddBookmark(__assign({}, tag), newBookmark); } }),
+            React.createElement(AddOrEditBookmark, { isEdit: false, onAddOrEdit: function (newBookmark) { return onAddBookmark(newBookmark); } }),
             React.createElement(AddOrEditTag, { key: "add" + tag.name, onAddOrEdit: function (newTag) { return props.onAddTag(newTag, tag); } }),
             React.createElement(AddOrEditTag, { key: "edit{tag.name}", tagToEdit: tag, onAddOrEdit: function (newTag) { return props.onAddTag(newTag, props.parentTag); } }))));
 }

@@ -1,5 +1,6 @@
 ﻿import { observer } from 'mobx-react-lite';
 import * as React from 'react';
+import { bookmarkApp } from '../bookmarks-redux/reducers';
 import { BookmarkModel, EditBookmark, TagModel, AddOrEditTagResult, BookmarksStore } from './model-mobx';
 
 
@@ -15,23 +16,41 @@ type BookmarkProps = {
 function Bookmarks(props: BookmarkProps) {
     const bookmarks = props.bookmarks.map(bookmark => !bookmark.hidden &&
         <li key={bookmark.name} className="bookmark">
-            <a href={bookmark.url} target="_blank" >{bookmark.name}</a>&nbsp;&nbsp;<AddOrEditBookmark bookmarkToEdit={bookmark} onAddOrEdit={edited => props.onEdit(edited)} />
+            <BookmarkComponent bookmark={bookmark} />
         </li>)
     return (<ul style={{ listStyleType: 'square' }}>{bookmarks}</ul>);
 }
 
 // AddOrEditBookmarkComponent
 
-type AddOrEditBookmarkProps = { bookmarkToEdit?: BookmarkModel; onAddOrEdit: (newBookmark: EditBookmark) => void };
+
+
+type BookmarkComponentProps = { bookmark?: BookmarkModel };
+
+const BookmarkComponent = (props: BookmarkComponentProps) => {
+
+    const onEdit = (editBookmark: BookmarkModel) => {
+        let bookmark = props.bookmark;
+        bookmark.name = editBookmark.name;
+        bookmark.url = editBookmark.url;
+    }
+
+    let bookmark = props.bookmark;
+    return <><a href={bookmark.url} target="_blank" >{bookmark.name}</a>&nbsp;&nbsp;<AddOrEditBookmark name={bookmark.name} url={bookmark.url} isEdit={true} onAddOrEdit={onEdit} /></>
+}
+
+// AddOrEditBookmarkComponent
+
+type AddOrEditBookmarkProps = { name?:string, url?:string; isEdit:boolean; onAddOrEdit: (newBookmark: EditBookmark) => void };
 type AddOrEditBookmarkState = { isFormVisible: boolean, name: string, url: string };
 
 class AddOrEditBookmark extends React.Component<AddOrEditBookmarkProps, AddOrEditBookmarkState>{
 
     constructor(props) {
         super(props);
-        const bookmarkToEdit = this.props.bookmarkToEdit;
+        const bookmarkToEdit = this.props.isEdit;
         if (bookmarkToEdit) {
-            this.state = { isFormVisible: false, name: bookmarkToEdit.name, url: bookmarkToEdit.url };
+            this.state = { isFormVisible: false, name: props.name, url: props.url };
         }
         else {
             this.state = { isFormVisible: false, name: null, url: null };
@@ -46,9 +65,9 @@ class AddOrEditBookmark extends React.Component<AddOrEditBookmarkProps, AddOrEdi
     handleSubmit = (evt: React.FormEvent) => {
         evt.preventDefault();
         const { name, url } = this.state;
-        const bookmarkToEdit = this.props.bookmarkToEdit;
+        const bookmarkToEdit = this.props.isEdit;
         if (name && url) {
-            this.props.onAddOrEdit({ name: name, url: url, oldName: bookmarkToEdit && bookmarkToEdit.name });
+            this.props.onAddOrEdit({ name: name, url: url, oldName: bookmarkToEdit && this.props.name });
             this.setState({ isFormVisible: false });
         }
     }
@@ -73,11 +92,9 @@ class AddOrEditBookmark extends React.Component<AddOrEditBookmarkProps, AddOrEdi
     }
 
     render() {
-        let bookmarkToEdit = this.props.bookmarkToEdit;
-        const idEdit = bookmarkToEdit != null;
 
-        const addOrEditToggleButtonText = bookmarkToEdit ? '(Edit Bookmark)' : '(Add Bookmark)'
-        const addOrEdditAcceptButtonText = bookmarkToEdit ? 'Edit' : 'Add';
+        const addOrEditToggleButtonText = this.props.isEdit ? '(Edit Bookmark)' : '(Add Bookmark)'
+        const addOrEdditAcceptButtonText = this.props.isEdit ? 'Edit' : 'Add';
         const buttonStyle = { display: 'inline-block', textDecoration: 'underline', cursor: 'pointer' };
 
         if (this.state.isFormVisible) {
@@ -94,6 +111,7 @@ class AddOrEditBookmark extends React.Component<AddOrEditBookmarkProps, AddOrEdi
         return <div style={buttonStyle} onClick={this.toggleShow}>{addOrEditToggleButtonText}</div>
     }
 }
+
 
 // AddOrEditTagComponent
 
@@ -179,6 +197,11 @@ type TagProps = {
 }
 
 function Tag(props: TagProps) {
+
+    const onAddBookmark = (bookmark: EditBookmark) => {
+        props.tag.bookmarks.push(bookmark);
+    }
+
     const tag = props.tag;
     if (tag.hidden) {
         return null;
@@ -197,7 +220,7 @@ function Tag(props: TagProps) {
                         <div>SubTags:</div>
                         <Tags tags={tag.subTags} parentTag={tag} onEditBookmark={props.onEditBookmark} onAddBookmark={props.onAddBookmark} onAddTag={props.onAddTag} />
                     </>}
-                <AddOrEditBookmark onAddOrEdit={(newBookmark) => props.onAddBookmark({ ...tag }, newBookmark)} />
+                <AddOrEditBookmark isEdit={false} onAddOrEdit={(newBookmark) => onAddBookmark(newBookmark)} />
                 <AddOrEditTag key={`add${tag.name}`} onAddOrEdit={(newTag) => props.onAddTag(newTag, tag)} />
                 <AddOrEditTag key={`edit{tag.name}`} tagToEdit={tag} onAddOrEdit={(newTag) => props.onAddTag(newTag, props.parentTag)} />
             </fieldset>
