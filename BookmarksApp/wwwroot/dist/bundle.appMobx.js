@@ -6005,26 +6005,17 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = __webpack_require__(/*! react */ "react");
 var ReactDOM = __webpack_require__(/*! react-dom */ "react-dom");
-var mobx_react_lite_1 = __webpack_require__(/*! mobx-react-lite */ "./node_modules/mobx-react-lite/es/index.js");
 var bookmarks_mobx_1 = __webpack_require__(/*! ./bookmarks-mobx */ "./wwwroot/app/bookmarks-mobx/bookmarks-mobx.tsx");
 var model_mobx_1 = __webpack_require__(/*! ./model-mobx */ "./wwwroot/app/bookmarks-mobx/model-mobx.ts");
 var store = new model_mobx_1.BookmarksStore();
 store.tags = bookmarks_mobx_1.sampleBookrmarks;
-var TagsRootNew = mobx_react_lite_1.observer(function (props) {
-    var firstTag = props.store.tags[0];
-    return (React.createElement("div", null,
-        React.createElement("span", null,
-            "First tag: ",
-            firstTag.name),
-        React.createElement("span", { onClick: function () { return props.store.coso(); } }, "Change")));
-});
 var App = /** @class */ (function (_super) {
     __extends(App, _super);
     function App() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     App.prototype.render = function () {
-        return (React.createElement(TagsRootNew, { store: store }));
+        return (React.createElement(bookmarks_mobx_1.TagsRootNew, { store: store }));
     };
     return App;
 }(React.Component));
@@ -6067,7 +6058,8 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.sampleBookrmarks = exports.TagsRoot = exports.replaceTag = exports.filterTags = void 0;
+exports.sampleBookrmarks = exports.TagsRoot = exports.TagsRootNew = exports.replaceTag = exports.filterTags = void 0;
+var mobx_react_lite_1 = __webpack_require__(/*! mobx-react-lite */ "./node_modules/mobx-react-lite/es/index.js");
 var React = __webpack_require__(/*! react */ "react");
 var ulStyle = { listStyleType: 'none', paddingInlineStart: 0 };
 function Bookmarks(props) {
@@ -6255,6 +6247,17 @@ function replaceTag(tags, newTag) {
     return newTags;
 }
 exports.replaceTag = replaceTag;
+exports.TagsRootNew = mobx_react_lite_1.observer(function (props) {
+    var store = props.store;
+    var onSearch = function (searchValue) {
+        store.searchText = searchValue;
+        filterTags(store.tags, searchValue);
+    };
+    return (React.createElement("div", null,
+        React.createElement(TagSearch, { searachText: store.searchText, onSearchChange: onSearch }),
+        React.createElement(Tags, { tags: store.filteredTags, parentTag: null, onEditBookmark: null, onAddBookmark: null, onAddTag: null }),
+        React.createElement(AddOrEditTag, { isRoot: true, onAddOrEdit: function (newTag) { } })));
+});
 var TagsRoot = /** @class */ (function (_super) {
     __extends(TagsRoot, _super);
     function TagsRoot() {
@@ -6367,12 +6370,19 @@ var mobx_1 = __webpack_require__(/*! mobx */ "./node_modules/mobx/dist/mobx.esm.
 var BookmarksStore = /** @class */ (function () {
     function BookmarksStore() {
         this.tags = [];
-        this.searachText = "";
+        this.searchText = "";
         mobx_1.makeAutoObservable(this, {
             tags: mobx_1.observable,
-            searachText: mobx_1.observable
+            searchText: mobx_1.observable
         });
     }
+    Object.defineProperty(BookmarksStore.prototype, "filteredTags", {
+        get: function () {
+            return this.tags.filter(function (x) { return !x.hidden; });
+        },
+        enumerable: false,
+        configurable: true
+    });
     BookmarksStore.prototype.coso = function () {
         this.tags[0].name = this.tags[0].name + '1';
     };

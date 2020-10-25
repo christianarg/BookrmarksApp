@@ -4,12 +4,16 @@ import { makeAutoObservable, observable } from "mobx"
 
 export class BookmarksStore {
     tags: TagModel[] = [];
-    searachText: string = ""
+    searchText: string = ""
     
+    get filteredTags(){
+        return this.tags.filter(x => !x.hidden);
+    }
+
     constructor(){
         makeAutoObservable(this, {
             tags: observable,
-            searachText: observable
+            searchText: observable
         });
     }
 

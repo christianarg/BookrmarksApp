@@ -1,4 +1,5 @@
-﻿import * as React from 'react';
+﻿import { observer } from 'mobx-react-lite';
+import * as React from 'react';
 import { BookmarkModel, EditBookmark, TagModel, AddOrEditTagResult, BookmarksStore } from './model-mobx';
 
 
@@ -109,7 +110,7 @@ class AddOrEditTag extends React.Component<AddTagProps, AddTagState>{
         super(props);
 
         const tagToEdit = this.props.tagToEdit;
-        this.state = { isFormVisible: false, name:  tagToEdit && tagToEdit.name };
+        this.state = { isFormVisible: false, name: tagToEdit && tagToEdit.name };
     }
 
     hasValue() {
@@ -193,8 +194,8 @@ function Tag(props: TagProps) {
 
                 {tag.subTags &&
                     <>
-                    <div>SubTags:</div>
-                    <Tags tags={tag.subTags} parentTag={tag} onEditBookmark={props.onEditBookmark} onAddBookmark={props.onAddBookmark} onAddTag={props.onAddTag} />
+                        <div>SubTags:</div>
+                        <Tags tags={tag.subTags} parentTag={tag} onEditBookmark={props.onEditBookmark} onAddBookmark={props.onAddBookmark} onAddTag={props.onAddTag} />
                     </>}
                 <AddOrEditBookmark onAddOrEdit={(newBookmark) => props.onAddBookmark({ ...tag }, newBookmark)} />
                 <AddOrEditTag key={`add${tag.name}`} onAddOrEdit={(newTag) => props.onAddTag(newTag, tag)} />
@@ -267,26 +268,22 @@ type TagsRootNewProps = {
     store: BookmarksStore;
 }
 
-// const tagsRootNew = class TagsRootNew extends React.Component<TagsRootNewProps>{
-//     constructor(props){
-//         super(props)
-//     }
 
-//     render(){
-//         return <div></div>
-//     }
-// };
-//const TimerView = observer(({ timer }) => <span>Seconds passed: {timer.secondsPassed}</span>)
+export const TagsRootNew = observer((props: { store: BookmarksStore }) => {
+    const store = props.store;
 
-// export const TagsRootNew3 : React.Component<TagsRootNewProps> = observer(class TagsRootNew extends React.Component<TagsRootNewProps>{
-//     constructor(props){
-//         super(props)
-//     }
+    const onSearch = (searchValue: string) => {
+        store.searchText = searchValue;
+        filterTags(store.tags, searchValue);
+    };
 
-//     render(){
-//         return <div></div>
-//     }
-// } as any);
+    return (<div>
+        <TagSearch searachText={store.searchText} onSearchChange={onSearch} />
+        <Tags tags={store.filteredTags} parentTag={null} onEditBookmark={null} onAddBookmark={null} onAddTag={null} />
+        <AddOrEditTag isRoot={true} onAddOrEdit={(newTag) => { }} />
+    </div>)
+});
+
 
 type TagsRootState = {
     tags: TagModel[];
