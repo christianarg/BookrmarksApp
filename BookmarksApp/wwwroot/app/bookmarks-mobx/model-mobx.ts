@@ -1,4 +1,4 @@
-import { makeAutoObservable, observable } from "mobx"
+import { action, makeAutoObservable, observable } from "mobx"
 
 // Global state
 
@@ -13,12 +13,14 @@ export class BookmarksStore {
     constructor(){
         makeAutoObservable(this, {
             tags: observable,
-            searchText: observable
+            searchText: observable,
+            addBookmark: action
         });
     }
 
-    coso(){
-        this.tags[0].name = this.tags[0].name + '1';
+    addBookmark(tag: TagModel, boomark: BookmarkModel){
+        tag.bookmarks.push(boomark);
+        this.tags = this.tags.map(x => x == tag ? tag : x);
     }
 }
 
@@ -39,3 +41,33 @@ export type BookmarkModel = {
 }
 
 export type EditBookmark = BookmarkModel & { oldName: string };
+
+// Store
+
+export const sampleBookrmarks: TagModel[] = [
+    {
+        name: '.Net',
+        bookmarks: [
+            { name: 'download', url: 'https://dotnet.microsoft.com/download' }
+        ],
+        subTags: [
+            {
+                name: 'Asp.net',
+                bookmarks: [
+                    { name: 'asp.net', url: 'https://dotnet.microsoft.com/apps/aspnet' },
+                    { name: 'asp.net core', url: 'https://docs.microsoft.com/es-es/aspnet/core/?view=aspnetcore-2.2' },
+                ],
+            }
+        ]
+    },
+    {
+        name: 'React',
+        bookmarks: [
+            { name: 'react docs', url: 'https://reactjs.org/docs/getting-started.html' }
+        ]
+    }
+]
+
+
+export const store = new BookmarksStore();
+store.tags = sampleBookrmarks;

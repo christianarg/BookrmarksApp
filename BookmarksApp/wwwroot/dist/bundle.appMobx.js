@@ -6007,15 +6007,13 @@ var React = __webpack_require__(/*! react */ "react");
 var ReactDOM = __webpack_require__(/*! react-dom */ "react-dom");
 var bookmarks_mobx_1 = __webpack_require__(/*! ./bookmarks-mobx */ "./wwwroot/app/bookmarks-mobx/bookmarks-mobx.tsx");
 var model_mobx_1 = __webpack_require__(/*! ./model-mobx */ "./wwwroot/app/bookmarks-mobx/model-mobx.ts");
-var store = new model_mobx_1.BookmarksStore();
-store.tags = bookmarks_mobx_1.sampleBookrmarks;
 var App = /** @class */ (function (_super) {
     __extends(App, _super);
     function App() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     App.prototype.render = function () {
-        return (React.createElement(bookmarks_mobx_1.TagsRootNew, { store: store }));
+        return (React.createElement(bookmarks_mobx_1.TagsRootNew, { store: model_mobx_1.store }));
     };
     return App;
 }(React.Component));
@@ -6058,9 +6056,10 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.sampleBookrmarks = exports.TagsRoot = exports.TagsRootNew = exports.replaceTag = exports.filterTags = void 0;
+exports.TagsRoot = exports.TagsRootNew = exports.replaceTag = exports.filterTags = void 0;
 var mobx_react_lite_1 = __webpack_require__(/*! mobx-react-lite */ "./node_modules/mobx-react-lite/es/index.js");
 var React = __webpack_require__(/*! react */ "react");
+var model_mobx_1 = __webpack_require__(/*! ./model-mobx */ "./wwwroot/app/bookmarks-mobx/model-mobx.ts");
 var ulStyle = { listStyleType: 'none', paddingInlineStart: 0 };
 function Bookmarks(props) {
     var bookmarks = props.bookmarks.map(function (bookmark) { return !bookmark.hidden &&
@@ -6083,6 +6082,7 @@ var BookmarkComponent = function (props) {
 var AddOrEditBookmark = /** @class */ (function (_super) {
     __extends(AddOrEditBookmark, _super);
     function AddOrEditBookmark(props) {
+        var _a, _b;
         var _this = _super.call(this, props) || this;
         _this.handleSubmit = function (evt) {
             evt.preventDefault();
@@ -6104,10 +6104,10 @@ var AddOrEditBookmark = /** @class */ (function (_super) {
         };
         var bookmarkToEdit = _this.props.isEdit;
         if (bookmarkToEdit) {
-            _this.state = { isFormVisible: false, name: props.name, url: props.url };
+            _this.state = { isFormVisible: false, name: (_a = props.name) !== null && _a !== void 0 ? _a : '', url: (_b = props.url) !== null && _b !== void 0 ? _b : '' };
         }
         else {
-            _this.state = { isFormVisible: false, name: null, url: null };
+            _this.state = { isFormVisible: false, name: '', url: '' };
         }
         return _this;
     }
@@ -6200,7 +6200,7 @@ var AddOrEditTag = /** @class */ (function (_super) {
 }(React.Component));
 function Tag(props) {
     var onAddBookmark = function (bookmark) {
-        props.tag.bookmarks.push(bookmark);
+        model_mobx_1.store.addBookmark(props.tag, bookmark);
     };
     var tag = props.tag;
     if (tag.hidden) {
@@ -6323,7 +6323,7 @@ var TagsRoot = /** @class */ (function (_super) {
         return _this;
     }
     TagsRoot.prototype.componentDidMount = function () {
-        this.setState({ tags: exports.sampleBookrmarks.slice() });
+        this.setState({ tags: model_mobx_1.sampleBookrmarks.slice() });
     };
     TagsRoot.prototype.render = function () {
         var _this = this;
@@ -6338,6 +6338,48 @@ var TagsRoot = /** @class */ (function (_super) {
     return TagsRoot;
 }(React.Component));
 exports.TagsRoot = TagsRoot;
+
+
+/***/ }),
+
+/***/ "./wwwroot/app/bookmarks-mobx/model-mobx.ts":
+/*!**************************************************!*\
+  !*** ./wwwroot/app/bookmarks-mobx/model-mobx.ts ***!
+  \**************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.store = exports.sampleBookrmarks = exports.BookmarksStore = void 0;
+var mobx_1 = __webpack_require__(/*! mobx */ "./node_modules/mobx/dist/mobx.esm.js");
+// Global state
+var BookmarksStore = /** @class */ (function () {
+    function BookmarksStore() {
+        this.tags = [];
+        this.searchText = "";
+        mobx_1.makeAutoObservable(this, {
+            tags: mobx_1.observable,
+            searchText: mobx_1.observable,
+            addBookmark: mobx_1.action
+        });
+    }
+    Object.defineProperty(BookmarksStore.prototype, "filteredTags", {
+        get: function () {
+            return this.tags.filter(function (x) { return !x.hidden; });
+        },
+        enumerable: false,
+        configurable: true
+    });
+    BookmarksStore.prototype.addBookmark = function (tag, boomark) {
+        tag.bookmarks.push(boomark);
+        this.tags = this.tags.map(function (x) { return x == tag ? tag : x; });
+    };
+    return BookmarksStore;
+}());
+exports.BookmarksStore = BookmarksStore;
+// Store
 exports.sampleBookrmarks = [
     {
         name: '.Net',
@@ -6361,45 +6403,8 @@ exports.sampleBookrmarks = [
         ]
     }
 ];
-
-
-/***/ }),
-
-/***/ "./wwwroot/app/bookmarks-mobx/model-mobx.ts":
-/*!**************************************************!*\
-  !*** ./wwwroot/app/bookmarks-mobx/model-mobx.ts ***!
-  \**************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.BookmarksStore = void 0;
-var mobx_1 = __webpack_require__(/*! mobx */ "./node_modules/mobx/dist/mobx.esm.js");
-// Global state
-var BookmarksStore = /** @class */ (function () {
-    function BookmarksStore() {
-        this.tags = [];
-        this.searchText = "";
-        mobx_1.makeAutoObservable(this, {
-            tags: mobx_1.observable,
-            searchText: mobx_1.observable
-        });
-    }
-    Object.defineProperty(BookmarksStore.prototype, "filteredTags", {
-        get: function () {
-            return this.tags.filter(function (x) { return !x.hidden; });
-        },
-        enumerable: false,
-        configurable: true
-    });
-    BookmarksStore.prototype.coso = function () {
-        this.tags[0].name = this.tags[0].name + '1';
-    };
-    return BookmarksStore;
-}());
-exports.BookmarksStore = BookmarksStore;
+exports.store = new BookmarksStore();
+exports.store.tags = exports.sampleBookrmarks;
 
 
 /***/ }),

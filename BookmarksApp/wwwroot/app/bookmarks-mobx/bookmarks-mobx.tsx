@@ -1,7 +1,7 @@
 ﻿import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { bookmarkApp } from '../bookmarks-redux/reducers';
-import { BookmarkModel, EditBookmark, TagModel, AddOrEditTagResult, BookmarksStore } from './model-mobx';
+import { BookmarkModel, EditBookmark, TagModel, AddOrEditTagResult, BookmarksStore, sampleBookrmarks, store, store } from './model-mobx';
 
 
 const ulStyle: React.CSSProperties = { listStyleType: 'none', paddingInlineStart: 0 };
@@ -22,8 +22,6 @@ function Bookmarks(props: BookmarkProps) {
 }
 
 // AddOrEditBookmarkComponent
-
-
 
 type BookmarkComponentProps = { bookmark?: BookmarkModel };
 
@@ -50,10 +48,10 @@ class AddOrEditBookmark extends React.Component<AddOrEditBookmarkProps, AddOrEdi
         super(props);
         const bookmarkToEdit = this.props.isEdit;
         if (bookmarkToEdit) {
-            this.state = { isFormVisible: false, name: props.name, url: props.url };
+            this.state = { isFormVisible: false, name: props.name ?? '', url: props.url ?? '' };
         }
         else {
-            this.state = { isFormVisible: false, name: null, url: null };
+            this.state = { isFormVisible: false, name: '', url: '' };
         }
     }
 
@@ -199,7 +197,7 @@ type TagProps = {
 function Tag(props: TagProps) {
 
     const onAddBookmark = (bookmark: EditBookmark) => {
-        props.tag.bookmarks.push(bookmark);
+        store.addBookmark(props.tag, bookmark);
     }
 
     const tag = props.tag;
@@ -388,26 +386,3 @@ export class TagsRoot extends React.Component<{}, TagsRootState> {
     }
 }
 
-export const sampleBookrmarks: TagModel[] = [
-    {
-        name: '.Net',
-        bookmarks: [
-            { name: 'download', url: 'https://dotnet.microsoft.com/download' }
-        ],
-        subTags: [
-            {
-                name: 'Asp.net',
-                bookmarks: [
-                    { name: 'asp.net', url: 'https://dotnet.microsoft.com/apps/aspnet' },
-                    { name: 'asp.net core', url: 'https://docs.microsoft.com/es-es/aspnet/core/?view=aspnetcore-2.2' },
-                ],
-            }
-        ]
-    },
-    {
-        name: 'React',
-        bookmarks: [
-            { name: 'react docs', url: 'https://reactjs.org/docs/getting-started.html' }
-        ]
-    }
-]

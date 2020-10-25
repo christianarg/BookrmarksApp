@@ -1,11 +1,9 @@
 ﻿import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
-import { sampleBookrmarks, TagsRootNew } from './bookmarks-mobx';
-import { BookmarksStore } from './model-mobx';
+import { TagsRootNew } from './bookmarks-mobx';
+import { store } from './model-mobx';
 
-const store = new BookmarksStore();
-store.tags = sampleBookrmarks;
 
 
 class App extends React.Component {
