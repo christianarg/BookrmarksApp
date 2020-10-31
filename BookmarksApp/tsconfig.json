@@ -1,6 +1,7 @@
 {
   "compileOnSave": true,
   "compilerOptions": {
+    "noEmit": true,
     "noImplicitAny": false,
     "noEmitOnError": true,
     "removeComments": false,
