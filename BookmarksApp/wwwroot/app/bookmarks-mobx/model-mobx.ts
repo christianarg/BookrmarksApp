@@ -5,17 +5,38 @@ import { action, makeAutoObservable, observable } from "mobx"
 export class BookmarksStore {
     tags: TagModel[] = [];
     searchText: string = ""
-    
-    get filteredTags(){
+
+    get filteredTags() {
         return this.tags.filter(x => !x.hidden);
     }
 
-    constructor(){
+    constructor() {
         makeAutoObservable(this);
     }
-    
-    addBookmark(tag: TagModel, boomark: BookmarkModel){
+
+    addBookmark(tag: TagModel, boomark: BookmarkModel) {
         tag.bookmarks.push(boomark);
+    }
+
+    editBookmark(bookmark: BookmarkModel, editBookmark: BookmarkModel) {
+        bookmark.name = editBookmark.name;
+        bookmark.url = editBookmark.url;
+    }
+
+    addTag(parentTag: TagModel, subTag: TagModel) {
+        if (parentTag) {
+            if (parentTag.subTags == null) {
+                parentTag.subTags = [];
+            }
+            parentTag.subTags.push(subTag);
+        }
+        else {
+            this.tags.push(parentTag);
+        }
+    }
+
+    editTag(tag: TagModel, editTag: TagModel) {
+        tag.name = editTag.name;
     }
 }
 

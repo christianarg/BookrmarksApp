@@ -6868,7 +6868,7 @@ var App = /** @class */ (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     App.prototype.render = function () {
-        return (React.createElement(bookmarks_mobx_1.TagsRootNew, { store: model_mobx_1.store }));
+        return (React.createElement(bookmarks_mobx_1.TagsRoot, { store: model_mobx_1.store }));
     };
     return App;
 }(React.Component));
@@ -6911,7 +6911,7 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.TagsRootNew = exports.replaceTag = exports.filterTags = void 0;
+exports.TagsRoot = exports.replaceTag = exports.filterTags = void 0;
 var mobx_react_1 = __webpack_require__(/*! mobx-react */ "./node_modules/mobx-react/dist/mobxreact.esm.js");
 var mobx_1 = __webpack_require__(/*! mobx */ "./node_modules/mobx/dist/mobx.esm.js");
 var React = __webpack_require__(/*! react */ "react");
@@ -6925,9 +6925,7 @@ var Bookmarks = mobx_react_1.observer(function (props) {
 });
 var BookmarkComponent = mobx_react_1.observer(function (props) {
     var onEdit = function (editBookmark) {
-        var bookmark = props.bookmark;
-        bookmark.name = editBookmark.name;
-        bookmark.url = editBookmark.url;
+        model_mobx_1.store.editBookmark(props.bookmark, editBookmark);
     };
     var bookmark = props.bookmark;
     return React.createElement(React.Fragment, null,
@@ -7060,16 +7058,13 @@ var Tag = mobx_react_1.observer(function (props) {
         return null;
     }
     var onAddBookmark = function (bookmark) {
-        model_mobx_1.store.addBookmark(props.tag, bookmark);
+        model_mobx_1.store.addBookmark(tag, bookmark);
     };
     var addSubTag = function (subTag) {
-        if (tag.subTags == null) {
-            tag.subTags = [];
-        }
-        tag.subTags.push(subTag);
+        model_mobx_1.store.addTag(tag, subTag);
     };
     var editTag = function (editTag) {
-        tag.name = editTag.name;
+        model_mobx_1.store.editTag(tag, editTag);
     };
     return (React.createElement("li", { className: "tag" },
         React.createElement("fieldset", null,
@@ -7123,7 +7118,7 @@ function replaceTag(tags, newTag) {
     return newTags;
 }
 exports.replaceTag = replaceTag;
-exports.TagsRootNew = mobx_react_1.observer(function (props) {
+exports.TagsRoot = mobx_react_1.observer(function (props) {
     var store = props.store;
     var onSearch = function (searchValue) {
         store.searchText = searchValue;
@@ -7132,75 +7127,8 @@ exports.TagsRootNew = mobx_react_1.observer(function (props) {
     return (React.createElement("div", null,
         React.createElement(TagSearch, { searachText: store.searchText, onSearchChange: onSearch }),
         React.createElement(Tags, { tags: store.filteredTags, parentTag: null, onAddTag: null }),
-        React.createElement(AddOrEditTag, { isRoot: true, onAddOrEdit: function (newTag) { return store.tags.push(newTag); } })));
+        React.createElement(AddOrEditTag, { isRoot: true, onAddOrEdit: function (newTag) { return store.addTag(null, newTag); } })));
 });
-// type TagsRootState = {
-//     tags: TagModel[];
-//     searachText: string;
-// }
-// export class TagsRoot extends React.Component<{}, TagsRootState> {
-//     state: TagsRootState = { tags: null, searachText: '' }
-//     componentDidMount() {
-//         this.setState({ tags: sampleBookrmarks.slice() });
-//     }
-//     handleSearch = (searchValue: string) => {
-//         const tags = this.state.tags.slice();
-//         filterTags(tags, searchValue);
-//         this.setState({ tags: tags, searachText: searchValue });
-//     }
-//     handleAddBookmark = (tag: TagModel, bookmarkModel: BookmarkModel) => {
-//         let tags = this.state.tags.slice();
-//         tag.bookmarks.push(bookmarkModel);
-//         tags = replaceTag(tags, tag);
-//         this.setState({ tags: tags });
-//     }
-//     handleAddOrEditTag = (addOrEditTagResult: AddOrEditTagResult, parentTag: TagModel) => {
-//         let tags = this.state.tags.slice();
-//         if (parentTag) {
-//             if (parentTag.subTags == null)
-//                 parentTag.subTags = [];
-//             if (addOrEditTagResult.oldName) {
-//                 // replace
-//                 parentTag.subTags = parentTag.subTags.map(x => x.name == addOrEditTagResult.oldName ? addOrEditTagResult : x);
-//             }
-//             else {
-//                 // new
-//                 parentTag.subTags.push(addOrEditTagResult);
-//             }
-//             replaceTag(tags, { ...parentTag });
-//         }
-//         else {
-//             // sin parent
-//             if (addOrEditTagResult.oldName) {
-//                 // replace
-//                 tags = tags.map(x => x.name == addOrEditTagResult.oldName ? addOrEditTagResult : x);
-//             }
-//             else {
-//                 // new
-//                 tags.push(addOrEditTagResult);
-//             }
-//         }
-//         this.setState({ tags: tags });
-//     }
-//     handleEditBookmark = (tag: TagModel, editedBookmark: EditBookmark) => {
-//         let tags = this.state.tags.slice();
-//         // replace bookmark
-//         tag.bookmarks = tag.bookmarks.map(x => x.name == editedBookmark.oldName ? editedBookmark : x);
-//         tags = replaceTag(tags, tag);
-//         this.setState({ tags: tags });
-//     }
-//     render() {
-//         if (this.state.tags) {
-//             return (
-//                 <div>
-//                     <TagSearch searachText={this.state.searachText} onSearchChange={this.handleSearch} />
-//                     <Tags tags={this.state.tags} parentTag={null} onEditBookmark={this.handleEditBookmark} onAddBookmark={this.handleAddBookmark} onAddTag={this.handleAddOrEditTag} />
-//                     <AddOrEditTag isRoot={true} onAddOrEdit={(newTag) => this.handleAddOrEditTag(newTag, null)} />
-//                 </div>);
-//         }
-//         return null;
-//     }
-// }
 
 
 /***/ }),
@@ -7233,6 +7161,24 @@ var BookmarksStore = /** @class */ (function () {
     });
     BookmarksStore.prototype.addBookmark = function (tag, boomark) {
         tag.bookmarks.push(boomark);
+    };
+    BookmarksStore.prototype.editBookmark = function (bookmark, editBookmark) {
+        bookmark.name = editBookmark.name;
+        bookmark.url = editBookmark.url;
+    };
+    BookmarksStore.prototype.addTag = function (parentTag, subTag) {
+        if (parentTag) {
+            if (parentTag.subTags == null) {
+                parentTag.subTags = [];
+            }
+            parentTag.subTags.push(subTag);
+        }
+        else {
+            this.tags.push(parentTag);
+        }
+    };
+    BookmarksStore.prototype.editTag = function (tag, editTag) {
+        tag.name = editTag.name;
     };
     return BookmarksStore;
 }());

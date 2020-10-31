@@ -27,9 +27,7 @@ type BookmarkComponentProps = { bookmark?: BookmarkModel };
 const BookmarkComponent = observer((props: BookmarkComponentProps) => {
 
     const onEdit = (editBookmark: BookmarkModel) => {
-        let bookmark = props.bookmark;
-        bookmark.name = editBookmark.name;
-        bookmark.url = editBookmark.url;
+        store.editBookmark(props.bookmark, editBookmark);
     }
 
     let bookmark = props.bookmark;
@@ -200,18 +198,15 @@ const Tag = observer((props: TagProps) => {
     }
 
     const onAddBookmark = (bookmark: EditBookmark) => {
-        store.addBookmark(props.tag, bookmark);
+        store.addBookmark(tag, bookmark);
     }
 
     const addSubTag = (subTag: TagModel) => {
-        if (tag.subTags == null) {
-            tag.subTags = [];
-        }
-        tag.subTags.push(subTag);
+        store.addTag(tag, subTag);
     }
 
     const editTag = (editTag: TagModel) => {
-        tag.name = editTag.name;
+        store.editTag(tag, editTag);
     }
 
     return (
@@ -229,7 +224,7 @@ const Tag = observer((props: TagProps) => {
                     </>}
                 <AddOrEditBookmark isEdit={false} onAddOrEdit={onAddBookmark} />
                 <AddOrEditTag key={`add${tag.name}`} onAddOrEdit={toJS(addSubTag)} />
-                <AddOrEditTag key={`edit{tag.name}`} tagToEdit={tag} onAddOrEdit={toJS (editTag)} />
+                <AddOrEditTag key={`edit{tag.name}`} tagToEdit={tag} onAddOrEdit={toJS(editTag)} />
             </fieldset>
         </li>);
 });
@@ -292,11 +287,11 @@ export function replaceTag(tags: TagModel[], newTag: TagModel): TagModel[] {
     return newTags;
 }
 
-type TagsRootNewProps = {
+type TagsRootProps = {
     store: BookmarksStore;
 }
 
-export const TagsRootNew = observer((props: TagsRootNewProps) => {
+export const TagsRoot = observer((props: TagsRootProps) => {
     const store = props.store;
 
     const onSearch = (searchValue: string) => {
@@ -307,88 +302,8 @@ export const TagsRootNew = observer((props: TagsRootNewProps) => {
     return (<div>
         <TagSearch searachText={store.searchText} onSearchChange={onSearch} />
         <Tags tags={store.filteredTags} parentTag={null} onAddTag={null} />
-        <AddOrEditTag isRoot={true} onAddOrEdit={(newTag) => store.tags.push(newTag)} />
+        <AddOrEditTag isRoot={true} onAddOrEdit={(newTag) => store.addTag(null, newTag)} />
     </div>)
 });
 
-
-// type TagsRootState = {
-//     tags: TagModel[];
-//     searachText: string;
-// }
-
-// export class TagsRoot extends React.Component<{}, TagsRootState> {
-
-//     state: TagsRootState = { tags: null, searachText: '' }
-
-//     componentDidMount() {
-//         this.setState({ tags: sampleBookrmarks.slice() });
-//     }
-
-//     handleSearch = (searchValue: string) => {
-//         const tags = this.state.tags.slice();
-//         filterTags(tags, searchValue);
-//         this.setState({ tags: tags, searachText: searchValue });
-//     }
-
-//     handleAddBookmark = (tag: TagModel, bookmarkModel: BookmarkModel) => {
-//         let tags = this.state.tags.slice();
-//         tag.bookmarks.push(bookmarkModel);
-
-//         tags = replaceTag(tags, tag);
-//         this.setState({ tags: tags });
-//     }
-
-//     handleAddOrEditTag = (addOrEditTagResult: AddOrEditTagResult, parentTag: TagModel) => {
-//         let tags = this.state.tags.slice();
-//         if (parentTag) {
-//             if (parentTag.subTags == null)
-//                 parentTag.subTags = [];
-
-//             if (addOrEditTagResult.oldName) {
-//                 // replace
-//                 parentTag.subTags = parentTag.subTags.map(x => x.name == addOrEditTagResult.oldName ? addOrEditTagResult : x);
-//             }
-//             else {
-//                 // new
-//                 parentTag.subTags.push(addOrEditTagResult);
-//             }
-//             replaceTag(tags, { ...parentTag });
-//         }
-//         else {
-//             // sin parent
-
-//             if (addOrEditTagResult.oldName) {
-//                 // replace
-//                 tags = tags.map(x => x.name == addOrEditTagResult.oldName ? addOrEditTagResult : x);
-//             }
-//             else {
-//                 // new
-//                 tags.push(addOrEditTagResult);
-//             }
-//         }
-//         this.setState({ tags: tags });
-//     }
-
-//     handleEditBookmark = (tag: TagModel, editedBookmark: EditBookmark) => {
-//         let tags = this.state.tags.slice();
-//         // replace bookmark
-//         tag.bookmarks = tag.bookmarks.map(x => x.name == editedBookmark.oldName ? editedBookmark : x);
-
-//         tags = replaceTag(tags, tag);
-//         this.setState({ tags: tags });
-//     }
-
-//     render() {
-//         if (this.state.tags) {
-//             return (
-//                 <div>
-//                     <TagSearch searachText={this.state.searachText} onSearchChange={this.handleSearch} />
-//                     <Tags tags={this.state.tags} parentTag={null} onEditBookmark={this.handleEditBookmark} onAddBookmark={this.handleAddBookmark} onAddTag={this.handleAddOrEditTag} />
-//                     <AddOrEditTag isRoot={true} onAddOrEdit={(newTag) => this.handleAddOrEditTag(newTag, null)} />
-//                 </div>);
-//         }
-//         return null;
-//     }
-// }
 
