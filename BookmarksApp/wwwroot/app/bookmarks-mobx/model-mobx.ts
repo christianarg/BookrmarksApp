@@ -1,6 +1,23 @@
-import { action, makeAutoObservable, observable } from "mobx"
+import { makeAutoObservable } from "mobx"
 
 // Global state
+
+function hasText(text: string, searchText: string) {
+    return text.toLowerCase().includes(searchText.toLowerCase());
+}
+
+function filterTags(tags: TagModel[], searchText: string) {
+    tags.forEach(tag => {
+        tag.bookmarks.forEach(bookmark => bookmark.hidden = !hasText(bookmark.name, searchText));
+        const anyBookmarkVisible = tag.bookmarks.some(b => !b.hidden);
+        const tagNameHasText = hasText(tag.name, searchText);
+        const anySubTagsVisible = tag.subTags && tag.subTags.some(t => !t.hidden);
+        tag.hidden = !tagNameHasText && !anyBookmarkVisible && !anySubTagsVisible;
+        if (tag.subTags) {
+            filterTags(tag.subTags, searchText);
+        }
+    });
+}
 
 export class BookmarksStore {
     tags: TagModel[] = [];
@@ -37,6 +54,11 @@ export class BookmarksStore {
 
     editTag(tag: TagModel, editTag: TagModel) {
         tag.name = editTag.name;
+    }
+
+    search(searchValue: string) {
+        this.searchText = searchValue;
+        filterTags(store.tags, searchValue);
     }
 }
 

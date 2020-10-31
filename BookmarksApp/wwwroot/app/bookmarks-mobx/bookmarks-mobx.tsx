@@ -259,29 +259,12 @@ function TagSearch(props: TagSearchProps) {
 
 // **TagsRootComponent**
 
-function hasText(text: string, searchText: string) {
-    return text.toLowerCase().includes(searchText.toLowerCase());
-}
-
-export function filterTags(tags: TagModel[], searchText: string) {
-    tags.forEach(tag => {
-        tag.bookmarks.forEach(bookmark => bookmark.hidden = !hasText(bookmark.name, searchText));
-        const anyBookmarkVisible = tag.bookmarks.some(b => !b.hidden);
-        const tagNameHasText = hasText(tag.name, searchText);
-        const anySubTagsVisible = tag.subTags && tag.subTags.some(t => !t.hidden);
-        tag.hidden = !tagNameHasText && !anyBookmarkVisible && !anySubTagsVisible;
-        if (tag.subTags) {
-            filterTags(tag.subTags, searchText);
-        }
-    });
-}
 
 export const TagsRoot = observer(() => {
     const store = useContext(StoreContext);
 
     const onSearch = (searchValue: string) => {
-        store.searchText = searchValue;
-        filterTags(store.tags, searchValue);
+        store.search(searchValue);
     };
 
     return (<div>

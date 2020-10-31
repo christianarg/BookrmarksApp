@@ -6914,7 +6914,7 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.TagsRoot = exports.filterTags = void 0;
+exports.TagsRoot = void 0;
 var mobx_react_1 = __webpack_require__(/*! mobx-react */ "./node_modules/mobx-react/dist/mobxreact.esm.js");
 var mobx_1 = __webpack_require__(/*! mobx */ "./node_modules/mobx/dist/mobx.esm.js");
 var React = __webpack_require__(/*! react */ "react");
@@ -7098,27 +7098,10 @@ function TagSearch(props) {
         React.createElement("input", { type: "text", placeholder: "Search tags...", value: searachText, onChange: function (evt) { return onSearchChange(evt.target.value); } })));
 }
 // **TagsRootComponent**
-function hasText(text, searchText) {
-    return text.toLowerCase().includes(searchText.toLowerCase());
-}
-function filterTags(tags, searchText) {
-    tags.forEach(function (tag) {
-        tag.bookmarks.forEach(function (bookmark) { return bookmark.hidden = !hasText(bookmark.name, searchText); });
-        var anyBookmarkVisible = tag.bookmarks.some(function (b) { return !b.hidden; });
-        var tagNameHasText = hasText(tag.name, searchText);
-        var anySubTagsVisible = tag.subTags && tag.subTags.some(function (t) { return !t.hidden; });
-        tag.hidden = !tagNameHasText && !anyBookmarkVisible && !anySubTagsVisible;
-        if (tag.subTags) {
-            filterTags(tag.subTags, searchText);
-        }
-    });
-}
-exports.filterTags = filterTags;
 exports.TagsRoot = mobx_react_1.observer(function () {
     var store = react_1.useContext(app_1.StoreContext);
     var onSearch = function (searchValue) {
-        store.searchText = searchValue;
-        filterTags(store.tags, searchValue);
+        store.search(searchValue);
     };
     return (React.createElement("div", null,
         React.createElement(TagSearch, { searachText: store.searchText, onSearchChange: onSearch }),
@@ -7142,6 +7125,21 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.store = exports.sampleBookrmarks = exports.BookmarksStore = void 0;
 var mobx_1 = __webpack_require__(/*! mobx */ "./node_modules/mobx/dist/mobx.esm.js");
 // Global state
+function hasText(text, searchText) {
+    return text.toLowerCase().includes(searchText.toLowerCase());
+}
+function filterTags(tags, searchText) {
+    tags.forEach(function (tag) {
+        tag.bookmarks.forEach(function (bookmark) { return bookmark.hidden = !hasText(bookmark.name, searchText); });
+        var anyBookmarkVisible = tag.bookmarks.some(function (b) { return !b.hidden; });
+        var tagNameHasText = hasText(tag.name, searchText);
+        var anySubTagsVisible = tag.subTags && tag.subTags.some(function (t) { return !t.hidden; });
+        tag.hidden = !tagNameHasText && !anyBookmarkVisible && !anySubTagsVisible;
+        if (tag.subTags) {
+            filterTags(tag.subTags, searchText);
+        }
+    });
+}
 var BookmarksStore = /** @class */ (function () {
     function BookmarksStore() {
         this.tags = [];
@@ -7175,6 +7173,10 @@ var BookmarksStore = /** @class */ (function () {
     };
     BookmarksStore.prototype.editTag = function (tag, editTag) {
         tag.name = editTag.name;
+    };
+    BookmarksStore.prototype.search = function (searchValue) {
+        this.searchText = searchValue;
+        filterTags(exports.store.tags, searchValue);
     };
     return BookmarksStore;
 }());
