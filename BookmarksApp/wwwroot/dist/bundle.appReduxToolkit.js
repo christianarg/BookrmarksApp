@@ -81,10 +81,476 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = "./wwwroot/app/bookmarks-redux-toolkit/app-redux-toolkit.tsx");
+/******/ 	return __webpack_require__(__webpack_require__.s = "./app/bookmarks-redux-toolkit/app-redux-toolkit.tsx");
 /******/ })
 /************************************************************************/
 /******/ ({
+
+/***/ "./app/bookmarks-redux-toolkit/app-redux-toolkit.tsx":
+/*!***********************************************************!*\
+  !*** ./app/bookmarks-redux-toolkit/app-redux-toolkit.tsx ***!
+  \***********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.App = void 0;
+var React = __webpack_require__(/*! react */ "react");
+var ReactDOM = __webpack_require__(/*! react-dom */ "react-dom");
+var bookmarks_redux_toolkit_1 = __webpack_require__(/*! ./bookmarks-redux-toolkit */ "./app/bookmarks-redux-toolkit/bookmarks-redux-toolkit.tsx");
+var react_redux_1 = __webpack_require__(/*! react-redux */ "./node_modules/react-redux/es/index.js");
+var toolkit_1 = __webpack_require__(/*! @reduxjs/toolkit */ "./node_modules/@reduxjs/toolkit/dist/redux-toolkit.esm.js");
+var bookmark_slice_1 = __webpack_require__(/*! ./bookmark-slice */ "./app/bookmarks-redux-toolkit/bookmark-slice.tsx");
+var store = toolkit_1.configureStore({ reducer: bookmark_slice_1.default });
+var App = /** @class */ (function (_super) {
+    __extends(App, _super);
+    function App() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    App.prototype.componentDidMount = function () {
+        // Estado inicial de pruebas (aqui habría que hacer un fetch)
+        store.dispatch(bookmark_slice_1.recieveState({ newState: bookmark_slice_1.sampleState }));
+    };
+    App.prototype.render = function () {
+        return (React.createElement(react_redux_1.Provider, { store: store },
+            React.createElement(bookmarks_redux_toolkit_1.ConnectedTagsRoot, null)));
+    };
+    return App;
+}(React.Component));
+exports.App = App;
+ReactDOM.render(React.createElement(App, null), document.getElementById('root'));
+
+
+/***/ }),
+
+/***/ "./app/bookmarks-redux-toolkit/bookmark-slice.tsx":
+/*!********************************************************!*\
+  !*** ./app/bookmarks-redux-toolkit/bookmark-slice.tsx ***!
+  \********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var _a;
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.recieveState = exports.search = exports.editBookmark = exports.addOrEditTag = exports.addBookmark = exports.filterTags = exports.sampleState = void 0;
+var toolkit_1 = __webpack_require__(/*! @reduxjs/toolkit */ "./node_modules/@reduxjs/toolkit/dist/redux-toolkit.esm.js");
+var initialState = {
+    bookmarks: [],
+    tags: [],
+    searchValue: ''
+};
+exports.sampleState = {
+    tags: [
+        {
+            name: '.Net',
+            bookmarks: ['download'],
+            subTags: ['Asp.net'],
+            isRoot: true
+        },
+        {
+            name: 'Asp.net',
+            bookmarks: ['asp.net', 'asp.net core']
+        },
+        {
+            name: 'React',
+            bookmarks: ['react docs'],
+            isRoot: true
+        }
+    ],
+    bookmarks: [
+        { name: 'download', url: 'https://dotnet.microsoft.com/download' },
+        { name: 'asp.net', url: 'https://dotnet.microsoft.com/apps/aspnet' },
+        { name: 'asp.net core', url: 'https://docs.microsoft.com/es-es/aspnet/core/?view=aspnetcore-2.2' },
+        { name: 'react docs', url: 'https://reactjs.org/docs/getting-started.html' }
+    ],
+    searchValue: ''
+};
+var bookmarksSlice = toolkit_1.createSlice({
+    name: 'bookmarks',
+    initialState: initialState,
+    reducers: {
+        recieveState: function (state, action) {
+            state.bookmarks = action.payload.newState.bookmarks;
+            state.tags = action.payload.newState.tags;
+        },
+        addBookmark: function (state, action) {
+            var tags = state.tags, bookmarks = state.bookmarks;
+            var _a = action.payload, tagName = _a.tagName, bookmarkModel = _a.bookmarkModel;
+            var tag = tags.find(function (x) { return x.name == tagName; });
+            tag.bookmarks.push(bookmarkModel.name);
+            bookmarks.push(bookmarkModel); // añadir bookmark
+            //tags = tags.map(x => x.name == tag.name ? tag : x); // reeplazar tag (no hace falta por el immer)
+            return state;
+        },
+        addOrEditTag: function (state, action) {
+            var tags = state.tags;
+            var _a = action.payload, addOrEditTagResult = _a.addOrEditTagResult, parentTagName = _a.parentTagName;
+            var tagToAddOrEdit = state.tags.find(function (x) { return x.name == addOrEditTagResult.oldName; });
+            if (tagToAddOrEdit) { // edit
+                tagToAddOrEdit.name = addOrEditTagResult.name;
+                tags = tags.map(function (x) { return x.name == addOrEditTagResult.oldName ? tagToAddOrEdit : x; });
+                // en el padre reemplazar el subtag por el nuevo nombre
+                var parentTag_1 = state.tags.find(function (x) { return x.name == parentTagName; });
+                if (parentTag_1) {
+                    parentTag_1.subTags = parentTag_1.subTags.map(function (x) { return x == addOrEditTagResult.oldName ? tagToAddOrEdit.name : x; });
+                    tags = tags.map(function (x) { return x.name == parentTag_1.name ? parentTag_1 : x; });
+                }
+            }
+            else {
+                tagToAddOrEdit = addOrEditTagResult;
+                tags.push(tagToAddOrEdit);
+                var parentTag_2 = tags.find(function (x) { return x.name == parentTagName; });
+                if (parentTag_2) {
+                    if (!parentTag_2.subTags) {
+                        parentTag_2.subTags = [];
+                    }
+                    parentTag_2.subTags.push(tagToAddOrEdit.name);
+                    tags = tags.map(function (x) { return x.name == parentTag_2.name ? parentTag_2 : x; });
+                }
+                else {
+                    tagToAddOrEdit.isRoot = true;
+                }
+            }
+            return state;
+        },
+        editBookmark: function (state, action) {
+            var _a = action.payload, oldName = _a.oldName, name = _a.name;
+            var bookmarks = state.bookmarks, tags = state.tags;
+            // reemplazar el bookmar en el estado global (se podría hacer con un map, estoy probando esta manera altenrativa)
+            var bookMarkIndex = bookmarks.findIndex(function (x) { return x.name == oldName; });
+            bookmarks[bookMarkIndex] = action.payload;
+            // si cambia el nombre hay que reemplazarlo en el bookmark del tag (si hacen falta id's sino esto se puede liar, o bien que el bookmark tenga el tagname)
+            if (name != oldName) {
+                var tagWithChangedBookmark = tags.find(function (x) { return x.bookmarks.some(function (bookmarkName) { return bookmarkName == oldName; }); });
+                var bookMarkIndexInTag = tagWithChangedBookmark.bookmarks.findIndex(function (x) { return x == oldName; });
+                tagWithChangedBookmark.bookmarks[bookMarkIndexInTag] = name;
+            }
+            return state;
+        },
+        search: function (state, action) {
+            var searchText = action.payload.searchValue;
+            state.searchValue = searchText;
+            filterTags(state, state.tags, state.searchValue);
+            return state;
+        }
+    }
+});
+function hasText(text, searchText) {
+    return text.toLowerCase().includes(searchText.toLowerCase());
+}
+function getTags(state, tagNames) {
+    var allTags = state.tags;
+    return allTags.filter(function (x) { return tagNames.some(function (tagName) { return tagName == x.name; }); });
+}
+function getBookmarks(state, bookmarkNames) {
+    var allBookmarks = state.bookmarks;
+    return allBookmarks.filter(function (x) { return bookmarkNames.some(function (bookmarkName) { return bookmarkName == x.name; }); });
+}
+function filterTags(state, tags, searchText) {
+    var allTags = state.tags;
+    tags.forEach(function (tag) {
+        var bookmarks = getBookmarks(state, tag.bookmarks);
+        bookmarks.forEach(function (bookmark) { return bookmark.hidden = !hasText(bookmark.name, searchText); });
+        var anyBookmarkVisible = bookmarks.some(function (b) { return !b.hidden; });
+        var tagNameHasText = hasText(tag.name, searchText);
+        var anySubTagsVisible = tag.subTags && getTags(state, tag.subTags).some(function (t) { return !t.hidden; });
+        tag.hidden = !tagNameHasText && !anyBookmarkVisible && !anySubTagsVisible;
+        if (tag.subTags) {
+            filterTags(state, getTags(state, tag.subTags), searchText);
+        }
+    });
+}
+exports.filterTags = filterTags;
+exports.addBookmark = (_a = bookmarksSlice.actions, _a.addBookmark), exports.addOrEditTag = _a.addOrEditTag, exports.editBookmark = _a.editBookmark, exports.search = _a.search, exports.recieveState = _a.recieveState;
+exports.default = bookmarksSlice.reducer;
+
+
+/***/ }),
+
+/***/ "./app/bookmarks-redux-toolkit/bookmarks-redux-toolkit.tsx":
+/*!*****************************************************************!*\
+  !*** ./app/bookmarks-redux-toolkit/bookmarks-redux-toolkit.tsx ***!
+  \*****************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ConnectedTagsRoot = exports.TagsRoot = exports.TagSearch = exports.Tags = exports.ConnectedTag = exports.Tag = exports.AddOrEditTag = exports.AddOrEditBookmark = exports.Bookmarks = void 0;
+var React = __webpack_require__(/*! react */ "react");
+var react_redux_1 = __webpack_require__(/*! react-redux */ "./node_modules/react-redux/es/index.js");
+var bookmark_slice_1 = __webpack_require__(/*! ./bookmark-slice */ "./app/bookmarks-redux-toolkit/bookmark-slice.tsx");
+function Bookmarks(props) {
+    var bookmarks = props.bookmarks.map(function (bookmark) { return !bookmark.hidden &&
+        React.createElement("li", { key: bookmark.name, className: "bookmark" },
+            React.createElement("a", { href: bookmark.url, target: "_blank" }, bookmark.name),
+            "\u00A0\u00A0",
+            React.createElement(AddOrEditBookmark, { bookmarkToEdit: bookmark, onAddOrEdit: function (edited) { return props.onEdit(edited); } })); });
+    return (React.createElement("ul", { style: { listStyleType: 'square' } }, bookmarks));
+}
+exports.Bookmarks = Bookmarks;
+var AddOrEditBookmark = /** @class */ (function (_super) {
+    __extends(AddOrEditBookmark, _super);
+    function AddOrEditBookmark() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.state = { isFormVisible: false, name: "", url: "" };
+        _this.handleSubmit = function (evt) {
+            evt.preventDefault();
+            var _a = _this.state, name = _a.name, url = _a.url;
+            var bookmarkToEdit = _this.props.bookmarkToEdit;
+            if (name && url) {
+                _this.props.onAddOrEdit({ name: name, url: url, oldName: bookmarkToEdit && bookmarkToEdit.name });
+                _this.setState({ isFormVisible: false, url: "", name: "" });
+            }
+        };
+        _this.handleNameChange = function (evt) {
+            _this.setState({ name: evt.target.value });
+        };
+        _this.handleUrlChange = function (evt) {
+            _this.setState({ url: evt.target.value });
+        };
+        _this.toggleShow = function () {
+            _this.setState({ isFormVisible: !_this.state.isFormVisible });
+        };
+        return _this;
+    }
+    AddOrEditBookmark.prototype.componentDidMount = function () {
+        this.updateFormWithBookmark();
+    };
+    AddOrEditBookmark.prototype.componentDidUpdate = function (prevProps) {
+        if (prevProps.bookmarkToEdit != this.props.bookmarkToEdit) {
+            this.updateFormWithBookmark();
+        }
+    };
+    AddOrEditBookmark.prototype.updateFormWithBookmark = function () {
+        var bookmarkToEdit = this.props.bookmarkToEdit;
+        if (bookmarkToEdit) {
+            this.setState({ name: bookmarkToEdit.name, url: bookmarkToEdit.url });
+        }
+        else {
+            this.setState({ name: "", url: "" });
+        }
+    };
+    AddOrEditBookmark.prototype.hasValue = function () {
+        var _a = this.state, name = _a.name, url = _a.url;
+        return (name && url);
+    };
+    AddOrEditBookmark.prototype.buttonStyle = function () {
+        if (!this.hasValue()) {
+            return { cursor: 'not-allowed' };
+        }
+        return null;
+    };
+    AddOrEditBookmark.prototype.render = function () {
+        var bookmarkToEdit = this.props.bookmarkToEdit;
+        var idEdit = bookmarkToEdit != null;
+        var addOrEditToggleButtonText = bookmarkToEdit ? '(Edit Bookmark)' : '(Add Bookmark)';
+        var addOrEdditAcceptButtonText = bookmarkToEdit ? 'Edit' : 'Add';
+        var buttonStyle = { display: 'inline-block', textDecoration: 'underline', cursor: 'pointer' };
+        if (this.state.isFormVisible) {
+            return (React.createElement("div", null,
+                React.createElement("div", { style: buttonStyle, onClick: this.toggleShow }, "Close"),
+                React.createElement("form", { onSubmit: this.handleSubmit },
+                    React.createElement("div", null,
+                        "Name: ",
+                        React.createElement("input", { type: "text", value: this.state.name, onChange: this.handleNameChange, placeholder: "Bookmark name..." })),
+                    React.createElement("div", null,
+                        "Url:  ",
+                        React.createElement("input", { type: "text", value: this.state.url, onChange: this.handleUrlChange, placeholder: "url..." })),
+                    React.createElement("button", { value: "Add", style: this.buttonStyle() }, addOrEdditAcceptButtonText))));
+        }
+        return React.createElement("div", { style: buttonStyle, onClick: this.toggleShow }, addOrEditToggleButtonText);
+    };
+    return AddOrEditBookmark;
+}(React.Component));
+exports.AddOrEditBookmark = AddOrEditBookmark;
+var AddOrEditTag = /** @class */ (function (_super) {
+    __extends(AddOrEditTag, _super);
+    function AddOrEditTag(props) {
+        var _this = _super.call(this, props) || this;
+        _this.handleSubmit = function (evt) {
+            evt.preventDefault();
+            var name = _this.state.name;
+            var tagToEdit = _this.props.tagToEdit;
+            if (name) {
+                if (tagToEdit) {
+                    var editTagResult = __assign(__assign({}, tagToEdit), { oldName: tagToEdit.name });
+                    editTagResult.name = name;
+                    _this.props.onAddOrEdit(editTagResult);
+                }
+                else {
+                    _this.props.onAddOrEdit({ name: name, bookmarks: [] });
+                }
+                _this.setState({ isFormVisible: false, name: '' });
+            }
+        };
+        _this.handleNameChange = function (evt) {
+            _this.setState({ name: evt.target.value });
+        };
+        _this.toggleShow = function () {
+            _this.setState({ isFormVisible: !_this.state.isFormVisible });
+        };
+        var tagToEdit = _this.props.tagToEdit || '';
+        _this.state = { isFormVisible: false, name: tagToEdit && tagToEdit.name };
+        return _this;
+    }
+    AddOrEditTag.prototype.hasValue = function () {
+        return this.state.name != null;
+    };
+    AddOrEditTag.prototype.buttonStyle = function () {
+        if (!this.hasValue()) {
+            return { cursor: 'not-allowed' };
+        }
+        return null;
+    };
+    AddOrEditTag.prototype.render = function () {
+        var buttonStyle = { display: 'inline-block', textDecoration: 'underline', cursor: 'pointer' };
+        var _a = this.props, isRoot = _a.isRoot, tagToEdit = _a.tagToEdit;
+        var toggleAddButtonText = isRoot ? '(Add Tags)' : tagToEdit ? '(Edit Tag)' : '(Add SubTags)';
+        var acceptText = tagToEdit ? 'Edit' : 'Add';
+        if (this.state.isFormVisible) {
+            return (React.createElement("div", null,
+                React.createElement("div", { style: buttonStyle, onClick: this.toggleShow }, "Close"),
+                React.createElement("form", { onSubmit: this.handleSubmit },
+                    React.createElement("div", null,
+                        "Name: ",
+                        React.createElement("input", { type: "text", value: this.state.name, onChange: this.handleNameChange, placeholder: "Tag name..." })),
+                    React.createElement("button", { value: "Add", style: this.buttonStyle() }, acceptText))));
+        }
+        return React.createElement("div", { style: buttonStyle, onClick: this.toggleShow }, toggleAddButtonText);
+    };
+    return AddOrEditTag;
+}(React.Component));
+exports.AddOrEditTag = AddOrEditTag;
+function Tag(props) {
+    var tag = props.tag, bookmarks = props.bookmarks, parentTag = props.parentTag;
+    if (tag.hidden) {
+        return null;
+    }
+    return (React.createElement("li", { className: "tag" },
+        React.createElement("fieldset", null,
+            React.createElement("legend", null,
+                "Tag: ",
+                tag.name),
+            React.createElement("div", null, "Bookmarks:"),
+            React.createElement(Bookmarks, { onEdit: function (bookmark) { return props.onEditBookmark(tag, bookmark); }, bookmarks: props.bookmarks }),
+            tag.subTags &&
+                React.createElement(React.Fragment, null,
+                    React.createElement("div", null, "SubTags:"),
+                    React.createElement(Tags, { tags: props.subTags, parentTag: tag })),
+            React.createElement(AddOrEditBookmark, { onAddOrEdit: function (newBookmark) { return props.addBookmark(newBookmark, tag.name); } }),
+            React.createElement(AddOrEditTag, { key: "add" + tag.name, onAddOrEdit: function (newTag) { return props.addOrEditTag(newTag, parentTag.name); } }),
+            React.createElement(AddOrEditTag, { key: "edit{tag.name}", tagToEdit: tag, onAddOrEdit: function (newTag) { return props.addOrEditTag(newTag, parentTag && parentTag.name); } }))));
+}
+exports.Tag = Tag;
+var bookmarksById = function (bookmarkIds, allBookmarks) {
+    return allBookmarks.filter(function (bookmark) { return bookmarkIds.some(function (x) { return x == bookmark.name; }); });
+};
+var tagByName = function (tagName, tags) {
+    return tags.find(function (x) { return x.name == tagName; });
+};
+var tagMapStateToProps = function (state, ownProps) {
+    var tag = tagByName(ownProps.tagName, state.tags);
+    return ({
+        tag: tag,
+        subTags: tag.subTags && state.tags.filter(function (x) { return tag.subTags.some(function (tagName) { return tagName == x.name; }); }),
+        bookmarks: bookmarksById(tag.bookmarks, state.bookmarks),
+        parentTag: tagByName(ownProps.parentTagName, state.tags)
+    });
+};
+var tagMapDispatchToProps = function (dispatch) {
+    return {
+        addBookmark: function (bookmarkModel, tagName) { return dispatch(bookmark_slice_1.addBookmark({ bookmarkModel: bookmarkModel, tagName: tagName })); },
+        addOrEditTag: function (addOrEditTagResult, parentTagName) { return dispatch(bookmark_slice_1.addOrEditTag({ addOrEditTagResult: addOrEditTagResult, parentTagName: parentTagName })); },
+        onEditBookmark: function (tag, bookmark) { return dispatch(bookmark_slice_1.editBookmark(bookmark)); }
+    };
+};
+exports.ConnectedTag = react_redux_1.connect(tagMapStateToProps, tagMapDispatchToProps)(Tag);
+function Tags(props) {
+    var tags = props.tags, parentTag = props.parentTag;
+    if (tags) {
+        var parentTagName_1 = parentTag && parentTag.name;
+        var tagItems = tags.map(function (tag) { return React.createElement(exports.ConnectedTag, { key: tag.name, parentTagName: parentTagName_1, tagName: tag.name }); });
+        return (React.createElement("ul", { style: { listStyleType: 'none', paddingInlineStart: 0 } }, tagItems));
+    }
+    return null;
+}
+exports.Tags = Tags;
+function TagSearch(props) {
+    var searachText = props.searachText, onSearchChange = props.onSearchChange;
+    return (React.createElement("div", null,
+        React.createElement("input", { type: "text", placeholder: "Search tags...", value: searachText, onChange: function (evt) { return onSearchChange(evt.target.value); } })));
+}
+exports.TagSearch = TagSearch;
+function TagsRoot(props) {
+    var tags = props.tags, search = props.search, searachText = props.searachText, addOrEditTag = props.addOrEditTag;
+    if (tags) {
+        return (React.createElement("div", null,
+            React.createElement(TagSearch, { searachText: searachText, onSearchChange: search }),
+            React.createElement(Tags, { tags: tags, parentTag: null }),
+            React.createElement(AddOrEditTag, { isRoot: true, onAddOrEdit: function (newTag) { return addOrEditTag(newTag); } })));
+    }
+    return null;
+}
+exports.TagsRoot = TagsRoot;
+var tagsRootMapStateToProps = function (state) {
+    return {
+        tags: state.tags.filter(function (x) { return x.isRoot; }),
+        searachText: state.searchValue
+    };
+};
+var tagsRootMapDispatchToProps = function (dispatch) {
+    return {
+        addOrEditTag: function (addOrEditTagResult) { return dispatch(bookmark_slice_1.addOrEditTag({ addOrEditTagResult: addOrEditTagResult, parentTagName: null })); },
+        search: function (searchValue) { return dispatch(bookmark_slice_1.search({ searchValue: searchValue })); }
+    };
+};
+exports.ConnectedTagsRoot = react_redux_1.connect(tagsRootMapStateToProps, tagsRootMapDispatchToProps)(TagsRoot);
+
+
+/***/ }),
 
 /***/ "./node_modules/@babel/runtime/helpers/esm/assertThisInitialized.js":
 /*!**************************************************************************!*\
@@ -5740,472 +6206,6 @@ module.exports = function(originalModule) {
 	}
 	return module;
 };
-
-
-/***/ }),
-
-/***/ "./wwwroot/app/bookmarks-redux-toolkit/app-redux-toolkit.tsx":
-/*!*******************************************************************!*\
-  !*** ./wwwroot/app/bookmarks-redux-toolkit/app-redux-toolkit.tsx ***!
-  \*******************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.App = void 0;
-var React = __webpack_require__(/*! react */ "react");
-var ReactDOM = __webpack_require__(/*! react-dom */ "react-dom");
-var bookmarks_redux_toolkit_1 = __webpack_require__(/*! ./bookmarks-redux-toolkit */ "./wwwroot/app/bookmarks-redux-toolkit/bookmarks-redux-toolkit.tsx");
-var react_redux_1 = __webpack_require__(/*! react-redux */ "./node_modules/react-redux/es/index.js");
-var toolkit_1 = __webpack_require__(/*! @reduxjs/toolkit */ "./node_modules/@reduxjs/toolkit/dist/redux-toolkit.esm.js");
-var bookmark_slice_1 = __webpack_require__(/*! ./bookmark-slice */ "./wwwroot/app/bookmarks-redux-toolkit/bookmark-slice.tsx");
-var store = toolkit_1.configureStore({ reducer: bookmark_slice_1.default });
-var App = /** @class */ (function (_super) {
-    __extends(App, _super);
-    function App() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    App.prototype.componentDidMount = function () {
-        // Estado inicial de pruebas (aqui habría que hacer un fetch)
-        store.dispatch(bookmark_slice_1.recieveState({ newState: bookmark_slice_1.sampleState }));
-    };
-    App.prototype.render = function () {
-        return (React.createElement(react_redux_1.Provider, { store: store },
-            React.createElement(bookmarks_redux_toolkit_1.ConnectedTagsRoot, null)));
-    };
-    return App;
-}(React.Component));
-exports.App = App;
-ReactDOM.render(React.createElement(App, null), document.getElementById('root'));
-
-
-/***/ }),
-
-/***/ "./wwwroot/app/bookmarks-redux-toolkit/bookmark-slice.tsx":
-/*!****************************************************************!*\
-  !*** ./wwwroot/app/bookmarks-redux-toolkit/bookmark-slice.tsx ***!
-  \****************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var _a;
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.recieveState = exports.search = exports.editBookmark = exports.addOrEditTag = exports.addBookmark = exports.filterTags = exports.sampleState = void 0;
-var toolkit_1 = __webpack_require__(/*! @reduxjs/toolkit */ "./node_modules/@reduxjs/toolkit/dist/redux-toolkit.esm.js");
-var initialState = {
-    bookmarks: [],
-    tags: [],
-    searchValue: ''
-};
-exports.sampleState = {
-    tags: [
-        {
-            name: '.Net',
-            bookmarks: ['download'],
-            subTags: ['Asp.net'],
-            isRoot: true
-        },
-        {
-            name: 'Asp.net',
-            bookmarks: ['asp.net', 'asp.net core']
-        },
-        {
-            name: 'React',
-            bookmarks: ['react docs'],
-            isRoot: true
-        }
-    ],
-    bookmarks: [
-        { name: 'download', url: 'https://dotnet.microsoft.com/download' },
-        { name: 'asp.net', url: 'https://dotnet.microsoft.com/apps/aspnet' },
-        { name: 'asp.net core', url: 'https://docs.microsoft.com/es-es/aspnet/core/?view=aspnetcore-2.2' },
-        { name: 'react docs', url: 'https://reactjs.org/docs/getting-started.html' }
-    ],
-    searchValue: ''
-};
-var bookmarksSlice = toolkit_1.createSlice({
-    name: 'bookmarks',
-    initialState: initialState,
-    reducers: {
-        recieveState: function (state, action) {
-            state.bookmarks = action.payload.newState.bookmarks;
-            state.tags = action.payload.newState.tags;
-        },
-        addBookmark: function (state, action) {
-            var tags = state.tags, bookmarks = state.bookmarks;
-            var _a = action.payload, tagName = _a.tagName, bookmarkModel = _a.bookmarkModel;
-            var tag = tags.find(function (x) { return x.name == tagName; });
-            tag.bookmarks.push(bookmarkModel.name);
-            bookmarks.push(bookmarkModel); // añadir bookmark
-            //tags = tags.map(x => x.name == tag.name ? tag : x); // reeplazar tag (no hace falta por el immer)
-            return state;
-        },
-        addOrEditTag: function (state, action) {
-            var tags = state.tags;
-            var _a = action.payload, addOrEditTagResult = _a.addOrEditTagResult, parentTagName = _a.parentTagName;
-            var tagToAddOrEdit = state.tags.find(function (x) { return x.name == addOrEditTagResult.oldName; });
-            if (tagToAddOrEdit) { // edit
-                tagToAddOrEdit.name = addOrEditTagResult.name;
-                tags = tags.map(function (x) { return x.name == addOrEditTagResult.oldName ? tagToAddOrEdit : x; });
-                // en el padre reemplazar el subtag por el nuevo nombre
-                var parentTag_1 = state.tags.find(function (x) { return x.name == parentTagName; });
-                if (parentTag_1) {
-                    parentTag_1.subTags = parentTag_1.subTags.map(function (x) { return x == addOrEditTagResult.oldName ? tagToAddOrEdit.name : x; });
-                    tags = tags.map(function (x) { return x.name == parentTag_1.name ? parentTag_1 : x; });
-                }
-            }
-            else {
-                tagToAddOrEdit = addOrEditTagResult;
-                tags.push(tagToAddOrEdit);
-                var parentTag_2 = tags.find(function (x) { return x.name == parentTagName; });
-                if (parentTag_2) {
-                    if (!parentTag_2.subTags) {
-                        parentTag_2.subTags = [];
-                    }
-                    parentTag_2.subTags.push(tagToAddOrEdit.name);
-                    tags = tags.map(function (x) { return x.name == parentTag_2.name ? parentTag_2 : x; });
-                }
-                else {
-                    tagToAddOrEdit.isRoot = true;
-                }
-            }
-            return state;
-        },
-        editBookmark: function (state, action) {
-            var _a = action.payload, oldName = _a.oldName, name = _a.name;
-            var bookmarks = state.bookmarks, tags = state.tags;
-            // reemplazar el bookmar en el estado global (se podría hacer con un map, estoy probando esta manera altenrativa)
-            var bookMarkIndex = bookmarks.findIndex(function (x) { return x.name == oldName; });
-            bookmarks[bookMarkIndex] = action.payload;
-            // si cambia el nombre hay que reemplazarlo en el bookmark del tag (si hacen falta id's sino esto se puede liar, o bien que el bookmark tenga el tagname)
-            if (name != oldName) {
-                var tagWithChangedBookmark = tags.find(function (x) { return x.bookmarks.some(function (bookmarkName) { return bookmarkName == oldName; }); });
-                var bookMarkIndexInTag = tagWithChangedBookmark.bookmarks.findIndex(function (x) { return x == oldName; });
-                tagWithChangedBookmark.bookmarks[bookMarkIndexInTag] = name;
-            }
-            return state;
-        },
-        search: function (state, action) {
-            var searchText = action.payload.searchValue;
-            state.searchValue = searchText;
-            filterTags(state, state.tags, state.searchValue);
-            return state;
-        }
-    }
-});
-function hasText(text, searchText) {
-    return text.toLowerCase().includes(searchText.toLowerCase());
-}
-function getTags(state, tagNames) {
-    var allTags = state.tags;
-    return allTags.filter(function (x) { return tagNames.some(function (tagName) { return tagName == x.name; }); });
-}
-function getBookmarks(state, bookmarkNames) {
-    var allBookmarks = state.bookmarks;
-    return allBookmarks.filter(function (x) { return bookmarkNames.some(function (bookmarkName) { return bookmarkName == x.name; }); });
-}
-function filterTags(state, tags, searchText) {
-    var allTags = state.tags;
-    tags.forEach(function (tag) {
-        var bookmarks = getBookmarks(state, tag.bookmarks);
-        bookmarks.forEach(function (bookmark) { return bookmark.hidden = !hasText(bookmark.name, searchText); });
-        var anyBookmarkVisible = bookmarks.some(function (b) { return !b.hidden; });
-        var tagNameHasText = hasText(tag.name, searchText);
-        var anySubTagsVisible = tag.subTags && getTags(state, tag.subTags).some(function (t) { return !t.hidden; });
-        tag.hidden = !tagNameHasText && !anyBookmarkVisible && !anySubTagsVisible;
-        if (tag.subTags) {
-            filterTags(state, getTags(state, tag.subTags), searchText);
-        }
-    });
-}
-exports.filterTags = filterTags;
-exports.addBookmark = (_a = bookmarksSlice.actions, _a.addBookmark), exports.addOrEditTag = _a.addOrEditTag, exports.editBookmark = _a.editBookmark, exports.search = _a.search, exports.recieveState = _a.recieveState;
-exports.default = bookmarksSlice.reducer;
-
-
-/***/ }),
-
-/***/ "./wwwroot/app/bookmarks-redux-toolkit/bookmarks-redux-toolkit.tsx":
-/*!*************************************************************************!*\
-  !*** ./wwwroot/app/bookmarks-redux-toolkit/bookmarks-redux-toolkit.tsx ***!
-  \*************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ConnectedTagsRoot = exports.TagsRoot = exports.TagSearch = exports.Tags = exports.ConnectedTag = exports.Tag = exports.AddOrEditTag = exports.AddOrEditBookmark = exports.Bookmarks = void 0;
-var React = __webpack_require__(/*! react */ "react");
-var react_redux_1 = __webpack_require__(/*! react-redux */ "./node_modules/react-redux/es/index.js");
-var bookmark_slice_1 = __webpack_require__(/*! ./bookmark-slice */ "./wwwroot/app/bookmarks-redux-toolkit/bookmark-slice.tsx");
-function Bookmarks(props) {
-    var bookmarks = props.bookmarks.map(function (bookmark) { return !bookmark.hidden &&
-        React.createElement("li", { key: bookmark.name, className: "bookmark" },
-            React.createElement("a", { href: bookmark.url, target: "_blank" }, bookmark.name),
-            "\u00A0\u00A0",
-            React.createElement(AddOrEditBookmark, { bookmarkToEdit: bookmark, onAddOrEdit: function (edited) { return props.onEdit(edited); } })); });
-    return (React.createElement("ul", { style: { listStyleType: 'square' } }, bookmarks));
-}
-exports.Bookmarks = Bookmarks;
-var AddOrEditBookmark = /** @class */ (function (_super) {
-    __extends(AddOrEditBookmark, _super);
-    function AddOrEditBookmark() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.state = { isFormVisible: false, name: "", url: "" };
-        _this.handleSubmit = function (evt) {
-            evt.preventDefault();
-            var _a = _this.state, name = _a.name, url = _a.url;
-            var bookmarkToEdit = _this.props.bookmarkToEdit;
-            if (name && url) {
-                _this.props.onAddOrEdit({ name: name, url: url, oldName: bookmarkToEdit && bookmarkToEdit.name });
-                _this.setState({ isFormVisible: false, url: "", name: "" });
-            }
-        };
-        _this.handleNameChange = function (evt) {
-            _this.setState({ name: evt.target.value });
-        };
-        _this.handleUrlChange = function (evt) {
-            _this.setState({ url: evt.target.value });
-        };
-        _this.toggleShow = function () {
-            _this.setState({ isFormVisible: !_this.state.isFormVisible });
-        };
-        return _this;
-    }
-    AddOrEditBookmark.prototype.componentDidMount = function () {
-        this.updateFormWithBookmark();
-    };
-    AddOrEditBookmark.prototype.componentDidUpdate = function (prevProps) {
-        if (prevProps.bookmarkToEdit != this.props.bookmarkToEdit) {
-            this.updateFormWithBookmark();
-        }
-    };
-    AddOrEditBookmark.prototype.updateFormWithBookmark = function () {
-        var bookmarkToEdit = this.props.bookmarkToEdit;
-        if (bookmarkToEdit) {
-            this.setState({ name: bookmarkToEdit.name, url: bookmarkToEdit.url });
-        }
-        else {
-            this.setState({ name: "", url: "" });
-        }
-    };
-    AddOrEditBookmark.prototype.hasValue = function () {
-        var _a = this.state, name = _a.name, url = _a.url;
-        return (name && url);
-    };
-    AddOrEditBookmark.prototype.buttonStyle = function () {
-        if (!this.hasValue()) {
-            return { cursor: 'not-allowed' };
-        }
-        return null;
-    };
-    AddOrEditBookmark.prototype.render = function () {
-        var bookmarkToEdit = this.props.bookmarkToEdit;
-        var idEdit = bookmarkToEdit != null;
-        var addOrEditToggleButtonText = bookmarkToEdit ? '(Edit Bookmark)' : '(Add Bookmark)';
-        var addOrEdditAcceptButtonText = bookmarkToEdit ? 'Edit' : 'Add';
-        var buttonStyle = { display: 'inline-block', textDecoration: 'underline', cursor: 'pointer' };
-        if (this.state.isFormVisible) {
-            return (React.createElement("div", null,
-                React.createElement("div", { style: buttonStyle, onClick: this.toggleShow }, "Close"),
-                React.createElement("form", { onSubmit: this.handleSubmit },
-                    React.createElement("div", null,
-                        "Name: ",
-                        React.createElement("input", { type: "text", value: this.state.name, onChange: this.handleNameChange, placeholder: "Bookmark name..." })),
-                    React.createElement("div", null,
-                        "Url:  ",
-                        React.createElement("input", { type: "text", value: this.state.url, onChange: this.handleUrlChange, placeholder: "url..." })),
-                    React.createElement("button", { value: "Add", style: this.buttonStyle() }, addOrEdditAcceptButtonText))));
-        }
-        return React.createElement("div", { style: buttonStyle, onClick: this.toggleShow }, addOrEditToggleButtonText);
-    };
-    return AddOrEditBookmark;
-}(React.Component));
-exports.AddOrEditBookmark = AddOrEditBookmark;
-var AddOrEditTag = /** @class */ (function (_super) {
-    __extends(AddOrEditTag, _super);
-    function AddOrEditTag(props) {
-        var _this = _super.call(this, props) || this;
-        _this.handleSubmit = function (evt) {
-            evt.preventDefault();
-            var name = _this.state.name;
-            var tagToEdit = _this.props.tagToEdit;
-            if (name) {
-                if (tagToEdit) {
-                    var editTagResult = __assign(__assign({}, tagToEdit), { oldName: tagToEdit.name });
-                    editTagResult.name = name;
-                    _this.props.onAddOrEdit(editTagResult);
-                }
-                else {
-                    _this.props.onAddOrEdit({ name: name, bookmarks: [] });
-                }
-                _this.setState({ isFormVisible: false, name: '' });
-            }
-        };
-        _this.handleNameChange = function (evt) {
-            _this.setState({ name: evt.target.value });
-        };
-        _this.toggleShow = function () {
-            _this.setState({ isFormVisible: !_this.state.isFormVisible });
-        };
-        var tagToEdit = _this.props.tagToEdit || '';
-        _this.state = { isFormVisible: false, name: tagToEdit && tagToEdit.name };
-        return _this;
-    }
-    AddOrEditTag.prototype.hasValue = function () {
-        return this.state.name != null;
-    };
-    AddOrEditTag.prototype.buttonStyle = function () {
-        if (!this.hasValue()) {
-            return { cursor: 'not-allowed' };
-        }
-        return null;
-    };
-    AddOrEditTag.prototype.render = function () {
-        var buttonStyle = { display: 'inline-block', textDecoration: 'underline', cursor: 'pointer' };
-        var _a = this.props, isRoot = _a.isRoot, tagToEdit = _a.tagToEdit;
-        var toggleAddButtonText = isRoot ? '(Add Tags)' : tagToEdit ? '(Edit Tag)' : '(Add SubTags)';
-        var acceptText = tagToEdit ? 'Edit' : 'Add';
-        if (this.state.isFormVisible) {
-            return (React.createElement("div", null,
-                React.createElement("div", { style: buttonStyle, onClick: this.toggleShow }, "Close"),
-                React.createElement("form", { onSubmit: this.handleSubmit },
-                    React.createElement("div", null,
-                        "Name: ",
-                        React.createElement("input", { type: "text", value: this.state.name, onChange: this.handleNameChange, placeholder: "Tag name..." })),
-                    React.createElement("button", { value: "Add", style: this.buttonStyle() }, acceptText))));
-        }
-        return React.createElement("div", { style: buttonStyle, onClick: this.toggleShow }, toggleAddButtonText);
-    };
-    return AddOrEditTag;
-}(React.Component));
-exports.AddOrEditTag = AddOrEditTag;
-function Tag(props) {
-    var tag = props.tag, bookmarks = props.bookmarks, parentTag = props.parentTag;
-    if (tag.hidden) {
-        return null;
-    }
-    return (React.createElement("li", { className: "tag" },
-        React.createElement("fieldset", null,
-            React.createElement("legend", null,
-                "Tag: ",
-                tag.name),
-            React.createElement("div", null, "Bookmarks:"),
-            React.createElement(Bookmarks, { onEdit: function (bookmark) { return props.onEditBookmark(tag, bookmark); }, bookmarks: props.bookmarks }),
-            tag.subTags &&
-                React.createElement(React.Fragment, null,
-                    React.createElement("div", null, "SubTags:"),
-                    React.createElement(Tags, { tags: props.subTags, parentTag: tag })),
-            React.createElement(AddOrEditBookmark, { onAddOrEdit: function (newBookmark) { return props.addBookmark(newBookmark, tag.name); } }),
-            React.createElement(AddOrEditTag, { key: "add" + tag.name, onAddOrEdit: function (newTag) { return props.addOrEditTag(newTag, parentTag.name); } }),
-            React.createElement(AddOrEditTag, { key: "edit{tag.name}", tagToEdit: tag, onAddOrEdit: function (newTag) { return props.addOrEditTag(newTag, parentTag && parentTag.name); } }))));
-}
-exports.Tag = Tag;
-var bookmarksById = function (bookmarkIds, allBookmarks) {
-    return allBookmarks.filter(function (bookmark) { return bookmarkIds.some(function (x) { return x == bookmark.name; }); });
-};
-var tagByName = function (tagName, tags) {
-    return tags.find(function (x) { return x.name == tagName; });
-};
-var tagMapStateToProps = function (state, ownProps) {
-    var tag = tagByName(ownProps.tagName, state.tags);
-    return ({
-        tag: tag,
-        subTags: tag.subTags && state.tags.filter(function (x) { return tag.subTags.some(function (tagName) { return tagName == x.name; }); }),
-        bookmarks: bookmarksById(tag.bookmarks, state.bookmarks),
-        parentTag: tagByName(ownProps.parentTagName, state.tags)
-    });
-};
-var tagMapDispatchToProps = function (dispatch) {
-    return {
-        addBookmark: function (bookmarkModel, tagName) { return dispatch(bookmark_slice_1.addBookmark({ bookmarkModel: bookmarkModel, tagName: tagName })); },
-        addOrEditTag: function (addOrEditTagResult, parentTagName) { return dispatch(bookmark_slice_1.addOrEditTag({ addOrEditTagResult: addOrEditTagResult, parentTagName: parentTagName })); },
-        onEditBookmark: function (tag, bookmark) { return dispatch(bookmark_slice_1.editBookmark(bookmark)); }
-    };
-};
-exports.ConnectedTag = react_redux_1.connect(tagMapStateToProps, tagMapDispatchToProps)(Tag);
-function Tags(props) {
-    var tags = props.tags, parentTag = props.parentTag;
-    if (tags) {
-        var parentTagName_1 = parentTag && parentTag.name;
-        var tagItems = tags.map(function (tag) { return React.createElement(exports.ConnectedTag, { key: tag.name, parentTagName: parentTagName_1, tagName: tag.name }); });
-        return (React.createElement("ul", { style: { listStyleType: 'none', paddingInlineStart: 0 } }, tagItems));
-    }
-    return null;
-}
-exports.Tags = Tags;
-function TagSearch(props) {
-    var searachText = props.searachText, onSearchChange = props.onSearchChange;
-    return (React.createElement("div", null,
-        React.createElement("input", { type: "text", placeholder: "Search tags...", value: searachText, onChange: function (evt) { return onSearchChange(evt.target.value); } })));
-}
-exports.TagSearch = TagSearch;
-function TagsRoot(props) {
-    var tags = props.tags, search = props.search, searachText = props.searachText, addOrEditTag = props.addOrEditTag;
-    if (tags) {
-        return (React.createElement("div", null,
-            React.createElement(TagSearch, { searachText: searachText, onSearchChange: search }),
-            React.createElement(Tags, { tags: tags, parentTag: null }),
-            React.createElement(AddOrEditTag, { isRoot: true, onAddOrEdit: function (newTag) { return addOrEditTag(newTag); } })));
-    }
-    return null;
-}
-exports.TagsRoot = TagsRoot;
-var tagsRootMapStateToProps = function (state) {
-    return {
-        tags: state.tags.filter(function (x) { return x.isRoot; }),
-        searachText: state.searchValue
-    };
-};
-var tagsRootMapDispatchToProps = function (dispatch) {
-    return {
-        addOrEditTag: function (addOrEditTagResult) { return dispatch(bookmark_slice_1.addOrEditTag({ addOrEditTagResult: addOrEditTagResult, parentTagName: null })); },
-        search: function (searchValue) { return dispatch(bookmark_slice_1.search({ searchValue: searchValue })); }
-    };
-};
-exports.ConnectedTagsRoot = react_redux_1.connect(tagsRootMapStateToProps, tagsRootMapDispatchToProps)(TagsRoot);
 
 
 /***/ }),

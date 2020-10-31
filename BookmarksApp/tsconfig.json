@@ -15,5 +15,5 @@
     "node_modules",
     "dist"
   ],
-  "include": [ "wwwroot/app/**/*.tsx", "wwwroot/app/**/*.ts" ]
+  "include": [ "app/**/*.tsx", "app/**/*.ts" ]
 }

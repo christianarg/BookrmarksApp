@@ -81,10 +81,386 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = "./wwwroot/app/bookmarks-mobx/app.tsx");
+/******/ 	return __webpack_require__(__webpack_require__.s = "./app/bookmarks-mobx/app.tsx");
 /******/ })
 /************************************************************************/
 /******/ ({
+
+/***/ "./app/bookmarks-mobx/app.tsx":
+/*!************************************!*\
+  !*** ./app/bookmarks-mobx/app.tsx ***!
+  \************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.StoreContext = void 0;
+var React = __webpack_require__(/*! react */ "react");
+var ReactDOM = __webpack_require__(/*! react-dom */ "react-dom");
+var bookmarks_mobx_1 = __webpack_require__(/*! ./bookmarks-mobx */ "./app/bookmarks-mobx/bookmarks-mobx.tsx");
+var model_mobx_1 = __webpack_require__(/*! ./model-mobx */ "./app/bookmarks-mobx/model-mobx.ts");
+exports.StoreContext = React.createContext(null);
+var App = /** @class */ (function (_super) {
+    __extends(App, _super);
+    function App() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    App.prototype.render = function () {
+        return (React.createElement(exports.StoreContext.Provider, { value: model_mobx_1.store },
+            React.createElement(bookmarks_mobx_1.TagsRoot, null)));
+    };
+    return App;
+}(React.Component));
+ReactDOM.render(React.createElement(App, null), document.getElementById('root'));
+
+
+/***/ }),
+
+/***/ "./app/bookmarks-mobx/bookmarks-mobx.tsx":
+/*!***********************************************!*\
+  !*** ./app/bookmarks-mobx/bookmarks-mobx.tsx ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.TagsRoot = void 0;
+var mobx_react_1 = __webpack_require__(/*! mobx-react */ "./node_modules/mobx-react/dist/mobxreact.esm.js");
+var mobx_1 = __webpack_require__(/*! mobx */ "./node_modules/mobx/dist/mobx.esm.js");
+var React = __webpack_require__(/*! react */ "react");
+var app_1 = __webpack_require__(/*! ./app */ "./app/bookmarks-mobx/app.tsx");
+var react_1 = __webpack_require__(/*! react */ "react");
+var ulStyle = { listStyleType: 'none', paddingInlineStart: 0 };
+var Bookmarks = mobx_react_1.observer(function (props) {
+    var bookmarks = props.bookmarks.map(function (bookmark) { return !bookmark.hidden &&
+        React.createElement("li", { key: bookmark.name, className: "bookmark" },
+            React.createElement(BookmarkComponent, { bookmark: bookmark })); });
+    return (React.createElement("ul", { style: { listStyleType: 'square' } }, bookmarks));
+});
+var BookmarkComponent = mobx_react_1.observer(function (props) {
+    var store = react_1.useContext(app_1.StoreContext);
+    var onEdit = function (editBookmark) {
+        store.editBookmark(props.bookmark, editBookmark);
+    };
+    var bookmark = props.bookmark;
+    return React.createElement(React.Fragment, null,
+        React.createElement("a", { href: bookmark.url, target: "_blank" }, bookmark.name),
+        "\u00A0\u00A0",
+        React.createElement(AddOrEditBookmark, { name: bookmark.name, url: bookmark.url, isEdit: true, onAddOrEdit: onEdit }));
+});
+var AddOrEditBookmark = /** @class */ (function (_super) {
+    __extends(AddOrEditBookmark, _super);
+    function AddOrEditBookmark(props) {
+        var _a, _b;
+        var _this = _super.call(this, props) || this;
+        _this.handleSubmit = function (evt) {
+            evt.preventDefault();
+            var _a = _this.state, name = _a.name, url = _a.url;
+            var bookmarkToEdit = _this.props.isEdit;
+            if (name && url) {
+                _this.props.onAddOrEdit({ name: name, url: url, oldName: bookmarkToEdit && _this.props.name });
+                _this.setState({ isFormVisible: false });
+            }
+        };
+        _this.handleNameChange = function (evt) {
+            _this.setState({ name: evt.target.value });
+        };
+        _this.handleUrlChange = function (evt) {
+            _this.setState({ url: evt.target.value });
+        };
+        _this.toggleShow = function () {
+            _this.setState({ isFormVisible: !_this.state.isFormVisible });
+        };
+        var bookmarkToEdit = _this.props.isEdit;
+        if (bookmarkToEdit) {
+            _this.state = { isFormVisible: false, name: (_a = props.name) !== null && _a !== void 0 ? _a : '', url: (_b = props.url) !== null && _b !== void 0 ? _b : '' };
+        }
+        else {
+            _this.state = { isFormVisible: false, name: '', url: '' };
+        }
+        return _this;
+    }
+    AddOrEditBookmark.prototype.hasValue = function () {
+        var _a = this.state, name = _a.name, url = _a.url;
+        return (name && url);
+    };
+    AddOrEditBookmark.prototype.buttonStyle = function () {
+        if (!this.hasValue()) {
+            return { cursor: 'not-allowed' };
+        }
+        return null;
+    };
+    AddOrEditBookmark.prototype.render = function () {
+        var addOrEditToggleButtonText = this.props.isEdit ? '(Edit Bookmark)' : '(Add Bookmark)';
+        var addOrEdditAcceptButtonText = this.props.isEdit ? 'Edit' : 'Add';
+        var buttonStyle = { display: 'inline-block', textDecoration: 'underline', cursor: 'pointer' };
+        if (this.state.isFormVisible) {
+            return (React.createElement("div", null,
+                React.createElement("div", { style: buttonStyle, onClick: this.toggleShow }, "Close"),
+                React.createElement("form", { onSubmit: this.handleSubmit },
+                    React.createElement("div", null,
+                        "Name: ",
+                        React.createElement("input", { type: "text", value: this.state.name, onChange: this.handleNameChange, placeholder: "Bookmark name..." })),
+                    React.createElement("div", null,
+                        "Url:  ",
+                        React.createElement("input", { type: "text", value: this.state.url, onChange: this.handleUrlChange, placeholder: "url..." })),
+                    React.createElement("button", { value: "Add", style: this.buttonStyle() }, addOrEdditAcceptButtonText))));
+        }
+        return React.createElement("div", { style: buttonStyle, onClick: this.toggleShow }, addOrEditToggleButtonText);
+    };
+    return AddOrEditBookmark;
+}(React.Component));
+var AddOrEditTag = /** @class */ (function (_super) {
+    __extends(AddOrEditTag, _super);
+    function AddOrEditTag(props) {
+        var _this = _super.call(this, props) || this;
+        _this.handleSubmit = function (evt) {
+            evt.preventDefault();
+            var name = _this.state.name;
+            var tagToEdit = _this.props.tagToEdit;
+            if (name) {
+                if (tagToEdit) {
+                    var editTagResult = __assign(__assign({}, tagToEdit), { oldName: tagToEdit.name });
+                    editTagResult.name = name;
+                    _this.props.onAddOrEdit(editTagResult);
+                }
+                else {
+                    _this.props.onAddOrEdit({ name: name, bookmarks: [] });
+                }
+                _this.setState({ isFormVisible: false, name: '' });
+            }
+        };
+        _this.handleNameChange = function (evt) {
+            _this.setState({ name: evt.target.value });
+        };
+        _this.toggleShow = function () {
+            _this.setState({ isFormVisible: !_this.state.isFormVisible });
+        };
+        var tagToEdit = _this.props.tagToEdit;
+        _this.state = { isFormVisible: false, name: tagToEdit ? tagToEdit.name : '' };
+        return _this;
+    }
+    AddOrEditTag.prototype.hasValue = function () {
+        return this.state.name != null;
+    };
+    AddOrEditTag.prototype.buttonStyle = function () {
+        if (!this.hasValue()) {
+            return { cursor: 'not-allowed' };
+        }
+        return null;
+    };
+    AddOrEditTag.prototype.render = function () {
+        var buttonStyle = { display: 'inline-block', textDecoration: 'underline', cursor: 'pointer' };
+        var _a = this.props, isRoot = _a.isRoot, tagToEdit = _a.tagToEdit;
+        var toggleAddButtonText = isRoot ? '(Add Tags)' : tagToEdit ? '(Edit Tag)' : '(Add SubTags)';
+        var acceptText = tagToEdit ? 'Edit' : 'Add';
+        if (this.state.isFormVisible) {
+            return (React.createElement("div", null,
+                React.createElement("div", { style: buttonStyle, onClick: this.toggleShow }, "Close"),
+                React.createElement("form", { onSubmit: this.handleSubmit },
+                    React.createElement("div", null,
+                        "Name: ",
+                        React.createElement("input", { type: "text", value: this.state.name, onChange: this.handleNameChange, placeholder: "Tag name..." })),
+                    React.createElement("button", { value: "Add", style: this.buttonStyle() }, acceptText))));
+        }
+        return React.createElement("div", { style: buttonStyle, onClick: this.toggleShow }, toggleAddButtonText);
+    };
+    return AddOrEditTag;
+}(React.Component));
+var Tag = mobx_react_1.observer(function (props) {
+    var store = react_1.useContext(app_1.StoreContext);
+    var tag = props.tag;
+    if (tag.hidden) {
+        return null;
+    }
+    var onAddBookmark = function (bookmark) {
+        store.addBookmark(tag, bookmark);
+    };
+    var addSubTag = function (subTag) {
+        store.addTag(tag, subTag);
+    };
+    var editTag = function (editTag) {
+        store.editTag(tag, editTag);
+    };
+    return (React.createElement("li", { className: "tag" },
+        React.createElement("fieldset", null,
+            React.createElement("legend", null,
+                "Tag: ",
+                tag.name),
+            React.createElement("div", null, "Bookmarks:"),
+            React.createElement(Bookmarks, { bookmarks: tag.bookmarks }),
+            tag.subTags &&
+                React.createElement(React.Fragment, null,
+                    React.createElement("div", null, "SubTags:"),
+                    React.createElement(Tags, { tags: tag.subTags, parentTag: tag })),
+            React.createElement(AddOrEditBookmark, { isEdit: false, onAddOrEdit: onAddBookmark }),
+            React.createElement(AddOrEditTag, { key: "add" + tag.name, onAddOrEdit: mobx_1.toJS(addSubTag) }),
+            React.createElement(AddOrEditTag, { key: "edit{tag.name}", tagToEdit: tag, onAddOrEdit: mobx_1.toJS(editTag) }))));
+});
+var Tags = mobx_react_1.observer(function (props) {
+    var tags = props.tags, parentTag = props.parentTag;
+    var tagItems = tags.map(function (tag) { return React.createElement(Tag, { key: tag.name, parentTag: parentTag, tag: tag }); });
+    return (React.createElement("ul", { style: ulStyle }, tagItems));
+});
+function TagSearch(props) {
+    var searachText = props.searachText, onSearchChange = props.onSearchChange;
+    return (React.createElement("div", null,
+        React.createElement("input", { type: "text", placeholder: "Search tags...", value: searachText, onChange: function (evt) { return onSearchChange(evt.target.value); } })));
+}
+// **TagsRootComponent**
+exports.TagsRoot = mobx_react_1.observer(function () {
+    var store = react_1.useContext(app_1.StoreContext);
+    var onSearch = function (searchValue) {
+        store.search(searchValue);
+    };
+    return (React.createElement("div", null,
+        React.createElement(TagSearch, { searachText: store.searchText, onSearchChange: onSearch }),
+        React.createElement(Tags, { tags: store.filteredTags, parentTag: null }),
+        React.createElement(AddOrEditTag, { isRoot: true, onAddOrEdit: function (newTag) { return store.addTag(null, newTag); } })));
+});
+
+
+/***/ }),
+
+/***/ "./app/bookmarks-mobx/model-mobx.ts":
+/*!******************************************!*\
+  !*** ./app/bookmarks-mobx/model-mobx.ts ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.store = exports.sampleBookrmarks = exports.BookmarksStore = void 0;
+var mobx_1 = __webpack_require__(/*! mobx */ "./node_modules/mobx/dist/mobx.esm.js");
+// Global state
+function hasText(text, searchText) {
+    return text.toLowerCase().includes(searchText.toLowerCase());
+}
+function filterTags(tags, searchText) {
+    tags.forEach(function (tag) {
+        tag.bookmarks.forEach(function (bookmark) { return bookmark.hidden = !hasText(bookmark.name, searchText); });
+        var anyBookmarkVisible = tag.bookmarks.some(function (b) { return !b.hidden; });
+        var tagNameHasText = hasText(tag.name, searchText);
+        var anySubTagsVisible = tag.subTags && tag.subTags.some(function (t) { return !t.hidden; });
+        tag.hidden = !tagNameHasText && !anyBookmarkVisible && !anySubTagsVisible;
+        if (tag.subTags) {
+            filterTags(tag.subTags, searchText);
+        }
+    });
+}
+var BookmarksStore = /** @class */ (function () {
+    function BookmarksStore() {
+        this.tags = [];
+        this.searchText = "";
+        mobx_1.makeAutoObservable(this);
+    }
+    Object.defineProperty(BookmarksStore.prototype, "filteredTags", {
+        get: function () {
+            return this.tags.filter(function (x) { return !x.hidden; });
+        },
+        enumerable: false,
+        configurable: true
+    });
+    BookmarksStore.prototype.addBookmark = function (tag, boomark) {
+        tag.bookmarks.push(boomark);
+    };
+    BookmarksStore.prototype.editBookmark = function (bookmark, editBookmark) {
+        bookmark.name = editBookmark.name;
+        bookmark.url = editBookmark.url;
+    };
+    BookmarksStore.prototype.addTag = function (parentTag, subTag) {
+        if (parentTag) {
+            if (parentTag.subTags == null) {
+                parentTag.subTags = [];
+            }
+            parentTag.subTags.push(subTag);
+        }
+        else {
+            this.tags.push(subTag);
+        }
+    };
+    BookmarksStore.prototype.editTag = function (tag, editTag) {
+        tag.name = editTag.name;
+    };
+    BookmarksStore.prototype.search = function (searchValue) {
+        this.searchText = searchValue;
+        filterTags(exports.store.tags, searchValue);
+    };
+    return BookmarksStore;
+}());
+exports.BookmarksStore = BookmarksStore;
+// Store
+exports.sampleBookrmarks = [
+    {
+        name: '.Net',
+        bookmarks: [
+            { name: 'download', url: 'https://dotnet.microsoft.com/download' }
+        ],
+        subTags: [
+            {
+                name: 'Asp.net',
+                bookmarks: [
+                    { name: 'asp.net', url: 'https://dotnet.microsoft.com/apps/aspnet' },
+                    { name: 'asp.net core', url: 'https://docs.microsoft.com/es-es/aspnet/core/?view=aspnetcore-2.2' },
+                ],
+            }
+        ]
+    },
+    {
+        name: 'React',
+        bookmarks: [
+            { name: 'react docs', url: 'https://reactjs.org/docs/getting-started.html' }
+        ]
+    }
+];
+exports.store = new BookmarksStore();
+exports.store.tags = exports.sampleBookrmarks;
+
+
+/***/ }),
 
 /***/ "./node_modules/mobx-react-lite/es/ObserverComponent.js":
 /*!**************************************************************!*\
@@ -6831,382 +7207,6 @@ try {
 // easier to handle this case. if(!global) { ...}
 
 module.exports = g;
-
-
-/***/ }),
-
-/***/ "./wwwroot/app/bookmarks-mobx/app.tsx":
-/*!********************************************!*\
-  !*** ./wwwroot/app/bookmarks-mobx/app.tsx ***!
-  \********************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.StoreContext = void 0;
-var React = __webpack_require__(/*! react */ "react");
-var ReactDOM = __webpack_require__(/*! react-dom */ "react-dom");
-var bookmarks_mobx_1 = __webpack_require__(/*! ./bookmarks-mobx */ "./wwwroot/app/bookmarks-mobx/bookmarks-mobx.tsx");
-var model_mobx_1 = __webpack_require__(/*! ./model-mobx */ "./wwwroot/app/bookmarks-mobx/model-mobx.ts");
-exports.StoreContext = React.createContext(null);
-var App = /** @class */ (function (_super) {
-    __extends(App, _super);
-    function App() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    App.prototype.render = function () {
-        return (React.createElement(exports.StoreContext.Provider, { value: model_mobx_1.store },
-            React.createElement(bookmarks_mobx_1.TagsRoot, null)));
-    };
-    return App;
-}(React.Component));
-ReactDOM.render(React.createElement(App, null), document.getElementById('root'));
-
-
-/***/ }),
-
-/***/ "./wwwroot/app/bookmarks-mobx/bookmarks-mobx.tsx":
-/*!*******************************************************!*\
-  !*** ./wwwroot/app/bookmarks-mobx/bookmarks-mobx.tsx ***!
-  \*******************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.TagsRoot = void 0;
-var mobx_react_1 = __webpack_require__(/*! mobx-react */ "./node_modules/mobx-react/dist/mobxreact.esm.js");
-var mobx_1 = __webpack_require__(/*! mobx */ "./node_modules/mobx/dist/mobx.esm.js");
-var React = __webpack_require__(/*! react */ "react");
-var app_1 = __webpack_require__(/*! ./app */ "./wwwroot/app/bookmarks-mobx/app.tsx");
-var react_1 = __webpack_require__(/*! react */ "react");
-var ulStyle = { listStyleType: 'none', paddingInlineStart: 0 };
-var Bookmarks = mobx_react_1.observer(function (props) {
-    var bookmarks = props.bookmarks.map(function (bookmark) { return !bookmark.hidden &&
-        React.createElement("li", { key: bookmark.name, className: "bookmark" },
-            React.createElement(BookmarkComponent, { bookmark: bookmark })); });
-    return (React.createElement("ul", { style: { listStyleType: 'square' } }, bookmarks));
-});
-var BookmarkComponent = mobx_react_1.observer(function (props) {
-    var store = react_1.useContext(app_1.StoreContext);
-    var onEdit = function (editBookmark) {
-        store.editBookmark(props.bookmark, editBookmark);
-    };
-    var bookmark = props.bookmark;
-    return React.createElement(React.Fragment, null,
-        React.createElement("a", { href: bookmark.url, target: "_blank" }, bookmark.name),
-        "\u00A0\u00A0",
-        React.createElement(AddOrEditBookmark, { name: bookmark.name, url: bookmark.url, isEdit: true, onAddOrEdit: onEdit }));
-});
-var AddOrEditBookmark = /** @class */ (function (_super) {
-    __extends(AddOrEditBookmark, _super);
-    function AddOrEditBookmark(props) {
-        var _a, _b;
-        var _this = _super.call(this, props) || this;
-        _this.handleSubmit = function (evt) {
-            evt.preventDefault();
-            var _a = _this.state, name = _a.name, url = _a.url;
-            var bookmarkToEdit = _this.props.isEdit;
-            if (name && url) {
-                _this.props.onAddOrEdit({ name: name, url: url, oldName: bookmarkToEdit && _this.props.name });
-                _this.setState({ isFormVisible: false });
-            }
-        };
-        _this.handleNameChange = function (evt) {
-            _this.setState({ name: evt.target.value });
-        };
-        _this.handleUrlChange = function (evt) {
-            _this.setState({ url: evt.target.value });
-        };
-        _this.toggleShow = function () {
-            _this.setState({ isFormVisible: !_this.state.isFormVisible });
-        };
-        var bookmarkToEdit = _this.props.isEdit;
-        if (bookmarkToEdit) {
-            _this.state = { isFormVisible: false, name: (_a = props.name) !== null && _a !== void 0 ? _a : '', url: (_b = props.url) !== null && _b !== void 0 ? _b : '' };
-        }
-        else {
-            _this.state = { isFormVisible: false, name: '', url: '' };
-        }
-        return _this;
-    }
-    AddOrEditBookmark.prototype.hasValue = function () {
-        var _a = this.state, name = _a.name, url = _a.url;
-        return (name && url);
-    };
-    AddOrEditBookmark.prototype.buttonStyle = function () {
-        if (!this.hasValue()) {
-            return { cursor: 'not-allowed' };
-        }
-        return null;
-    };
-    AddOrEditBookmark.prototype.render = function () {
-        var addOrEditToggleButtonText = this.props.isEdit ? '(Edit Bookmark)' : '(Add Bookmark)';
-        var addOrEdditAcceptButtonText = this.props.isEdit ? 'Edit' : 'Add';
-        var buttonStyle = { display: 'inline-block', textDecoration: 'underline', cursor: 'pointer' };
-        if (this.state.isFormVisible) {
-            return (React.createElement("div", null,
-                React.createElement("div", { style: buttonStyle, onClick: this.toggleShow }, "Close"),
-                React.createElement("form", { onSubmit: this.handleSubmit },
-                    React.createElement("div", null,
-                        "Name: ",
-                        React.createElement("input", { type: "text", value: this.state.name, onChange: this.handleNameChange, placeholder: "Bookmark name..." })),
-                    React.createElement("div", null,
-                        "Url:  ",
-                        React.createElement("input", { type: "text", value: this.state.url, onChange: this.handleUrlChange, placeholder: "url..." })),
-                    React.createElement("button", { value: "Add", style: this.buttonStyle() }, addOrEdditAcceptButtonText))));
-        }
-        return React.createElement("div", { style: buttonStyle, onClick: this.toggleShow }, addOrEditToggleButtonText);
-    };
-    return AddOrEditBookmark;
-}(React.Component));
-var AddOrEditTag = /** @class */ (function (_super) {
-    __extends(AddOrEditTag, _super);
-    function AddOrEditTag(props) {
-        var _this = _super.call(this, props) || this;
-        _this.handleSubmit = function (evt) {
-            evt.preventDefault();
-            var name = _this.state.name;
-            var tagToEdit = _this.props.tagToEdit;
-            if (name) {
-                if (tagToEdit) {
-                    var editTagResult = __assign(__assign({}, tagToEdit), { oldName: tagToEdit.name });
-                    editTagResult.name = name;
-                    _this.props.onAddOrEdit(editTagResult);
-                }
-                else {
-                    _this.props.onAddOrEdit({ name: name, bookmarks: [] });
-                }
-                _this.setState({ isFormVisible: false, name: '' });
-            }
-        };
-        _this.handleNameChange = function (evt) {
-            _this.setState({ name: evt.target.value });
-        };
-        _this.toggleShow = function () {
-            _this.setState({ isFormVisible: !_this.state.isFormVisible });
-        };
-        var tagToEdit = _this.props.tagToEdit;
-        _this.state = { isFormVisible: false, name: tagToEdit ? tagToEdit.name : '' };
-        return _this;
-    }
-    AddOrEditTag.prototype.hasValue = function () {
-        return this.state.name != null;
-    };
-    AddOrEditTag.prototype.buttonStyle = function () {
-        if (!this.hasValue()) {
-            return { cursor: 'not-allowed' };
-        }
-        return null;
-    };
-    AddOrEditTag.prototype.render = function () {
-        var buttonStyle = { display: 'inline-block', textDecoration: 'underline', cursor: 'pointer' };
-        var _a = this.props, isRoot = _a.isRoot, tagToEdit = _a.tagToEdit;
-        var toggleAddButtonText = isRoot ? '(Add Tags)' : tagToEdit ? '(Edit Tag)' : '(Add SubTags)';
-        var acceptText = tagToEdit ? 'Edit' : 'Add';
-        if (this.state.isFormVisible) {
-            return (React.createElement("div", null,
-                React.createElement("div", { style: buttonStyle, onClick: this.toggleShow }, "Close"),
-                React.createElement("form", { onSubmit: this.handleSubmit },
-                    React.createElement("div", null,
-                        "Name: ",
-                        React.createElement("input", { type: "text", value: this.state.name, onChange: this.handleNameChange, placeholder: "Tag name..." })),
-                    React.createElement("button", { value: "Add", style: this.buttonStyle() }, acceptText))));
-        }
-        return React.createElement("div", { style: buttonStyle, onClick: this.toggleShow }, toggleAddButtonText);
-    };
-    return AddOrEditTag;
-}(React.Component));
-var Tag = mobx_react_1.observer(function (props) {
-    var store = react_1.useContext(app_1.StoreContext);
-    var tag = props.tag;
-    if (tag.hidden) {
-        return null;
-    }
-    var onAddBookmark = function (bookmark) {
-        store.addBookmark(tag, bookmark);
-    };
-    var addSubTag = function (subTag) {
-        store.addTag(tag, subTag);
-    };
-    var editTag = function (editTag) {
-        store.editTag(tag, editTag);
-    };
-    return (React.createElement("li", { className: "tag" },
-        React.createElement("fieldset", null,
-            React.createElement("legend", null,
-                "Tag: ",
-                tag.name),
-            React.createElement("div", null, "Bookmarks:"),
-            React.createElement(Bookmarks, { bookmarks: tag.bookmarks }),
-            tag.subTags &&
-                React.createElement(React.Fragment, null,
-                    React.createElement("div", null, "SubTags:"),
-                    React.createElement(Tags, { tags: tag.subTags, parentTag: tag })),
-            React.createElement(AddOrEditBookmark, { isEdit: false, onAddOrEdit: onAddBookmark }),
-            React.createElement(AddOrEditTag, { key: "add" + tag.name, onAddOrEdit: mobx_1.toJS(addSubTag) }),
-            React.createElement(AddOrEditTag, { key: "edit{tag.name}", tagToEdit: tag, onAddOrEdit: mobx_1.toJS(editTag) }))));
-});
-var Tags = mobx_react_1.observer(function (props) {
-    var tags = props.tags, parentTag = props.parentTag;
-    var tagItems = tags.map(function (tag) { return React.createElement(Tag, { key: tag.name, parentTag: parentTag, tag: tag }); });
-    return (React.createElement("ul", { style: ulStyle }, tagItems));
-});
-function TagSearch(props) {
-    var searachText = props.searachText, onSearchChange = props.onSearchChange;
-    return (React.createElement("div", null,
-        React.createElement("input", { type: "text", placeholder: "Search tags...", value: searachText, onChange: function (evt) { return onSearchChange(evt.target.value); } })));
-}
-// **TagsRootComponent**
-exports.TagsRoot = mobx_react_1.observer(function () {
-    var store = react_1.useContext(app_1.StoreContext);
-    var onSearch = function (searchValue) {
-        store.search(searchValue);
-    };
-    return (React.createElement("div", null,
-        React.createElement(TagSearch, { searachText: store.searchText, onSearchChange: onSearch }),
-        React.createElement(Tags, { tags: store.filteredTags, parentTag: null }),
-        React.createElement(AddOrEditTag, { isRoot: true, onAddOrEdit: function (newTag) { return store.addTag(null, newTag); } })));
-});
-
-
-/***/ }),
-
-/***/ "./wwwroot/app/bookmarks-mobx/model-mobx.ts":
-/*!**************************************************!*\
-  !*** ./wwwroot/app/bookmarks-mobx/model-mobx.ts ***!
-  \**************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.store = exports.sampleBookrmarks = exports.BookmarksStore = void 0;
-var mobx_1 = __webpack_require__(/*! mobx */ "./node_modules/mobx/dist/mobx.esm.js");
-// Global state
-function hasText(text, searchText) {
-    return text.toLowerCase().includes(searchText.toLowerCase());
-}
-function filterTags(tags, searchText) {
-    tags.forEach(function (tag) {
-        tag.bookmarks.forEach(function (bookmark) { return bookmark.hidden = !hasText(bookmark.name, searchText); });
-        var anyBookmarkVisible = tag.bookmarks.some(function (b) { return !b.hidden; });
-        var tagNameHasText = hasText(tag.name, searchText);
-        var anySubTagsVisible = tag.subTags && tag.subTags.some(function (t) { return !t.hidden; });
-        tag.hidden = !tagNameHasText && !anyBookmarkVisible && !anySubTagsVisible;
-        if (tag.subTags) {
-            filterTags(tag.subTags, searchText);
-        }
-    });
-}
-var BookmarksStore = /** @class */ (function () {
-    function BookmarksStore() {
-        this.tags = [];
-        this.searchText = "";
-        mobx_1.makeAutoObservable(this);
-    }
-    Object.defineProperty(BookmarksStore.prototype, "filteredTags", {
-        get: function () {
-            return this.tags.filter(function (x) { return !x.hidden; });
-        },
-        enumerable: false,
-        configurable: true
-    });
-    BookmarksStore.prototype.addBookmark = function (tag, boomark) {
-        tag.bookmarks.push(boomark);
-    };
-    BookmarksStore.prototype.editBookmark = function (bookmark, editBookmark) {
-        bookmark.name = editBookmark.name;
-        bookmark.url = editBookmark.url;
-    };
-    BookmarksStore.prototype.addTag = function (parentTag, subTag) {
-        if (parentTag) {
-            if (parentTag.subTags == null) {
-                parentTag.subTags = [];
-            }
-            parentTag.subTags.push(subTag);
-        }
-        else {
-            this.tags.push(subTag);
-        }
-    };
-    BookmarksStore.prototype.editTag = function (tag, editTag) {
-        tag.name = editTag.name;
-    };
-    BookmarksStore.prototype.search = function (searchValue) {
-        this.searchText = searchValue;
-        filterTags(exports.store.tags, searchValue);
-    };
-    return BookmarksStore;
-}());
-exports.BookmarksStore = BookmarksStore;
-// Store
-exports.sampleBookrmarks = [
-    {
-        name: '.Net',
-        bookmarks: [
-            { name: 'download', url: 'https://dotnet.microsoft.com/download' }
-        ],
-        subTags: [
-            {
-                name: 'Asp.net',
-                bookmarks: [
-                    { name: 'asp.net', url: 'https://dotnet.microsoft.com/apps/aspnet' },
-                    { name: 'asp.net core', url: 'https://docs.microsoft.com/es-es/aspnet/core/?view=aspnetcore-2.2' },
-                ],
-            }
-        ]
-    },
-    {
-        name: 'React',
-        bookmarks: [
-            { name: 'react docs', url: 'https://reactjs.org/docs/getting-started.html' }
-        ]
-    }
-];
-exports.store = new BookmarksStore();
-exports.store.tags = exports.sampleBookrmarks;
 
 
 /***/ }),

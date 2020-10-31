@@ -3,11 +3,11 @@
 module.exports = {
     //entry: "./Scripts/HelloWorld/HelloWorld.tsx",
     entry: {
-        app: "./wwwroot/app/bookmarks/app.tsx",
-        appRedux: "./wwwroot/app/bookmarks-redux/app-redux.tsx",
-        appMobx: "./wwwroot/app/bookmarks-mobx/app.tsx",
-        appReduxToolkit: "./wwwroot/app/bookmarks-redux-toolkit/app-redux-toolkit.tsx",
-        tutorialReduxBasic: "./wwwroot/app/redux-tutorials/basic/index.tsx"
+        app: "./app/bookmarks/app.tsx",
+        appRedux: "./app/bookmarks-redux/app-redux.tsx",
+        appMobx: "./app/bookmarks-mobx/app.tsx",
+        appReduxToolkit: "./app/bookmarks-redux-toolkit/app-redux-toolkit.tsx",
+        tutorialReduxBasic: "./app/redux-tutorials/basic/index.tsx"
     },
     output: {
         filename: "bundle.[name].js",

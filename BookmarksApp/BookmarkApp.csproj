@@ -6,26 +6,64 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="wwwroot\app\app-redux.tsx" />
-    <Content Remove="wwwroot\app\app.js" />
-    <Content Remove="wwwroot\app\app.js.map" />
-    <Content Remove="wwwroot\app\app.tsx" />
-    <Content Remove="wwwroot\app\bookmarks-redux-toolkit\app-redux-toolkit.tsx" />
-    <Content Remove="wwwroot\app\bookmarks-redux-toolkit\bookmark-slice.tsx" />
-    <Content Remove="wwwroot\app\bookmarks-redux-toolkit\bookmarks-redux-toolkit.tsx" />
-    <Content Remove="wwwroot\app\bookmarks-redux-toolkit\bookmars-redux-toolkit.test.tsx" />
-    <Content Remove="wwwroot\app\bookmarks-redux\actions.ts" />
-    <Content Remove="wwwroot\app\bookmarks-redux\bookmarks-redux.tsx" />
-    <Content Remove="wwwroot\app\bookmarks-redux\reducers.tsx" />
-    <Content Remove="wwwroot\app\bookmarks\bookmarks.test.tsx" />
-    <Content Remove="wwwroot\app\provider.tsx" />
-    <Content Remove="wwwroot\app\redux-tutorials\basic\components\counter.tsx" />
-    <Content Remove="wwwroot\app\redux-tutorials\basic\reducers\index.tsx" />
-    <Content Remove="wwwroot\app\redux-tutorials\index.tsx" />
+    <Content Remove="app\app-redux.tsx" />
+    <Content Remove="app\app.tsx" />
+    <Content Remove="app\bookmarks-redux-toolkit\app-redux-toolkit.tsx" />
+    <Content Remove="app\bookmarks-redux-toolkit\bookmark-slice.tsx" />
+    <Content Remove="app\bookmarks-redux-toolkit\bookmarks-redux-toolkit.tsx" />
+    <Content Remove="app\bookmarks-redux-toolkit\bookmars-redux-toolkit.test.tsx" />
+    <Content Remove="app\bookmarks-redux\actions.ts" />
+    <Content Remove="app\bookmarks-redux\bookmarks-redux.tsx" />
+    <Content Remove="app\bookmarks-redux\reducers.tsx" />
+    <Content Remove="app\bookmarks\bookmarks.test.tsx" />
+    <Content Remove="app\provider.tsx" />
+    <Content Remove="app\redux-tutorials\basic\components\counter.tsx" />
+    <Content Remove="app\redux-tutorials\basic\reducers\index.tsx" />
+    <Content Remove="app\redux-tutorials\index.tsx" />
   </ItemGroup>
 
   <ItemGroup>
-    <TypeScriptCompile Remove="wwwroot\app\bookmarks-redux\TagProps.tsx" />
+    <TypeScriptCompile Remove="app\bookmarks-redux\TagProps.tsx" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="app\.gitignore" />
+    <Content Include="app\bookmarks-mobx\app.js" />
+    <Content Include="app\bookmarks-mobx\app.js.map" />
+    <Content Include="app\bookmarks-mobx\bookmarks-mobx.js" />
+    <Content Include="app\bookmarks-mobx\bookmarks-mobx.js.map" />
+    <Content Include="app\bookmarks-mobx\model-mobx.js" />
+    <Content Include="app\bookmarks-mobx\model-mobx.js.map" />
+    <Content Include="app\bookmarks-redux-toolkit\app-redux-toolkit.js" />
+    <Content Include="app\bookmarks-redux-toolkit\app-redux-toolkit.js.map" />
+    <Content Include="app\bookmarks-redux-toolkit\bookmark-slice.js" />
+    <Content Include="app\bookmarks-redux-toolkit\bookmark-slice.js.map" />
+    <Content Include="app\bookmarks-redux-toolkit\bookmarks-redux-toolkit.js" />
+    <Content Include="app\bookmarks-redux-toolkit\bookmarks-redux-toolkit.js.map" />
+    <Content Include="app\bookmarks-redux-toolkit\bookmars-redux-toolkit.test.js" />
+    <Content Include="app\bookmarks-redux-toolkit\bookmars-redux-toolkit.test.js.map" />
+    <Content Include="app\bookmarks-redux-toolkit\__snapshots__\bookmars-redux-toolkit.test.tsx.snap" />
+    <Content Include="app\bookmarks-redux\actions.js" />
+    <Content Include="app\bookmarks-redux\actions.js.map" />
+    <Content Include="app\bookmarks-redux\app-redux.js" />
+    <Content Include="app\bookmarks-redux\app-redux.js.map" />
+    <Content Include="app\bookmarks-redux\bookmarks-redux.js" />
+    <Content Include="app\bookmarks-redux\bookmarks-redux.js.map" />
+    <Content Include="app\bookmarks-redux\reducers.js" />
+    <Content Include="app\bookmarks-redux\reducers.js.map" />
+    <Content Include="app\bookmarks\app.js" />
+    <Content Include="app\bookmarks\app.js.map" />
+    <Content Include="app\bookmarks\bookmarks.js" />
+    <Content Include="app\bookmarks\bookmarks.js.map" />
+    <Content Include="app\bookmarks\bookmarks.test.js" />
+    <Content Include="app\bookmarks\bookmarks.test.js.map" />
+    <Content Include="app\bookmarks\__snapshots__\bookmarks.test.tsx.snap" />
+    <Content Include="app\redux-tutorials\basic\components\counter.js" />
+    <Content Include="app\redux-tutorials\basic\components\counter.js.map" />
+    <Content Include="app\redux-tutorials\basic\index.js" />
+    <Content Include="app\redux-tutorials\basic\index.js.map" />
+    <Content Include="app\redux-tutorials\basic\reducers\index.js" />
+    <Content Include="app\redux-tutorials\basic\reducers\index.js.map" />
   </ItemGroup>
 
   <ItemGroup>
@@ -38,16 +76,18 @@
   </ItemGroup>
 
   <ItemGroup>
-    <TypeScriptCompile Update="wwwroot\app\bookmarks-redux-toolkit\app-redux-toolkit.tsx">
+    <TypeScriptCompile Update="app\bookmarks-redux-toolkit\app-redux-toolkit.tsx">
       <SubType>Code</SubType>
     </TypeScriptCompile>
-    <TypeScriptCompile Update="wwwroot\app\bookmarks-redux\app-redux.tsx">
+    <TypeScriptCompile Update="app\bookmarks-redux\app-redux.tsx">
       <SubType>Code</SubType>
     </TypeScriptCompile>
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\app\bookmarks\__snapshots__\" />
+    <None Include="wwwroot\app\index.css" />
+    <None Include="wwwroot\app\index.debug.html" />
+    <None Include="wwwroot\app\index.html" />
   </ItemGroup>
 
 </Project>

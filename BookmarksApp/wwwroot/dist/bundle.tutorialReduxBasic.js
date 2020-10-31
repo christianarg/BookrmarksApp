@@ -81,10 +81,120 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = "./wwwroot/app/redux-tutorials/basic/index.tsx");
+/******/ 	return __webpack_require__(__webpack_require__.s = "./app/redux-tutorials/basic/index.tsx");
 /******/ })
 /************************************************************************/
 /******/ ({
+
+/***/ "./app/redux-tutorials/basic/components/counter.tsx":
+/*!**********************************************************!*\
+  !*** ./app/redux-tutorials/basic/components/counter.tsx ***!
+  \**********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var React = __webpack_require__(/*! react */ "react");
+var Counter = /** @class */ (function (_super) {
+    __extends(Counter, _super);
+    function Counter() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.incrementIfOdd = function () {
+            if (_this.props.value % 2 == 0) {
+                _this.props.onIncrement();
+            }
+        };
+        _this.incrementAsync = function () {
+            setTimeout(_this.props.onIncrement, 100);
+        };
+        return _this;
+    }
+    Counter.prototype.render = function () {
+        var _a = this.props, value = _a.value, onIncrement = _a.onIncrement, onDecrement = _a.onDecrement;
+        return (React.createElement("p", null,
+            "Clicked: ",
+            value,
+            " times",
+            ' ',
+            React.createElement("button", { onClick: onIncrement }, "+"),
+            ' ',
+            React.createElement("button", { onClick: onDecrement }, "-"),
+            ' ',
+            React.createElement("button", { onClick: this.incrementIfOdd }, "Increment if odd"),
+            ' ',
+            React.createElement("button", { onClick: this.incrementAsync }, "Increment async")));
+    };
+    return Counter;
+}(React.Component));
+exports.default = Counter;
+
+
+/***/ }),
+
+/***/ "./app/redux-tutorials/basic/index.tsx":
+/*!*********************************************!*\
+  !*** ./app/redux-tutorials/basic/index.tsx ***!
+  \*********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var React = __webpack_require__(/*! react */ "react");
+var ReactDOM = __webpack_require__(/*! react-dom */ "react-dom");
+var redux_1 = __webpack_require__(/*! redux */ "./node_modules/redux/es/redux.js");
+var counter_1 = __webpack_require__(/*! ./components/counter */ "./app/redux-tutorials/basic/components/counter.tsx");
+var reducers_1 = __webpack_require__(/*! ./reducers */ "./app/redux-tutorials/basic/reducers/index.tsx");
+var store = redux_1.createStore(reducers_1.default);
+var rootEl = document.getElementById('root');
+var render = function () { return ReactDOM.render(React.createElement(counter_1.default, { value: store.getState(), onIncrement: function () { return store.dispatch({ type: 'INCREMENT' }); }, onDecrement: function () { return store.dispatch({ type: 'DECREMENT' }); } }), rootEl); };
+render();
+store.subscribe(render);
+
+
+/***/ }),
+
+/***/ "./app/redux-tutorials/basic/reducers/index.tsx":
+/*!******************************************************!*\
+  !*** ./app/redux-tutorials/basic/reducers/index.tsx ***!
+  \******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+function counter(state, action) {
+    if (state === void 0) { state = 0; }
+    switch (action.type) {
+        case 'INCREMENT':
+            return state + 1;
+        case 'DECREMENT':
+            return state - 1;
+        default:
+            return state;
+    }
+}
+exports.default = counter;
+
+
+/***/ }),
 
 /***/ "./node_modules/redux/es/redux.js":
 /*!****************************************!*\
@@ -867,116 +977,6 @@ module.exports = function(originalModule) {
 	}
 	return module;
 };
-
-
-/***/ }),
-
-/***/ "./wwwroot/app/redux-tutorials/basic/components/counter.tsx":
-/*!******************************************************************!*\
-  !*** ./wwwroot/app/redux-tutorials/basic/components/counter.tsx ***!
-  \******************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-var React = __webpack_require__(/*! react */ "react");
-var Counter = /** @class */ (function (_super) {
-    __extends(Counter, _super);
-    function Counter() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.incrementIfOdd = function () {
-            if (_this.props.value % 2 == 0) {
-                _this.props.onIncrement();
-            }
-        };
-        _this.incrementAsync = function () {
-            setTimeout(_this.props.onIncrement, 100);
-        };
-        return _this;
-    }
-    Counter.prototype.render = function () {
-        var _a = this.props, value = _a.value, onIncrement = _a.onIncrement, onDecrement = _a.onDecrement;
-        return (React.createElement("p", null,
-            "Clicked: ",
-            value,
-            " times",
-            ' ',
-            React.createElement("button", { onClick: onIncrement }, "+"),
-            ' ',
-            React.createElement("button", { onClick: onDecrement }, "-"),
-            ' ',
-            React.createElement("button", { onClick: this.incrementIfOdd }, "Increment if odd"),
-            ' ',
-            React.createElement("button", { onClick: this.incrementAsync }, "Increment async")));
-    };
-    return Counter;
-}(React.Component));
-exports.default = Counter;
-
-
-/***/ }),
-
-/***/ "./wwwroot/app/redux-tutorials/basic/index.tsx":
-/*!*****************************************************!*\
-  !*** ./wwwroot/app/redux-tutorials/basic/index.tsx ***!
-  \*****************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var React = __webpack_require__(/*! react */ "react");
-var ReactDOM = __webpack_require__(/*! react-dom */ "react-dom");
-var redux_1 = __webpack_require__(/*! redux */ "./node_modules/redux/es/redux.js");
-var counter_1 = __webpack_require__(/*! ./components/counter */ "./wwwroot/app/redux-tutorials/basic/components/counter.tsx");
-var reducers_1 = __webpack_require__(/*! ./reducers */ "./wwwroot/app/redux-tutorials/basic/reducers/index.tsx");
-var store = redux_1.createStore(reducers_1.default);
-var rootEl = document.getElementById('root');
-var render = function () { return ReactDOM.render(React.createElement(counter_1.default, { value: store.getState(), onIncrement: function () { return store.dispatch({ type: 'INCREMENT' }); }, onDecrement: function () { return store.dispatch({ type: 'DECREMENT' }); } }), rootEl); };
-render();
-store.subscribe(render);
-
-
-/***/ }),
-
-/***/ "./wwwroot/app/redux-tutorials/basic/reducers/index.tsx":
-/*!**************************************************************!*\
-  !*** ./wwwroot/app/redux-tutorials/basic/reducers/index.tsx ***!
-  \**************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-function counter(state, action) {
-    if (state === void 0) { state = 0; }
-    switch (action.type) {
-        case 'INCREMENT':
-            return state + 1;
-        case 'DECREMENT':
-            return state - 1;
-        default:
-            return state;
-    }
-}
-exports.default = counter;
 
 
 /***/ }),
