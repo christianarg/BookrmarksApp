@@ -31,7 +31,7 @@ export class BookmarksStore {
             parentTag.subTags.push(subTag);
         }
         else {
-            this.tags.push(parentTag);
+            this.tags.push(subTag);
         }
     }
 

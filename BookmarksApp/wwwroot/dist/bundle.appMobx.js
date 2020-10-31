@@ -6911,7 +6911,7 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.TagsRoot = exports.replaceTag = exports.filterTags = void 0;
+exports.TagsRoot = exports.filterTags = void 0;
 var mobx_react_1 = __webpack_require__(/*! mobx-react */ "./node_modules/mobx-react/dist/mobxreact.esm.js");
 var mobx_1 = __webpack_require__(/*! mobx */ "./node_modules/mobx/dist/mobx.esm.js");
 var React = __webpack_require__(/*! react */ "react");
@@ -7012,7 +7012,7 @@ var AddOrEditTag = /** @class */ (function (_super) {
                 else {
                     _this.props.onAddOrEdit({ name: name, bookmarks: [] });
                 }
-                _this.setState({ isFormVisible: false });
+                _this.setState({ isFormVisible: false, name: '' });
             }
         };
         _this.handleNameChange = function (evt) {
@@ -7022,7 +7022,7 @@ var AddOrEditTag = /** @class */ (function (_super) {
             _this.setState({ isFormVisible: !_this.state.isFormVisible });
         };
         var tagToEdit = _this.props.tagToEdit;
-        _this.state = { isFormVisible: false, name: tagToEdit && tagToEdit.name };
+        _this.state = { isFormVisible: false, name: tagToEdit ? tagToEdit.name : '' };
         return _this;
     }
     AddOrEditTag.prototype.hasValue = function () {
@@ -7076,16 +7076,16 @@ var Tag = mobx_react_1.observer(function (props) {
             tag.subTags &&
                 React.createElement(React.Fragment, null,
                     React.createElement("div", null, "SubTags:"),
-                    React.createElement(Tags, { tags: tag.subTags, parentTag: tag, onAddTag: props.onAddTag })),
+                    React.createElement(Tags, { tags: tag.subTags, parentTag: tag })),
             React.createElement(AddOrEditBookmark, { isEdit: false, onAddOrEdit: onAddBookmark }),
             React.createElement(AddOrEditTag, { key: "add" + tag.name, onAddOrEdit: mobx_1.toJS(addSubTag) }),
             React.createElement(AddOrEditTag, { key: "edit{tag.name}", tagToEdit: tag, onAddOrEdit: mobx_1.toJS(editTag) }))));
 });
-function Tags(props) {
+var Tags = mobx_react_1.observer(function (props) {
     var tags = props.tags, parentTag = props.parentTag;
-    var tagItems = tags.map(function (tag) { return React.createElement(Tag, { key: tag.name, parentTag: parentTag, tag: tag, onAddTag: props.onAddTag }); });
+    var tagItems = tags.map(function (tag) { return React.createElement(Tag, { key: tag.name, parentTag: parentTag, tag: tag }); });
     return (React.createElement("ul", { style: ulStyle }, tagItems));
-}
+});
 function TagSearch(props) {
     var searachText = props.searachText, onSearchChange = props.onSearchChange;
     return (React.createElement("div", null,
@@ -7108,16 +7108,6 @@ function filterTags(tags, searchText) {
     });
 }
 exports.filterTags = filterTags;
-function replaceTag(tags, newTag) {
-    var newTags = tags.map(function (tag) { return tag.name == newTag.name ? newTag : tag; });
-    newTags.forEach(function (tag) {
-        if (tag.subTags) {
-            tag.subTags = replaceTag(tag.subTags, newTag);
-        }
-    });
-    return newTags;
-}
-exports.replaceTag = replaceTag;
 exports.TagsRoot = mobx_react_1.observer(function (props) {
     var store = props.store;
     var onSearch = function (searchValue) {
@@ -7126,7 +7116,7 @@ exports.TagsRoot = mobx_react_1.observer(function (props) {
     };
     return (React.createElement("div", null,
         React.createElement(TagSearch, { searachText: store.searchText, onSearchChange: onSearch }),
-        React.createElement(Tags, { tags: store.filteredTags, parentTag: null, onAddTag: null }),
+        React.createElement(Tags, { tags: store.filteredTags, parentTag: null }),
         React.createElement(AddOrEditTag, { isRoot: true, onAddOrEdit: function (newTag) { return store.addTag(null, newTag); } })));
 });
 
@@ -7174,7 +7164,7 @@ var BookmarksStore = /** @class */ (function () {
             parentTag.subTags.push(subTag);
         }
         else {
-            this.tags.push(parentTag);
+            this.tags.push(subTag);
         }
     };
     BookmarksStore.prototype.editTag = function (tag, editTag) {

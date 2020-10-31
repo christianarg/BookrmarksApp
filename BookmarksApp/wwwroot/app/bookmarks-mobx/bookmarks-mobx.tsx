@@ -123,7 +123,7 @@ class AddOrEditTag extends React.Component<AddTagProps, AddTagState>{
         super(props);
 
         const tagToEdit = this.props.tagToEdit;
-        this.state = { isFormVisible: false, name: tagToEdit && tagToEdit.name };
+        this.state = { isFormVisible: false, name: tagToEdit ? tagToEdit.name : '' };
     }
 
     hasValue() {
@@ -143,7 +143,7 @@ class AddOrEditTag extends React.Component<AddTagProps, AddTagState>{
             } else {
                 this.props.onAddOrEdit({ name: name, bookmarks: [] });
             }
-            this.setState({ isFormVisible: false });
+            this.setState({ isFormVisible: false, name: '' });
         }
     }
 
@@ -187,7 +187,6 @@ class AddOrEditTag extends React.Component<AddTagProps, AddTagState>{
 type TagProps = {
     parentTag: TagModel;
     tag: TagModel;
-    onAddTag: (newTag: TagModel, parentTag: TagModel) => void;
 }
 
 const Tag = observer((props: TagProps) => {
@@ -220,7 +219,7 @@ const Tag = observer((props: TagProps) => {
                 {tag.subTags &&
                     <>
                         <div>SubTags:</div>
-                        <Tags tags={tag.subTags} parentTag={tag} onAddTag={props.onAddTag} />
+                        <Tags tags={tag.subTags} parentTag={tag} />
                     </>}
                 <AddOrEditBookmark isEdit={false} onAddOrEdit={onAddBookmark} />
                 <AddOrEditTag key={`add${tag.name}`} onAddOrEdit={toJS(addSubTag)} />
@@ -234,16 +233,15 @@ const Tag = observer((props: TagProps) => {
 type TagsProps = {
     parentTag: TagModel;
     tags: TagModel[];
-    onAddTag: (newTag: TagModel, parentTag: TagModel) => void;
 }
 
-function Tags(props: TagsProps) {
+const Tags =  observer((props: TagsProps) => {
     const { tags, parentTag } = props;
-    const tagItems = tags.map(tag => <Tag key={tag.name} parentTag={parentTag} tag={tag} onAddTag={props.onAddTag} />);
+    const tagItems = tags.map(tag => <Tag key={tag.name} parentTag={parentTag} tag={tag} />);
     return (
         <ul style={ulStyle}>{tagItems}</ul>
     );
-}
+});
 
 // **TagSearchComponent**
 
@@ -276,17 +274,6 @@ export function filterTags(tags: TagModel[], searchText: string) {
     });
 }
 
-export function replaceTag(tags: TagModel[], newTag: TagModel): TagModel[] {
-    const newTags = tags.map(tag => tag.name == newTag.name ? newTag : tag);
-
-    newTags.forEach(tag => {
-        if (tag.subTags) {
-            tag.subTags = replaceTag(tag.subTags, newTag);
-        }
-    });
-    return newTags;
-}
-
 type TagsRootProps = {
     store: BookmarksStore;
 }
@@ -301,7 +288,7 @@ export const TagsRoot = observer((props: TagsRootProps) => {
 
     return (<div>
         <TagSearch searachText={store.searchText} onSearchChange={onSearch} />
-        <Tags tags={store.filteredTags} parentTag={null} onAddTag={null} />
+        <Tags tags={store.filteredTags} parentTag={null} />
         <AddOrEditTag isRoot={true} onAddOrEdit={(newTag) => store.addTag(null, newTag)} />
     </div>)
 });
