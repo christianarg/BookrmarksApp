@@ -345,3 +345,9 @@ healthchecksdb
 /BookmarksApp/wwwroot/dist/bundle.app.js
 /BookmarksApp/wwwroot/dist/bundle.appRedux.js.map
 /BookmarksApp/wwwroot/dist/bundle.appRedux.js
+/BookmarksApp/wwwroot/dist/bundle.tutorialReduxBasic.js.map
+/BookmarksApp/wwwroot/dist/bundle.tutorialReduxBasic.js
+/BookmarksApp/wwwroot/dist/bundle.appReduxToolkit.js.map
+/BookmarksApp/wwwroot/dist/bundle.appReduxToolkit.js
+/BookmarksApp/wwwroot/dist/bundle.appMobx.js.map
+/BookmarksApp/wwwroot/dist/bundle.appMobx.js
