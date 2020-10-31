@@ -2,7 +2,6 @@
 import { BookmarksAppState, TagModelState, BookmarkModel, EditBookmark } from './bookmarks-redux-toolkit';
 import { AddOrEditTagResult } from './bookmarks-redux-toolkit';
 
-
 const initialState: BookmarksAppState = {
     bookmarks: [],
     tags: [],

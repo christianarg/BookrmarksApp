@@ -1,8 +1,9 @@
 ﻿import { observer } from 'mobx-react';
 import { toJS } from 'mobx';
 import * as React from 'react';
-import { BookmarkModel, EditBookmark, TagModel, AddOrEditTagResult, BookmarksStore, store } from './model-mobx';
-
+import { BookmarkModel, EditBookmark, TagModel, AddOrEditTagResult } from './model-mobx';
+import { StoreContext } from './app';
+import { useContext } from 'react';
 
 const ulStyle: React.CSSProperties = { listStyleType: 'none', paddingInlineStart: 0 };
 
@@ -25,6 +26,7 @@ const Bookmarks = observer((props: BookmarkProps) => {
 type BookmarkComponentProps = { bookmark?: BookmarkModel };
 
 const BookmarkComponent = observer((props: BookmarkComponentProps) => {
+    const store = useContext(StoreContext);
 
     const onEdit = (editBookmark: BookmarkModel) => {
         store.editBookmark(props.bookmark, editBookmark);
@@ -106,7 +108,6 @@ class AddOrEditBookmark extends React.Component<AddOrEditBookmarkProps, AddOrEdi
         return <div style={buttonStyle} onClick={this.toggleShow}>{addOrEditToggleButtonText}</div>
     }
 }
-
 
 // AddOrEditTagComponent
 
@@ -190,6 +191,7 @@ type TagProps = {
 }
 
 const Tag = observer((props: TagProps) => {
+    const store = useContext(StoreContext);
 
     const tag = props.tag;
     if (tag.hidden) {
@@ -274,12 +276,8 @@ export function filterTags(tags: TagModel[], searchText: string) {
     });
 }
 
-type TagsRootProps = {
-    store: BookmarksStore;
-}
-
-export const TagsRoot = observer((props: TagsRootProps) => {
-    const store = props.store;
+export const TagsRoot = observer(() => {
+    const store = useContext(StoreContext);
 
     const onSearch = (searchValue: string) => {
         store.searchText = searchValue;
@@ -292,5 +290,3 @@ export const TagsRoot = observer((props: TagsRootProps) => {
         <AddOrEditTag isRoot={true} onAddOrEdit={(newTag) => store.addTag(null, newTag)} />
     </div>)
 });
-
-

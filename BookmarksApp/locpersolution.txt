@@ -1,0 +1,6 @@
+loc per solutions:
+
+vanilla react: 396
+mobx: 396
+redux: 588 (48%+ loc)
+redux-toolkit: 543 (37%+ loc)

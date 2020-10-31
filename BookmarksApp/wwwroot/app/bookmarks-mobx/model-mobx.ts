@@ -84,6 +84,5 @@ export const sampleBookrmarks: TagModel[] = [
     }
 ]
 
-
 export const store = new BookmarksStore();
 store.tags = sampleBookrmarks;

@@ -6858,17 +6858,20 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.StoreContext = void 0;
 var React = __webpack_require__(/*! react */ "react");
 var ReactDOM = __webpack_require__(/*! react-dom */ "react-dom");
 var bookmarks_mobx_1 = __webpack_require__(/*! ./bookmarks-mobx */ "./wwwroot/app/bookmarks-mobx/bookmarks-mobx.tsx");
 var model_mobx_1 = __webpack_require__(/*! ./model-mobx */ "./wwwroot/app/bookmarks-mobx/model-mobx.ts");
+exports.StoreContext = React.createContext(null);
 var App = /** @class */ (function (_super) {
     __extends(App, _super);
     function App() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     App.prototype.render = function () {
-        return (React.createElement(bookmarks_mobx_1.TagsRoot, { store: model_mobx_1.store }));
+        return (React.createElement(exports.StoreContext.Provider, { value: model_mobx_1.store },
+            React.createElement(bookmarks_mobx_1.TagsRoot, null)));
     };
     return App;
 }(React.Component));
@@ -6915,7 +6918,8 @@ exports.TagsRoot = exports.filterTags = void 0;
 var mobx_react_1 = __webpack_require__(/*! mobx-react */ "./node_modules/mobx-react/dist/mobxreact.esm.js");
 var mobx_1 = __webpack_require__(/*! mobx */ "./node_modules/mobx/dist/mobx.esm.js");
 var React = __webpack_require__(/*! react */ "react");
-var model_mobx_1 = __webpack_require__(/*! ./model-mobx */ "./wwwroot/app/bookmarks-mobx/model-mobx.ts");
+var app_1 = __webpack_require__(/*! ./app */ "./wwwroot/app/bookmarks-mobx/app.tsx");
+var react_1 = __webpack_require__(/*! react */ "react");
 var ulStyle = { listStyleType: 'none', paddingInlineStart: 0 };
 var Bookmarks = mobx_react_1.observer(function (props) {
     var bookmarks = props.bookmarks.map(function (bookmark) { return !bookmark.hidden &&
@@ -6924,8 +6928,9 @@ var Bookmarks = mobx_react_1.observer(function (props) {
     return (React.createElement("ul", { style: { listStyleType: 'square' } }, bookmarks));
 });
 var BookmarkComponent = mobx_react_1.observer(function (props) {
+    var store = react_1.useContext(app_1.StoreContext);
     var onEdit = function (editBookmark) {
-        model_mobx_1.store.editBookmark(props.bookmark, editBookmark);
+        store.editBookmark(props.bookmark, editBookmark);
     };
     var bookmark = props.bookmark;
     return React.createElement(React.Fragment, null,
@@ -7053,18 +7058,19 @@ var AddOrEditTag = /** @class */ (function (_super) {
     return AddOrEditTag;
 }(React.Component));
 var Tag = mobx_react_1.observer(function (props) {
+    var store = react_1.useContext(app_1.StoreContext);
     var tag = props.tag;
     if (tag.hidden) {
         return null;
     }
     var onAddBookmark = function (bookmark) {
-        model_mobx_1.store.addBookmark(tag, bookmark);
+        store.addBookmark(tag, bookmark);
     };
     var addSubTag = function (subTag) {
-        model_mobx_1.store.addTag(tag, subTag);
+        store.addTag(tag, subTag);
     };
     var editTag = function (editTag) {
-        model_mobx_1.store.editTag(tag, editTag);
+        store.editTag(tag, editTag);
     };
     return (React.createElement("li", { className: "tag" },
         React.createElement("fieldset", null,
@@ -7108,8 +7114,8 @@ function filterTags(tags, searchText) {
     });
 }
 exports.filterTags = filterTags;
-exports.TagsRoot = mobx_react_1.observer(function (props) {
-    var store = props.store;
+exports.TagsRoot = mobx_react_1.observer(function () {
+    var store = react_1.useContext(app_1.StoreContext);
     var onSearch = function (searchValue) {
         store.searchText = searchValue;
         filterTags(store.tags, searchValue);
