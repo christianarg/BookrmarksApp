@@ -1,4 +1,5 @@
 ﻿import { observer } from 'mobx-react';
+import { toJS } from 'mobx';
 import * as React from 'react';
 import { BookmarkModel, EditBookmark, TagModel, AddOrEditTagResult, BookmarksStore, store } from './model-mobx';
 
@@ -9,7 +10,6 @@ const ulStyle: React.CSSProperties = { listStyleType: 'none', paddingInlineStart
 
 type BookmarkProps = {
     bookmarks: BookmarkModel[];
-    onEdit: (bookrmark: EditBookmark) => void;
 }
 
 const Bookmarks = observer((props: BookmarkProps) => {
@@ -38,7 +38,7 @@ const BookmarkComponent = observer((props: BookmarkComponentProps) => {
 
 // AddOrEditBookmarkComponent
 
-type AddOrEditBookmarkProps = { name?:string, url?:string; isEdit:boolean; onAddOrEdit: (newBookmark: EditBookmark) => void };
+type AddOrEditBookmarkProps = { name?: string, url?: string; isEdit: boolean; onAddOrEdit: (newBookmark: EditBookmark) => void };
 type AddOrEditBookmarkState = { isFormVisible: boolean, name: string, url: string };
 
 class AddOrEditBookmark extends React.Component<AddOrEditBookmarkProps, AddOrEditBookmarkState>{
@@ -183,25 +183,35 @@ class AddOrEditTag extends React.Component<AddTagProps, AddTagState>{
     }
 }
 
+
 // **TagComponent**
 
 type TagProps = {
     parentTag: TagModel;
     tag: TagModel;
-    onAddBookmark: (tag: TagModel, bookmark: BookmarkModel) => void;
-    onEditBookmark: (tag: TagModel, bookmark: EditBookmark) => void;
     onAddTag: (newTag: TagModel, parentTag: TagModel) => void;
 }
 
- const Tag = observer((props: TagProps) => {
+const Tag = observer((props: TagProps) => {
+
+    const tag = props.tag;
+    if (tag.hidden) {
+        return null;
+    }
 
     const onAddBookmark = (bookmark: EditBookmark) => {
         store.addBookmark(props.tag, bookmark);
     }
 
-    const tag = props.tag;
-    if (tag.hidden) {
-        return null;
+    const addSubTag = (subTag: TagModel) => {
+        if (tag.subTags == null) {
+            tag.subTags = [];
+        }
+        tag.subTags.push(subTag);
+    }
+
+    const editTag = (editTag: TagModel) => {
+        tag.name = editTag.name;
     }
 
     return (
@@ -210,16 +220,16 @@ type TagProps = {
             <fieldset>
                 <legend>Tag: {tag.name}</legend>
                 <div>Bookmarks:</div>
-                <Bookmarks onEdit={bookmark => props.onEditBookmark(tag, bookmark)} bookmarks={tag.bookmarks} />
+                <Bookmarks bookmarks={tag.bookmarks} />
 
                 {tag.subTags &&
                     <>
                         <div>SubTags:</div>
-                        <Tags tags={tag.subTags} parentTag={tag} onEditBookmark={props.onEditBookmark} onAddBookmark={props.onAddBookmark} onAddTag={props.onAddTag} />
+                        <Tags tags={tag.subTags} parentTag={tag} onAddTag={props.onAddTag} />
                     </>}
-                <AddOrEditBookmark isEdit={false} onAddOrEdit={(newBookmark) => onAddBookmark(newBookmark)} />
-                <AddOrEditTag key={`add${tag.name}`} onAddOrEdit={(newTag) => props.onAddTag(newTag, tag)} />
-                <AddOrEditTag key={`edit{tag.name}`} tagToEdit={tag} onAddOrEdit={(newTag) => props.onAddTag(newTag, props.parentTag)} />
+                <AddOrEditBookmark isEdit={false} onAddOrEdit={onAddBookmark} />
+                <AddOrEditTag key={`add${tag.name}`} onAddOrEdit={toJS(addSubTag)} />
+                <AddOrEditTag key={`edit{tag.name}`} tagToEdit={tag} onAddOrEdit={toJS (editTag)} />
             </fieldset>
         </li>);
 });
@@ -229,14 +239,12 @@ type TagProps = {
 type TagsProps = {
     parentTag: TagModel;
     tags: TagModel[];
-    onAddBookmark: (tag: TagModel, bookmark: BookmarkModel) => void;
-    onEditBookmark: (tag: TagModel, bookmark: EditBookmark) => void;
     onAddTag: (newTag: TagModel, parentTag: TagModel) => void;
 }
 
 function Tags(props: TagsProps) {
     const { tags, parentTag } = props;
-    const tagItems = tags.map(tag => <Tag key={tag.name} parentTag={parentTag} tag={tag} onEditBookmark={props.onEditBookmark} onAddBookmark={props.onAddBookmark} onAddTag={props.onAddTag} />);
+    const tagItems = tags.map(tag => <Tag key={tag.name} parentTag={parentTag} tag={tag} onAddTag={props.onAddTag} />);
     return (
         <ul style={ulStyle}>{tagItems}</ul>
     );
@@ -298,7 +306,7 @@ export const TagsRootNew = observer((props: TagsRootNewProps) => {
 
     return (<div>
         <TagSearch searachText={store.searchText} onSearchChange={onSearch} />
-        <Tags tags={store.filteredTags} parentTag={null} onEditBookmark={null} onAddBookmark={null} onAddTag={null} />
+        <Tags tags={store.filteredTags} parentTag={null} onAddTag={null} />
         <AddOrEditTag isRoot={true} onAddOrEdit={(newTag) => store.tags.push(newTag)} />
     </div>)
 });

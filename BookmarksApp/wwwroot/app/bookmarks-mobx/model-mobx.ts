@@ -11,16 +11,11 @@ export class BookmarksStore {
     }
 
     constructor(){
-        makeAutoObservable(this, {
-            tags: observable,
-            searchText: observable,
-            addBookmark: action
-        });
+        makeAutoObservable(this);
     }
-
+    
     addBookmark(tag: TagModel, boomark: BookmarkModel){
         tag.bookmarks.push(boomark);
-        this.tags = this.tags.map(x => x == tag ? tag : x);
     }
 }
 

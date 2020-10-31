@@ -6913,6 +6913,7 @@ var __assign = (this && this.__assign) || function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TagsRootNew = exports.replaceTag = exports.filterTags = void 0;
 var mobx_react_1 = __webpack_require__(/*! mobx-react */ "./node_modules/mobx-react/dist/mobxreact.esm.js");
+var mobx_1 = __webpack_require__(/*! mobx */ "./node_modules/mobx/dist/mobx.esm.js");
 var React = __webpack_require__(/*! react */ "react");
 var model_mobx_1 = __webpack_require__(/*! ./model-mobx */ "./wwwroot/app/bookmarks-mobx/model-mobx.ts");
 var ulStyle = { listStyleType: 'none', paddingInlineStart: 0 };
@@ -7054,31 +7055,40 @@ var AddOrEditTag = /** @class */ (function (_super) {
     return AddOrEditTag;
 }(React.Component));
 var Tag = mobx_react_1.observer(function (props) {
-    var onAddBookmark = function (bookmark) {
-        model_mobx_1.store.addBookmark(props.tag, bookmark);
-    };
     var tag = props.tag;
     if (tag.hidden) {
         return null;
     }
+    var onAddBookmark = function (bookmark) {
+        model_mobx_1.store.addBookmark(props.tag, bookmark);
+    };
+    var addSubTag = function (subTag) {
+        if (tag.subTags == null) {
+            tag.subTags = [];
+        }
+        tag.subTags.push(subTag);
+    };
+    var editTag = function (editTag) {
+        tag.name = editTag.name;
+    };
     return (React.createElement("li", { className: "tag" },
         React.createElement("fieldset", null,
             React.createElement("legend", null,
                 "Tag: ",
                 tag.name),
             React.createElement("div", null, "Bookmarks:"),
-            React.createElement(Bookmarks, { onEdit: function (bookmark) { return props.onEditBookmark(tag, bookmark); }, bookmarks: tag.bookmarks }),
+            React.createElement(Bookmarks, { bookmarks: tag.bookmarks }),
             tag.subTags &&
                 React.createElement(React.Fragment, null,
                     React.createElement("div", null, "SubTags:"),
-                    React.createElement(Tags, { tags: tag.subTags, parentTag: tag, onEditBookmark: props.onEditBookmark, onAddBookmark: props.onAddBookmark, onAddTag: props.onAddTag })),
-            React.createElement(AddOrEditBookmark, { isEdit: false, onAddOrEdit: function (newBookmark) { return onAddBookmark(newBookmark); } }),
-            React.createElement(AddOrEditTag, { key: "add" + tag.name, onAddOrEdit: function (newTag) { return props.onAddTag(newTag, tag); } }),
-            React.createElement(AddOrEditTag, { key: "edit{tag.name}", tagToEdit: tag, onAddOrEdit: function (newTag) { return props.onAddTag(newTag, props.parentTag); } }))));
+                    React.createElement(Tags, { tags: tag.subTags, parentTag: tag, onAddTag: props.onAddTag })),
+            React.createElement(AddOrEditBookmark, { isEdit: false, onAddOrEdit: onAddBookmark }),
+            React.createElement(AddOrEditTag, { key: "add" + tag.name, onAddOrEdit: mobx_1.toJS(addSubTag) }),
+            React.createElement(AddOrEditTag, { key: "edit{tag.name}", tagToEdit: tag, onAddOrEdit: mobx_1.toJS(editTag) }))));
 });
 function Tags(props) {
     var tags = props.tags, parentTag = props.parentTag;
-    var tagItems = tags.map(function (tag) { return React.createElement(Tag, { key: tag.name, parentTag: parentTag, tag: tag, onEditBookmark: props.onEditBookmark, onAddBookmark: props.onAddBookmark, onAddTag: props.onAddTag }); });
+    var tagItems = tags.map(function (tag) { return React.createElement(Tag, { key: tag.name, parentTag: parentTag, tag: tag, onAddTag: props.onAddTag }); });
     return (React.createElement("ul", { style: ulStyle }, tagItems));
 }
 function TagSearch(props) {
@@ -7121,7 +7131,7 @@ exports.TagsRootNew = mobx_react_1.observer(function (props) {
     };
     return (React.createElement("div", null,
         React.createElement(TagSearch, { searachText: store.searchText, onSearchChange: onSearch }),
-        React.createElement(Tags, { tags: store.filteredTags, parentTag: null, onEditBookmark: null, onAddBookmark: null, onAddTag: null }),
+        React.createElement(Tags, { tags: store.filteredTags, parentTag: null, onAddTag: null }),
         React.createElement(AddOrEditTag, { isRoot: true, onAddOrEdit: function (newTag) { return store.tags.push(newTag); } })));
 });
 // type TagsRootState = {
@@ -7212,11 +7222,7 @@ var BookmarksStore = /** @class */ (function () {
     function BookmarksStore() {
         this.tags = [];
         this.searchText = "";
-        mobx_1.makeAutoObservable(this, {
-            tags: mobx_1.observable,
-            searchText: mobx_1.observable,
-            addBookmark: mobx_1.action
-        });
+        mobx_1.makeAutoObservable(this);
     }
     Object.defineProperty(BookmarksStore.prototype, "filteredTags", {
         get: function () {
@@ -7227,7 +7233,6 @@ var BookmarksStore = /** @class */ (function () {
     });
     BookmarksStore.prototype.addBookmark = function (tag, boomark) {
         tag.bookmarks.push(boomark);
-        this.tags = this.tags.map(function (x) { return x == tag ? tag : x; });
     };
     return BookmarksStore;
 }());
