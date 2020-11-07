@@ -23,6 +23,7 @@
     "mobx": "^6.0.1",
     "mobx-react": "^7.0.0",
     "mobx-react-lite": "^3.0.1",
+    "msw": "^0.21.3",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
     "react-redux": "^7.1.0",
