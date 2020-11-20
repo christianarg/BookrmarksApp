@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { data, DetailData, MasterData } from './model';
 import * as clone from 'clone';
+import { RenderChivato } from './common';
 
 
 type MasterComponentState = {
@@ -70,13 +71,4 @@ class DetailComponent extends React.Component<DetailComponentProps> {
     }
 }
 
-function RenderCounter(props: { count: number }) {
-    return <div>renderCount : {props.count}</div>
-}
 
-function RenderChivato(props: { phase?: string }) {
-    return <>
-        <div>renderTime : {new Date().toISOString()}</div>
-        {props.phase && <div>phase: {props.phase}</div>}
-    </>
-}
