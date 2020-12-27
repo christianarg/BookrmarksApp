@@ -135,8 +135,8 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.App = void 0;
 var React = __webpack_require__(/*! react */ "react");
-var ReactDOM = __webpack_require__(/*! react-dom */ "react-dom");
 var NoPureClone = __webpack_require__(/*! ./nopure+clone */ "./app/renderStuff/nopure+clone.tsx");
 var PureClone = __webpack_require__(/*! ./pure+clone */ "./app/renderStuff/pure+clone.tsx");
 var NoPureConcreteModify = __webpack_require__(/*! ./nopure+concrete-modify */ "./app/renderStuff/nopure+concrete-modify.tsx");
@@ -167,7 +167,7 @@ var App = /** @class */ (function (_super) {
     };
     return App;
 }(React.Component));
-ReactDOM.render(React.createElement(App, null), document.getElementById('root'));
+exports.App = App;
 
 
 /***/ }),
@@ -3121,17 +3121,6 @@ module.exports = g;
 /***/ (function(module, exports) {
 
 module.exports = React;
-
-/***/ }),
-
-/***/ "react-dom":
-/*!***************************!*\
-  !*** external "ReactDOM" ***!
-  \***************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-module.exports = ReactDOM;
 
 /***/ })
 

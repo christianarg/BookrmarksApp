@@ -1,12 +1,11 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import * as NoPureClone from './nopure+clone';
 import * as PureClone from './pure+clone';
 import * as NoPureConcreteModify from './nopure+concrete-modify';
 import * as PureConcreteModify from './pure+concrete-modify';
 import * as PureConcreteModifyImmer from './pure+concrete-modify-with-immer';
 
-class App extends React.Component {
+export class App extends React.Component {
     render() {
         return (<div>
             <div>
@@ -32,5 +31,3 @@ class App extends React.Component {
         </div>);
     }
 }
-
-ReactDOM.render(<App />, document.getElementById('root'));

@@ -1,5 +1,4 @@
 ﻿import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { ConnectedTagsRoot } from "./bookmarks-redux-toolkit";
 import { Provider } from 'react-redux'
 import { configureStore } from '@reduxjs/toolkit'
@@ -19,5 +18,3 @@ export class App extends React.Component {
             </Provider>);
     }
 }
-
-ReactDOM.render(<App />, document.getElementById('root'));
