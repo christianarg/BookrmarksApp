@@ -5,6 +5,7 @@ import * as BookmarksRedux from './bookmarks-redux/app-redux';
 import * as BookmarksReduxToolkit from './bookmarks-redux-toolkit/app-redux-toolkit';
 import * as BookmarksMobx from './bookmarks-mobx/app';
 import * as RenderStuff from './renderStuff';
+import StateBatched from './statebatches';
 
 
 class App extends React.Component<{}, { appName: string }> {
@@ -40,6 +41,8 @@ class App extends React.Component<{}, { appName: string }> {
                 return <BookmarksMobx.App />
             case 'renderStuff':
                 return <RenderStuff.App />
+            case 'statebatches':
+                return <StateBatched />
             default:
                 return <div>
                     <ul>
@@ -48,6 +51,7 @@ class App extends React.Component<{}, { appName: string }> {
                         <li onClick={() => this.setApp('bookmarks-redux-toolkit')}><a href='#bookmarks-redux-toolkit'>bookmarks-redux-toolkit</a></li>
                         <li onClick={() => this.setApp('bookmarks-mobx')}><a href='#bookmarks-mobx'>bookmarks-mobx</a></li>
                         <li onClick={() => this.setApp('renderStuff')}><a href='#renderStuff'>renderStuff</a></li>
+                        <li onClick={() => this.setApp('statebatches')}><a href='#statebatches'>statebatches</a></li>
                     </ul>
                 </div>
         }
