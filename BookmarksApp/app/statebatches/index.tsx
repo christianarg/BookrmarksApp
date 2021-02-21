@@ -1,4 +1,5 @@
 ﻿import * as React from 'react';
+import { useState } from 'react';
 
 async function someAsync() {
     return new Promise<string>((resolve) => resolve("Hola 3"));
@@ -7,7 +8,7 @@ async function someAsync() {
 type SomeState = {
     foo: string;
 }
-class MyComponent extends React.Component<{}, SomeState>{
+class StateBatchingSamplesClassComponent extends React.Component<{}, SomeState>{
     state: SomeState = { foo: '' }
 
     componentDidMount() {
@@ -31,8 +32,9 @@ class MyComponent extends React.Component<{}, SomeState>{
     }
 
     render() {
-        console.log('render MyComponent');
+        console.log('render StateBatchingSamplesClassComponent');
         return (<>
+            <h2>With Class Component</h2>
             <div>{this.state.foo}</div>
             <button onClick={this.onClick}>Click</button>
             <button onClick={this.onClickAsync}>Async Click</button>
@@ -40,11 +42,44 @@ class MyComponent extends React.Component<{}, SomeState>{
     }
 }
 
+function StateBatchingSamplesHooks() {
+    const [foo, setFoo] = useState('');
+
+    const onClick = () => {
+        // setState are batched becase we are on a react event handler
+        setFoo('Hola 2');
+        setFoo('Hola que hace2');
+    }
+
+    const onClickAsync = async () => {
+        const result = await someAsync();
+        // setState are NOT batched because we are NOT on a react event handler. 
+        // remember, after the await it's syntas sugar for someAsync().then() => {/*we are not in the react handler anymore */ })
+        setFoo(result);
+        setFoo(result + 'que hace');
+    }
+
+
+    console.log('render StateBatchingSamplesHooks');
+    return (<>
+        <h2>With Hooks</h2>
+        <div>{foo}</div>
+        <button onClick={onClick}>Click</button>
+        <button onClick={onClickAsync}>Async Click</button>
+    </>);
+}
+
+export type StateBatchedState = {
+    type: string;
+}
 // more infor about batching https://github.com/facebook/react/issues/14259
 export default class StateBatched extends React.Component {
+    state: StateBatchedState = { type: '' }
     render() {
+
         return (<>
-            <MyComponent />
+            <StateBatchingSamplesClassComponent />
+            <StateBatchingSamplesHooks />
         </>);
     }
 }
