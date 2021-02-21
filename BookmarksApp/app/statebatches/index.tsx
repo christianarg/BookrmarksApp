@@ -73,13 +73,18 @@ export type StateBatchedState = {
     type: string;
 }
 // more infor about batching https://github.com/facebook/react/issues/14259
-export default class StateBatched extends React.Component {
-    state: StateBatchedState = { type: '' }
-    render() {
 
-        return (<>
-            <StateBatchingSamplesClassComponent />
-            <StateBatchingSamplesHooks />
-        </>);
-    }
+export default function StateBatched() {
+    const [type, setType] = useState('');
+
+    const onRadioChange = (e : React.ChangeEvent<HTMLInputElement>) => setType(e.currentTarget.value);
+
+    return (<>
+        <div>
+            <input type='radio' value='class' name='type' onChange={onRadioChange } /> class
+            <input type='radio' value='hook' name='type' onChange={onRadioChange} /> hook
+        </div>
+        {type === 'class' && <StateBatchingSamplesClassComponent />}
+        {type === 'hook' && <StateBatchingSamplesHooks />}
+    </>);
 }
