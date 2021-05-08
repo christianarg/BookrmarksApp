@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="app\prop-drilling\" />
     <Folder Include="app\renderStuff\" />
   </ItemGroup>
 
