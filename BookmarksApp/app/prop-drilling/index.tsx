@@ -22,21 +22,32 @@ type License = {
     name: string;
     checked: boolean;
 }
-type UserLicenseRowProps = {
+
+type UserLicenseCheckerProps = {
     license: License;
-    handleLicenseCheck: (license: License) => void;
+    onLicenseCheck: (license: License) => void;
 }
 
-const UserLicenseRow = (props: UserLicenseRowProps) => {
-    const { license, handleLicenseCheck } = props;
+const UserLicenseChecker = (props: UserLicenseCheckerProps ) =>{
+    const { license, onLicenseCheck } = props;
+    
     const handleCheck = (e: React.ChangeEvent<HTMLInputElement>) => {
-
         const updatedLicense = { ...license, checked: e.target.checked };
-        handleLicenseCheck(updatedLicense);
+        onLicenseCheck(updatedLicense);
     }
 
+    return <input id="license-check" type="checkbox" checked={license.checked} onChange={handleCheck} style={{ verticalAlign: 'middle' }} />
+}
+
+type UserLicenseRowProps = {
+    license: License;
+    onLicenseCheck: (license: License) => void;
+}
+const UserLicenseRow = (props: UserLicenseRowProps) => {
+    const { license, onLicenseCheck } = props;
+
     return <div key={license.name}>
-        <input id="license-check" type="checkbox" checked={license.checked} onChange={handleCheck} style={{ verticalAlign: 'middle' }} />
+        <UserLicenseChecker license={license} onLicenseCheck={onLicenseCheck}  />
         <label htmlFor="license-check">{license.name}</label>
     </div>;
 }
@@ -57,7 +68,7 @@ const UserLiceses = () => {
         setLicenses(updatedLicenses);
     }
 
-    const licensesList = licenses?.map(license => <UserLicenseRow key={license.name} license={license} handleLicenseCheck={handleLicenseCheck} />);
+    const licensesList = licenses?.map(license => <UserLicenseRow key={license.name} license={license} onLicenseCheck={handleLicenseCheck} />);
 
     return licenses && <div>{licensesList}</div>
 }
