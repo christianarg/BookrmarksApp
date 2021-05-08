@@ -8,16 +8,21 @@ import * as RenderStuff from './renderStuff';
 import * as PropDrilling from './prop-drilling';
 import StateBatched from './statebatches';
 
+const getAppNameFromQueryString = () => {
+    const appName = window.location.hash.substr(1, window.location.hash.length - 1);
+    return appName ?? "";
+}
 
 class App extends React.Component<{}, { appName: string }> {
     constructor(props) {
         super(props);
-        this.state = { appName: '' }
+
+        this.state = { appName: getAppNameFromQueryString() }
     }
 
     componentDidMount() {
         window.onhashchange = () => {
-            const appName = window.location.hash.substr(1, window.location.hash.length - 1);
+            const appName = getAppNameFromQueryString();
             if (appName !== this.state.appName) {
                 this.setApp(appName);
             }
