@@ -43,9 +43,9 @@ class App extends React.Component<{}, { appName: string }> {
             case 'bookmarks':
                 return <Bookmarks.App />
             case 'bookmarks-no-prop-drilling':
-                return <Bookmarks.App />
-            case 'bookmarks-redux':
                 return <BookmarksNoPropDrilling.App />
+            case 'bookmarks-redux':
+                return <BookmarksRedux.App />
             case 'bookmarks-redux-toolkit':
                 return <BookmarksReduxToolkit.App />
             case 'bookmarks-redux-toolkit':
