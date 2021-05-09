@@ -50,7 +50,23 @@ const Child = memo((props: ChildProps) => {
 
     return <div>
         <div>{text}</div><div><RenderedAt /></div>
-        {child && <Child data={child} />}
+        {child && <Child2 data={child} />}
     </div>;
 });
 
+const Child2 = memo((props: ChildProps) => {
+    const { text, child } = props.data;
+
+    return <div>
+        <div>{text}</div><div><RenderedAt /></div>
+        {child && <Child3 data={child} />}
+    </div>;
+});
+
+const Child3 = memo((props: ChildProps) => {
+    const { text, child } = props.data;
+
+    return <div>
+        <div>{text}</div><div><RenderedAt /></div>
+    </div>;
+});
