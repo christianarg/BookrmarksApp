@@ -74,7 +74,7 @@ const Child2 = () => {
 const Child3 = () => {
     const contextData = useContext(DataContext);
 
-    const { text } = contextData;
+    const { text } = contextData.child.child;
 
     return <div>
         <div>{text}</div><div><RenderedAt /></div>

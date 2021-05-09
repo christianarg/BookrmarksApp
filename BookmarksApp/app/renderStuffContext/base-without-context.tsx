@@ -64,7 +64,7 @@ const Child2 = memo((props: ChildProps) => {
 });
 
 const Child3 = memo((props: ChildProps) => {
-    const { text, child } = props.data;
+    const { text } = props.data;
 
     return <div>
         <div>{text}</div><div><RenderedAt /></div>
