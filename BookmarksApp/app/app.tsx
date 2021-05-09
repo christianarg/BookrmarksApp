@@ -6,6 +6,7 @@ import * as BookmarksRedux from './bookmarks-redux/app-redux';
 import * as BookmarksReduxToolkit from './bookmarks-redux-toolkit/app-redux-toolkit';
 import * as BookmarksMobx from './bookmarks-mobx/app';
 import * as RenderStuff from './renderStuff';
+import * as RenderStuffContext from './renderStuffContext';
 import * as PropDrilling from './prop-drilling';
 import StateBatched from './statebatches';
 
@@ -54,6 +55,8 @@ class App extends React.Component<{}, { appName: string }> {
                 return <BookmarksMobx.App />
             case 'renderStuff':
                 return <RenderStuff.App />
+            case 'renderStuffContext':
+                return <RenderStuffContext.App />
             case 'statebatches':
                 return <StateBatched />
             case 'prop-drilling':
@@ -67,6 +70,7 @@ class App extends React.Component<{}, { appName: string }> {
                         <li onClick={() => this.setApp('bookmarks-redux-toolkit')}><a href='#bookmarks-redux-toolkit'>bookmarks-redux-toolkit</a></li>
                         <li onClick={() => this.setApp('bookmarks-mobx')}><a href='#bookmarks-mobx'>bookmarks-mobx</a></li>
                         <li onClick={() => this.setApp('renderStuff')}><a href='#renderStuff'>renderStuff</a></li>
+                        {this.renderAppItem('renderStuffContext')}
                         <li onClick={() => this.setApp('statebatches')}><a href='#statebatches'>statebatches</a></li>
                         <li onClick={() => this.setApp('prop-drilling')}><a href='#prop-drilling'>prop-drilling</a></li>
                     </ul>
