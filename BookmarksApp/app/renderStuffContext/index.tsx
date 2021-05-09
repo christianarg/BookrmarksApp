@@ -31,9 +31,25 @@ export function App() {
         setData(nextData);
     }
 
+    const changeSecond = () => {
+        const nextData = produce(data, (draft) =>{
+            draft.child.text += "1";
+        });
+        setData(nextData);
+    }
+
+    const changeThird = () => {
+        const nextData = produce(data, (draft) =>{
+            draft.child.child.text += "1";
+        });
+        setData(nextData);
+    }
+
     return <>
         <Child data={data} />
         <button onClick={changeFirst}>Change First</button>
+        <button onClick={changeSecond}>Change Second</button>
+        <button onClick={changeThird}>Change Third</button>
     </>
 }
 
@@ -43,7 +59,7 @@ const Child = memo((props: ChildProps) => {
     const { text, child } = props.data;
 
     return <div>
-        <span>{text}</span><span>rendered at: {new Date().toTimeString()}</span>
+        <div>{text}</div><div>rendered at: {new Date().toTimeString()}</div>
         {child && <Child data={child} />}
     </div>;
 });
