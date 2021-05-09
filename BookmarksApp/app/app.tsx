@@ -1,6 +1,7 @@
 ﻿import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as Bookmarks from './bookmarks/app';
+import * as BookmarksNoPropDrilling from './bookmarks-no-prop-drilling/app';
 import * as BookmarksRedux from './bookmarks-redux/app-redux';
 import * as BookmarksReduxToolkit from './bookmarks-redux-toolkit/app-redux-toolkit';
 import * as BookmarksMobx from './bookmarks-mobx/app';
@@ -32,13 +33,19 @@ class App extends React.Component<{}, { appName: string }> {
         this.setState({ appName: appName });
     }
 
+    renderAppItem(appName: string) {
+        return <li onClick={() => this.setApp(appName)}><a href={`#${appName}`}>{appName}</a></li>
+    }
+
     renderApp() {
         const appName = this.state.appName;
         switch (appName) {
             case 'bookmarks':
                 return <Bookmarks.App />
+            case 'bookmarks-no-prop-drilling':
+                return <Bookmarks.App />
             case 'bookmarks-redux':
-                return <BookmarksRedux.App />
+                return <BookmarksNoPropDrilling.App />
             case 'bookmarks-redux-toolkit':
                 return <BookmarksReduxToolkit.App />
             case 'bookmarks-redux-toolkit':
@@ -55,6 +62,7 @@ class App extends React.Component<{}, { appName: string }> {
                 return <div>
                     <ul>
                         <li onClick={() => this.setApp('bookmarks')}><a href='#bookmarks'>bookmarks</a></li>
+                        {this.renderAppItem('bookmarks-no-prop-drilling')}
                         <li onClick={() => this.setApp('bookmarks-redux')}><a href='#bookmarks-redux'>bookmarks-redux</a></li>
                         <li onClick={() => this.setApp('bookmarks-redux-toolkit')}><a href='#bookmarks-redux-toolkit'>bookmarks-redux-toolkit</a></li>
                         <li onClick={() => this.setApp('bookmarks-mobx')}><a href='#bookmarks-mobx'>bookmarks-mobx</a></li>
