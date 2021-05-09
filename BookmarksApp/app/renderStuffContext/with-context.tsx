@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { memo, useContext, useState } from 'react';
 import { produce } from 'immer';
-import { DataWithChild, RenderedAt } from '.';
+import { DataWithChild, RenderedAt, Static } from '.';
 
 const DataContext = React.createContext<DataWithChild>(null);
 
@@ -47,7 +47,7 @@ export function App() {
     </>
 }
 
-const Child = () => {
+const Child = memo(() => {
     const contextData = useContext(DataContext);
 
     const { text, child } = contextData;
@@ -56,10 +56,10 @@ const Child = () => {
         <div>{text}</div><div><RenderedAt /></div>
         {child && <Child2 />}
     </div>;
-}
+});
 
 
-const Child2 = () => {
+const Child2 = memo(() => {
     const contextData = useContext(DataContext);
 
     const { text, child } = contextData.child;
@@ -68,15 +68,27 @@ const Child2 = () => {
         <div>{text}</div><div><RenderedAt /></div>
         {child && <Child3 />}
     </div>;
-}
+});
 
 
-const Child3 = () => {
+const Child3 = memo(() => {
     const contextData = useContext(DataContext);
 
     const { text } = contextData.child.child;
 
     return <div>
         <div>{text}</div><div><RenderedAt /></div>
+        <NonStaticBecauseOfUseContext />
+        <Static />
     </div>;
-}
+});
+
+
+
+export const NonStaticBecauseOfUseContext = memo(() => {
+    const contextData = useContext(DataContext);
+
+    return <div>
+        <div>NonStaticBecauseOfUseContext</div><div><RenderedAt /></div>
+    </div>;
+});

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { memo, useState } from 'react';
 import { produce } from 'immer';
-import { DataWithChild, RenderedAt } from '.';
+import { DataWithChild, RenderedAt, Static } from '.';
 
 export function App() {
     const [data, setData] = useState<DataWithChild>({
@@ -68,5 +68,6 @@ const Child3 = memo((props: ChildProps) => {
 
     return <div>
         <div>{text}</div><div><RenderedAt /></div>
+        <Static />
     </div>;
 });

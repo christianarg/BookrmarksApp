@@ -13,6 +13,14 @@ export const RenderedAt = () =>{
     return <>rendered at: {new Date().toISOString()}</>
 }
 
+// para demostrar que no cambia nunca
+export const Static = memo(() => {
+    return <div>
+        <div>Static
+            </div><div><RenderedAt /></div>
+    </div>;
+});
+
 export function App() {
     return <div>
         <div>
